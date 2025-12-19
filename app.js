@@ -1,3 +1,4 @@
+console.log("NEW APP JS LOADED");
 // ======================================================
 // 1. ГЛОБАЛЬНОЕ СОСТОЯНИЕ
 // ======================================================
@@ -386,3 +387,4 @@ function initMap() {
 document.addEventListener("DOMContentLoaded", () => {
     ymaps.ready(initMap);
 });
+
