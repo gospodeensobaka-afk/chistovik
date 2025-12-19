@@ -164,6 +164,22 @@ function handlePoint(p, index) {
         );
         map.geoObjects.add(polygon);
 
+        // стрелка
+        let arrow = "";
+        if (p.direction === "left") arrow = "←";
+        if (p.direction === "right") arrow = "→";
+        if (p.direction === "u-turn") arrow = "⟲";
+
+        const arrowPlacemark = new ymaps.Placemark(
+            [p.lat, p.lng],
+            { iconContent: arrow },
+            {
+                preset: "islands#blueStretchyIcon",
+                iconColor: "#0044ff"
+            }
+        );
+        map.geoObjects.add(arrowPlacemark);
+
         const coords = [p.lat, p.lng];
 
         allPoints.push({
@@ -194,6 +210,22 @@ function handlePoint(p, index) {
             }
         );
         map.geoObjects.add(polygon);
+
+        // стрелка
+        let arrow = "";
+        if (p.direction === "left") arrow = "←";
+        if (p.direction === "right") arrow = "→";
+        if (p.direction === "u-turn") arrow = "⟲";
+
+        const arrowPlacemark = new ymaps.Placemark(
+            [p.lat, p.lng],
+            { iconContent: arrow },
+            {
+                preset: "islands#redStretchyIcon",
+                iconColor: "#ff0000"
+            }
+        );
+        map.geoObjects.add(arrowPlacemark);
 
         const coords = [p.lat, p.lng];
 
@@ -324,7 +356,7 @@ function startSimulation() {
 // ======================================================
 
 function initMap() {
-    const initialCenter = [55.826584, 49.082118];
+    const initialCenter = [55.78724, 49.121848];
 
     map = new ymaps.Map("map", {
         center: initialCenter,
@@ -349,6 +381,14 @@ function initMap() {
     fetch("points.json")
         .then(r => r.json())
         .then(points => {
+
+            // 🔥 СОРТИРОВКА ПО ЧИСЛУ В ID
+            points.sort((a, b) => {
+                const na = parseInt(a.id.match(/\d+/));
+                const nb = parseInt(b.id.match(/\d+/));
+                return na - nb;
+            });
+
             points.forEach(handlePoint);
 
             const routeLine = new ymaps.Polyline(
