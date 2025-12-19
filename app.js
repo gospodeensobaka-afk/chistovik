@@ -1,4 +1,5 @@
 console.log("NEW APP JS LOADED");
+
 // ======================================================
 // 1. ГЛОБАЛЬНОЕ СОСТОЯНИЕ
 // ======================================================
@@ -11,7 +12,6 @@ let lastCoords = null;
 let allPoints = [];          // ВСЕ точки (point + nav + triggers)
 let routePoints = [];        // Координаты для маршрута
 let triggerStates = {};      // Состояние триггеров (0 → 1 → 2)
-let visitedPoints = {};      // Для обычных точек
 
 let simulationActive = false;
 let simulationIndex = 0;
@@ -88,18 +88,24 @@ function playAudio(src) {
 
 
 // ======================================================
-// 4. ГЕОМЕТРИЯ ТОЧЕК
+// 4. ГЕОМЕТРИЯ ТОЧЕК (идеальные квадраты в метрах)
 // ======================================================
 
-// Квадрат 25×25 или 20×20
 function createSquare(lat, lng, sizeMeters) {
-    const d = sizeMeters / 2 / 111320; // перевод метров в градусы
+    const half = sizeMeters / 2;
+
+    const meterInDegLat = 1 / 111320;
+    const meterInDegLng = 1 / (111320 * Math.cos(lat * Math.PI / 180));
+
+    const dLat = half * meterInDegLat;
+    const dLng = half * meterInDegLng;
+
     return [
-        [lat - d, lng - d],
-        [lat - d, lng + d],
-        [lat + d, lng + d],
-        [lat + d, lng - d],
-        [lat - d, lng - d]
+        [lat - dLat, lng - dLng],
+        [lat - dLat, lng + dLng],
+        [lat + dLat, lng + dLng],
+        [lat + dLat, lng - dLng],
+        [lat - dLat, lng - dLng]
     ];
 }
 
@@ -109,15 +115,13 @@ function createSquare(lat, lng, sizeMeters) {
 // ======================================================
 
 function handlePoint(p, index) {
-    const coords = [p.lat, p.lng];
-
-    // Добавляем в маршрут
-    routePoints.push(coords);
 
     // -----------------------------
     // POINT (круг 20 м)
     // -----------------------------
     if (p.type === "point") {
+        const coords = [p.lat, p.lng];
+
         const circle = new ymaps.Circle(
             [coords, 20],
             {},
@@ -139,6 +143,7 @@ function handlePoint(p, index) {
             circle
         });
 
+        routePoints.push(coords);
         return;
     }
 
@@ -159,6 +164,8 @@ function handlePoint(p, index) {
         );
         map.geoObjects.add(polygon);
 
+        const coords = [p.lat, p.lng];
+
         allPoints.push({
             id: p.id,
             type: "nav",
@@ -167,6 +174,7 @@ function handlePoint(p, index) {
             size: 25
         });
 
+        routePoints.push(coords);
         return;
     }
 
@@ -187,7 +195,9 @@ function handlePoint(p, index) {
         );
         map.geoObjects.add(polygon);
 
-        triggerStates[p.id] = 0; // 0 → красный
+        const coords = [p.lat, p.lng];
+
+        triggerStates[p.id] = 0;
 
         allPoints.push({
             id: p.id,
@@ -198,8 +208,11 @@ function handlePoint(p, index) {
             audio: `audio/${index}.mp3`
         });
 
+        routePoints.push(coords);
         return;
     }
+
+    // AREA — пропускаем
 }
 
 
@@ -210,9 +223,7 @@ function handlePoint(p, index) {
 function checkPoints(coords) {
     allPoints.forEach(p => {
 
-        // -----------------------------
-        // POINT (круг)
-        // -----------------------------
+        // POINT
         if (p.type === "point") {
             const dist = distance(coords, p.coords);
             if (dist <= p.radius && !p.visited) {
@@ -227,13 +238,10 @@ function checkPoints(coords) {
             }
         }
 
-        // -----------------------------
-        // TRIGGER (квадрат)
-        // -----------------------------
+        // TRIGGER
         if (p.type === "trigger") {
             const square = p.polygon.geometry.getCoordinates()[0];
 
-            // Проверяем попадание в квадрат
             const inside = ymaps.util.bounds.containsPoint(
                 ymaps.util.bounds.fromPoints(square),
                 coords
@@ -250,7 +258,6 @@ function checkPoints(coords) {
                     playAudio(p.audio);
                 }
             } else {
-                // Выход → сброс
                 triggerStates[p.id] = 0;
                 p.polygon.options.set("fillColor", "rgba(255,0,0,0.25)");
             }
@@ -344,7 +351,6 @@ function initMap() {
         .then(points => {
             points.forEach(handlePoint);
 
-            // Линия маршрута
             const routeLine = new ymaps.Polyline(
                 routePoints,
                 {},
@@ -387,4 +393,3 @@ function initMap() {
 document.addEventListener("DOMContentLoaded", () => {
     ymaps.ready(initMap);
 });
-
