@@ -6,18 +6,18 @@ let map;
 let userMarker = null;
 
 let lastCoords = null;
-let zones = [];
+
+let allPoints = [];          // ВСЕ точки (point + nav + triggers)
+let routePoints = [];        // Координаты для маршрута
+let triggerStates = {};      // Состояние триггеров (0 → 1 → 2)
+let visitedPoints = {};      // Для обычных точек
 
 let simulationActive = false;
-let simulationPoints = [];
 let simulationIndex = 0;
 
 let gpsActive = true;
 
-// Флаг, чтобы не накладывались аудио
 let audioPlaying = false;
-
-// Флаг, что пользователь разрешил звук
 let audioEnabled = false;
 
 
@@ -63,26 +63,18 @@ function calculateAngle(prev, curr) {
 // 3. АУДИО
 // ======================================================
 
-function playZoneAudio(src) {
+function playAudio(src) {
     if (!audioEnabled) {
-        log("Аудио заблокировано браузером — нажми кнопку 'Включить звук'");
+        log("Аудио заблокировано — нажми 'Включить звук'");
         return;
     }
 
-    if (audioPlaying) {
-        log("Аудио уже играет — новое не запускаем");
-        return;
-    }
-
-    log("Запуск аудио: " + src);
+    if (audioPlaying) return;
 
     const audio = new Audio(src);
     audioPlaying = true;
 
     audio.play()
-        .then(() => {
-            log("Аудио успешно проигрывается");
-        })
         .catch(err => {
             log("Ошибка аудио: " + err.message);
             audioPlaying = false;
@@ -90,36 +82,176 @@ function playZoneAudio(src) {
 
     audio.onended = () => {
         audioPlaying = false;
-        log("Аудио завершено");
     };
 }
 
 
 // ======================================================
-// 4. ЗОНЫ
+// 4. ГЕОМЕТРИЯ ТОЧЕК
 // ======================================================
 
-function checkZones(coords) {
-    zones.forEach(z => {
-        const dist = distance(coords, [z.lat, z.lon]);
+// Квадрат 25×25 или 20×20
+function createSquare(lat, lng, sizeMeters) {
+    const d = sizeMeters / 2 / 111320; // перевод метров в градусы
+    return [
+        [lat - d, lng - d],
+        [lat - d, lng + d],
+        [lat + d, lng + d],
+        [lat + d, lng - d],
+        [lat - d, lng - d]
+    ];
+}
 
-        if (dist <= z.radius && !z.visited) {
-            z.visited = true;
 
-            z.circle.options.set({
-                fillColor: "rgba(0,255,0,0.15)",
-                strokeColor: "rgba(0,255,0,0.4)"
-            });
+// ======================================================
+// 5. ОБРАБОТКА ТОЧЕК
+// ======================================================
 
-            log("Вход в зону: " + z.name);
+function handlePoint(p, index) {
+    const coords = [p.lat, p.lng];
 
-            if (z.audio) {
-                playZoneAudio(z.audio);
+    // Добавляем в маршрут
+    routePoints.push(coords);
+
+    // -----------------------------
+    // POINT (круг 20 м)
+    // -----------------------------
+    if (p.type === "point") {
+        const circle = new ymaps.Circle(
+            [coords, 20],
+            {},
+            {
+                fillColor: "rgba(255,0,0,0.15)",
+                strokeColor: "rgba(255,0,0,0.4)",
+                strokeWidth: 2
             }
+        );
+        map.geoObjects.add(circle);
 
-            if (z.isLast) {
-                setStatus("Финальная точка достигнута!");
-                log("Финальная точка достигнута.");
+        allPoints.push({
+            id: p.id,
+            type: "point",
+            coords,
+            radius: 20,
+            audio: `audio/${index}.mp3`,
+            visited: false,
+            circle
+        });
+
+        return;
+    }
+
+    // -----------------------------
+    // NAV (костыль 25×25)
+    // -----------------------------
+    if (p.type === "nav" && !p.triggerMode) {
+        const square = createSquare(p.lat, p.lng, 25);
+
+        const polygon = new ymaps.Polygon(
+            [square],
+            {},
+            {
+                fillColor: "rgba(0,120,255,0.15)",
+                strokeColor: "rgba(0,120,255,1)",
+                strokeWidth: 2
+            }
+        );
+        map.geoObjects.add(polygon);
+
+        allPoints.push({
+            id: p.id,
+            type: "nav",
+            coords,
+            polygon,
+            size: 25
+        });
+
+        return;
+    }
+
+    // -----------------------------
+    // TRIGGER (двойной, 20×20)
+    // -----------------------------
+    if (p.type === "nav" && p.triggerMode === "double") {
+        const square = createSquare(p.lat, p.lng, 20);
+
+        const polygon = new ymaps.Polygon(
+            [square],
+            {},
+            {
+                fillColor: "rgba(255,0,0,0.25)",
+                strokeColor: "rgba(0,0,0,1)",
+                strokeWidth: 2
+            }
+        );
+        map.geoObjects.add(polygon);
+
+        triggerStates[p.id] = 0; // 0 → красный
+
+        allPoints.push({
+            id: p.id,
+            type: "trigger",
+            coords,
+            polygon,
+            size: 20,
+            audio: `audio/${index}.mp3`
+        });
+
+        return;
+    }
+}
+
+
+// ======================================================
+// 6. ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
+// ======================================================
+
+function checkPoints(coords) {
+    allPoints.forEach(p => {
+
+        // -----------------------------
+        // POINT (круг)
+        // -----------------------------
+        if (p.type === "point") {
+            const dist = distance(coords, p.coords);
+            if (dist <= p.radius && !p.visited) {
+                p.visited = true;
+
+                p.circle.options.set({
+                    fillColor: "rgba(0,255,0,0.15)",
+                    strokeColor: "rgba(0,255,0,0.4)"
+                });
+
+                playAudio(p.audio);
+            }
+        }
+
+        // -----------------------------
+        // TRIGGER (квадрат)
+        // -----------------------------
+        if (p.type === "trigger") {
+            const square = p.polygon.geometry.getCoordinates()[0];
+
+            // Проверяем попадание в квадрат
+            const inside = ymaps.util.bounds.containsPoint(
+                ymaps.util.bounds.fromPoints(square),
+                coords
+            );
+
+            if (inside) {
+                if (triggerStates[p.id] === 0) {
+                    triggerStates[p.id] = 1;
+                    p.polygon.options.set("fillColor", "rgba(255,255,0,0.25)");
+                    playAudio(p.audio);
+                } else if (triggerStates[p.id] === 1) {
+                    triggerStates[p.id] = 2;
+                    p.polygon.options.set("fillColor", "rgba(0,255,0,0.25)");
+                    playAudio(p.audio);
+                }
+            } else {
+                // Выход → сброс
+                triggerStates[p.id] = 0;
+                p.polygon.options.set("fillColor", "rgba(255,0,0,0.25)");
             }
         }
     });
@@ -127,7 +259,7 @@ function checkZones(coords) {
 
 
 // ======================================================
-// 5. ДВИЖЕНИЕ МАРКЕРА
+// 7. ДВИЖЕНИЕ МАРКЕРА
 // ======================================================
 
 function moveMarker(coords) {
@@ -139,58 +271,48 @@ function moveMarker(coords) {
     lastCoords = coords;
     userMarker.geometry.setCoordinates(coords);
 
-    checkZones(coords);
+    checkPoints(coords);
 }
 
 
 // ======================================================
-// 6. СИМУЛЯЦИЯ (ТОЛЬКО ДО ПЕРВОЙ ТОЧКИ)
+// 8. СИМУЛЯЦИЯ
 // ======================================================
 
 function simulateNextStep() {
     if (!simulationActive) return;
 
-    // Останавливаемся строго на первой точке
-    if (simulationIndex >= 2) {
+    if (simulationIndex >= routePoints.length) {
         simulationActive = false;
         gpsActive = true;
-        setStatus("Симуляция завершена (до первой точки)");
-        log("Симуляция завершена");
+        setStatus("Симуляция завершена");
         return;
     }
 
-    const next = simulationPoints[simulationIndex];
+    const next = routePoints[simulationIndex];
     simulationIndex++;
 
     moveMarker(next);
 
-    setTimeout(simulateNextStep, 2000);
+    setTimeout(simulateNextStep, 1500);
 }
 
 function startSimulation() {
-    if (!simulationPoints.length) {
-        setStatus("Нет точек для симуляции");
-        log("Нет точек для симуляции");
-        return;
-    }
+    if (!routePoints.length) return;
 
     simulationActive = true;
     gpsActive = false;
     simulationIndex = 0;
 
-    const start = simulationPoints[0];
-    moveMarker(start);
-    map.setCenter(start, 15);
+    moveMarker(routePoints[0]);
+    map.setCenter(routePoints[0], 16);
 
-    setStatus("Симуляция запущена (до первой точки)");
-    log("Симуляция запущена");
-
-    setTimeout(simulateNextStep, 2000);
+    setTimeout(simulateNextStep, 1500);
 }
 
 
 // ======================================================
-// 7. ИНИЦИАЛИЗАЦИЯ КАРТЫ
+// 9. ИНИЦИАЛИЗАЦИЯ КАРТЫ
 // ======================================================
 
 function initMap() {
@@ -219,132 +341,35 @@ function initMap() {
     fetch("points.json")
         .then(r => r.json())
         .then(points => {
-            // Используем порядок из файла
-            const sorted = points.slice();
+            points.forEach(handlePoint);
 
-            const routePoints = [];
-
-            sorted.forEach((p, index) => {
-                // Обычные точки маршрута
-                if (p.type === "point") {
-                    if (typeof p.lat !== "number" || typeof p.lng !== "number") {
-                        console.warn("Некорректные координаты point", p);
-                        return;
-                    }
-
-                    // Подпись точки (id)
-                    const label = new ymaps.Placemark(
-                        [p.lat, p.lng],
-                        { iconContent: p.id },
-                        {
-                            preset: "islands#blueCircleIcon",
-                            iconColor: "#1E90FF"
-                        }
-                    );
-                    map.geoObjects.add(label);
-
-                    // Круг радиуса
-                    const circle = new ymaps.Circle(
-                        [[p.lat, p.lng], p.radius],
-                        {},
-                        {
-                            fillColor: "rgba(255,0,0,0.15)",
-                            strokeColor: "rgba(255,0,0,0.4)",
-                            strokeWidth: 2
-                        }
-                    );
-                    map.geoObjects.add(circle);
-
-                    // Пока простое аудио по индексу
-                    const audioFile =
-                        index === 0 ? "audio/start.mp3" : `audio/${index}.mp3`;
-
-                    zones.push({
-                        id: p.id,
-                        name: p.name,
-                        lat: p.lat,
-                        lon: p.lng, // ВАЖНО: lng из JSON
-                        radius: p.radius,
-                        circle: circle,
-                        visited: false,
-                        isLast: index === sorted.length - 1,
-                        audio: audioFile
-                    });
-
-                    // Для симуляции маршрута берём только точки
-                    routePoints.push([p.lat, p.lng]);
+            // Линия маршрута
+            const routeLine = new ymaps.Polyline(
+                routePoints,
+                {},
+                {
+                    strokeColor: "#1E90FF",
+                    strokeWidth: 4,
+                    strokeOpacity: 0.8
                 }
+            );
+            map.geoObjects.add(routeLine);
 
-                // Навигационные точки (если хочешь видеть их отдельно)
-                if (p.type === "nav") {
-                    if (typeof p.lat !== "number" || typeof p.lng !== "number") {
-                        console.warn("Некорректные координаты nav", p);
-                        return;
-                    }
-
-                    const navPlacemark = new ymaps.Placemark(
-                        [p.lat, p.lng],
-                        { iconContent: p.id },
-                        {
-                            preset: "islands#darkOrangeDotIcon"
-                        }
-                    );
-                    map.geoObjects.add(navPlacemark);
-                }
-
-                // Полигоны-зоны
-                if (p.type === "area" && p.shape === "polygon" && Array.isArray(p.coordinates)) {
-                    const polygonCoords = p.coordinates.map(c => [c.lat, c.lng]);
-
-                    const polygon = new ymaps.Polygon(
-                        [polygonCoords],
-                        {},
-                        {
-                            fillColor: p.color || "rgba(0,80,0,0.25)",
-                            strokeColor: p.strokeColor || "rgba(0,120,0,1)",
-                            strokeWidth: 2
-                        }
-                    );
-                    map.geoObjects.add(polygon);
-                }
-            });
-
-            simulationPoints = routePoints;
-
-            if (simulationPoints.length > 1) {
-                const routeLine = new ymaps.Polyline(
-                    simulationPoints,
-                    {},
-                    {
-                        strokeColor: "#1E90FF",
-                        strokeWidth: 4,
-                        strokeOpacity: 0.8
-                    }
-                );
-
-                map.geoObjects.add(routeLine);
-            }
-
-            setStatus("Готово к симуляции");
-            log("Точки и маршрут загружены");
+            setStatus("Готово");
+            log("Все точки загружены");
         });
 
-    const btnSim = document.getElementById("simulate");
-    if (btnSim) btnSim.addEventListener("click", startSimulation);
+    document.getElementById("simulate").addEventListener("click", startSimulation);
 
-    // Кнопка включения звука
-    const btnAudio = document.getElementById("enableAudio");
-    if (btnAudio) {
-        btnAudio.addEventListener("click", () => {
-            const a = new Audio("audio/start.mp3");
-            a.play()
-                .then(() => {
-                    audioEnabled = true;
-                    log("Аудио разрешено браузером");
-                })
-                .catch(err => log("Ошибка разрешения аудио: " + err.message));
-        });
-    }
+    document.getElementById("enableAudio").addEventListener("click", () => {
+        const a = new Audio("audio/start.mp3");
+        a.play()
+            .then(() => {
+                audioEnabled = true;
+                log("Аудио разрешено");
+            })
+            .catch(err => log("Ошибка аудио: " + err.message));
+    });
 
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition(
@@ -352,13 +377,10 @@ function initMap() {
                 if (!gpsActive) return;
                 moveMarker([pos.coords.latitude, pos.coords.longitude]);
             },
-            err => log("Ошибка GPS: " + err.message),
+            err => log("GPS ошибка: " + err.message),
             { enableHighAccuracy: true }
         );
     }
-
-    setStatus("Карта инициализирована");
-    log("Карта инициализирована");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
