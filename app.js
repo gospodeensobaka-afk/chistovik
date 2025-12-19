@@ -219,63 +219,111 @@ function initMap() {
     fetch("points.json")
         .then(r => r.json())
         .then(points => {
-            const sorted = points.slice().sort((a, b) => a.id - b.id);
+            // Используем порядок из файла
+            const sorted = points.slice();
 
-            sorted.forEach(p => {
-                const label = new ymaps.Placemark(
-                    [p.lat, p.lon],
-                    { iconContent: p.id },
-                    {
-                        preset: "islands#blueCircleIcon",
-                        iconColor: "#1E90FF"
-                    }
-                );
-                map.geoObjects.add(label);
-            });
+            const routePoints = [];
 
             sorted.forEach((p, index) => {
-                const circle = new ymaps.Circle(
-                    [[p.lat, p.lon], p.radius],
+                // Обычные точки маршрута
+                if (p.type === "point") {
+                    if (typeof p.lat !== "number" || typeof p.lng !== "number") {
+                        console.warn("Некорректные координаты point", p);
+                        return;
+                    }
+
+                    // Подпись точки (id)
+                    const label = new ymaps.Placemark(
+                        [p.lat, p.lng],
+                        { iconContent: p.id },
+                        {
+                            preset: "islands#blueCircleIcon",
+                            iconColor: "#1E90FF"
+                        }
+                    );
+                    map.geoObjects.add(label);
+
+                    // Круг радиуса
+                    const circle = new ymaps.Circle(
+                        [[p.lat, p.lng], p.radius],
+                        {},
+                        {
+                            fillColor: "rgba(255,0,0,0.15)",
+                            strokeColor: "rgba(255,0,0,0.4)",
+                            strokeWidth: 2
+                        }
+                    );
+                    map.geoObjects.add(circle);
+
+                    // Пока простое аудио по индексу
+                    const audioFile =
+                        index === 0 ? "audio/start.mp3" : `audio/${index}.mp3`;
+
+                    zones.push({
+                        id: p.id,
+                        name: p.name,
+                        lat: p.lat,
+                        lon: p.lng, // ВАЖНО: lng из JSON
+                        radius: p.radius,
+                        circle: circle,
+                        visited: false,
+                        isLast: index === sorted.length - 1,
+                        audio: audioFile
+                    });
+
+                    // Для симуляции маршрута берём только точки
+                    routePoints.push([p.lat, p.lng]);
+                }
+
+                // Навигационные точки (если хочешь видеть их отдельно)
+                if (p.type === "nav") {
+                    if (typeof p.lat !== "number" || typeof p.lng !== "number") {
+                        console.warn("Некорректные координаты nav", p);
+                        return;
+                    }
+
+                    const navPlacemark = new ymaps.Placemark(
+                        [p.lat, p.lng],
+                        { iconContent: p.id },
+                        {
+                            preset: "islands#darkOrangeDotIcon"
+                        }
+                    );
+                    map.geoObjects.add(navPlacemark);
+                }
+
+                // Полигоны-зоны
+                if (p.type === "area" && p.shape === "polygon" && Array.isArray(p.coordinates)) {
+                    const polygonCoords = p.coordinates.map(c => [c.lat, c.lng]);
+
+                    const polygon = new ymaps.Polygon(
+                        [polygonCoords],
+                        {},
+                        {
+                            fillColor: p.color || "rgba(0,80,0,0.25)",
+                            strokeColor: p.strokeColor || "rgba(0,120,0,1)",
+                            strokeWidth: 2
+                        }
+                    );
+                    map.geoObjects.add(polygon);
+                }
+            });
+
+            simulationPoints = routePoints;
+
+            if (simulationPoints.length > 1) {
+                const routeLine = new ymaps.Polyline(
+                    simulationPoints,
                     {},
                     {
-                        fillColor: "rgba(255,0,0,0.15)",
-                        strokeColor: "rgba(255,0,0,0.4)",
-                        strokeWidth: 2
+                        strokeColor: "#1E90FF",
+                        strokeWidth: 4,
+                        strokeOpacity: 0.8
                     }
                 );
 
-                map.geoObjects.add(circle);
-
-                // Автоматически назначаем аудио по id
-                const audioFile =
-                    p.id === 1 ? "audio/start.mp3" : `audio/${p.id - 1}.mp3`;
-
-                zones.push({
-                    id: p.id,
-                    name: p.name,
-                    lat: p.lat,
-                    lon: p.lon,
-                    radius: p.radius,
-                    circle: circle,
-                    visited: false,
-                    isLast: index === sorted.length - 1,
-                    audio: audioFile
-                });
-            });
-
-            simulationPoints = sorted.map(p => [p.lat, p.lon]);
-
-            const routeLine = new ymaps.Polyline(
-                simulationPoints,
-                {},
-                {
-                    strokeColor: "#1E90FF",
-                    strokeWidth: 4,
-                    strokeOpacity: 0.8
-                }
-            );
-
-            map.geoObjects.add(routeLine);
+                map.geoObjects.add(routeLine);
+            }
 
             setStatus("Готово к симуляции");
             log("Точки и маршрут загружены");
