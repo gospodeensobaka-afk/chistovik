@@ -1,0 +1,43 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+#map {
+    width: 100%;
+    height: 70vh;
+    background: #ccc;
+}
+
+#simulate {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#simulate:active {
+    opacity: 0.8;
+}
+
+#status {
+    padding: 10px;
+    background: #fff;
+    font-size: 14px;
+    border-top: 1px solid #ddd;
+}
+
+#debug {
+    padding: 10px;
+    background: #eee;
+    font-size: 12px;
+    white-space: pre-line;
+    height: 20vh;
+    overflow-y: auto;
+}
