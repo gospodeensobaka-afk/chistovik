@@ -155,7 +155,7 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  }  {
+  },  {
     "id": "k10_tatarstan_left",
     "name": "Поворот налево — Татарстан",
     "type": "nav",
@@ -353,7 +353,7 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true,
     "triggerMode": "double"
-  }  {
+  },  {
     "id": "area_sloboda",
     "name": "Старо‑Татарская слобода",
     "type": "area",
