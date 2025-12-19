@@ -94,8 +94,8 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  }
-][
+  },
+
   {
     "id": "k1_pushkina_bulak",
     "name": "Поворот Пушкина–Булак",
@@ -155,8 +155,7 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  },
-  {
+  }  {
     "id": "k10_tatarstan_left",
     "name": "Поворот налево — Татарстан",
     "type": "nav",
@@ -192,6 +191,21 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
+
+  {
+    "id": "k13_kayum_nasiri_trigger",
+    "name": "Каюма Насыри — двойной триггер",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.781229,
+    "lng": 49.115164,
+    "direction": "right",
+    "color": "rgba(255,0,0,1)",
+    "strokeColor": "rgba(0,0,0,1)",
+    "interactive": true,
+    "triggerMode": "double"
+  },
+
   {
     "id": "k14_tukaya_left",
     "name": "Площадь Тукая — поворот налево",
@@ -311,34 +325,8 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  }
-][
-  {
-    "id": "k13_kayum_nasiri_trigger",
-    "name": "Каюма Насыри — двойной триггер",
-    "type": "nav",
-    "shape": "square",
-    "lat": 55.781229,
-    "lng": 49.115164,
-    "direction": "right",
-    "color": "rgba(255,0,0,1)", 
-    "strokeColor": "rgba(0,0,0,1)",
-    "interactive": true,
-    "triggerMode": "double"
   },
-  {
-    "id": "k27_kayum_nasiri_trigger2",
-    "name": "Каюма Насыри — второй двойной триггер",
-    "type": "nav",
-    "shape": "square",
-    "lat": 55.793963,
-    "lng": 49.114847,
-    "direction": "left",
-    "color": "rgba(255,0,0,1)",
-    "strokeColor": "rgba(0,0,0,1)",
-    "interactive": true,
-    "triggerMode": "double"
-  },
+
   {
     "id": "p26_petropavlovsky",
     "name": "Петропавловский — двойной триггер",
@@ -351,5 +339,35 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true,
     "triggerMode": "double"
+  },
+
+  {
+    "id": "k27_kayum_nasiri_trigger2",
+    "name": "Каюма Насыри — второй двойной триггер",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.793963,
+    "lng": 49.114847,
+    "direction": "left",
+    "color": "rgba(255,0,0,1)",
+    "strokeColor": "rgba(0,0,0,1)",
+    "interactive": true,
+    "triggerMode": "double"
+  }  {
+    "id": "area_sloboda",
+    "name": "Старо‑Татарская слобода",
+    "type": "area",
+    "shape": "polygon",
+    "coordinates": [
+      { "lat": 55.782247, "lng": 49.115768 },
+      { "lat": 55.778053, "lng": 49.120929 },
+      { "lat": 55.777589, "lng": 49.118888 },
+      { "lat": 55.777006, "lng": 49.11355 },
+      { "lat": 55.780298, "lng": 49.113219 },
+      { "lat": 55.782247, "lng": 49.115768 }
+    ],
+    "color": "rgba(0,80,0,0.25)",
+    "strokeColor": "rgba(0,120,0,1)",
+    "interactive": false
   }
 ]
