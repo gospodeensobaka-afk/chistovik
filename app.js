@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS LOADED");
+console.log("UPDATED APP JS — LOCAL SMOOTHING ONLY");
 
 // ======================================================
 // 1. ГЛОБАЛЬНОЕ СОСТОЯНИЕ
@@ -9,11 +9,11 @@ let userMarker = null;
 
 let lastCoords = null;
 
-let allPoints = [];          // ВСЕ точки (point + nav + triggers)
-let routePoints = [];        // Координаты для маршрута (сырые)
-let smoothRoute = [];        // Сглаженный маршрут
+let allPoints = [];          // все точки (point/nav/trigger)
+let routePoints = [];        // все точки маршрута (сырые)
+let finalRoute = [];         // итоговый маршрут: сглаженный участок + обычные точки
 
-let triggerStates = {};      // Состояние триггеров (0 → 1 → 2)
+let triggerStates = {};
 
 let simulationActive = false;
 let simulationIndex = 0;
@@ -77,15 +77,12 @@ function playAudio(src) {
     const audio = new Audio(src);
     audioPlaying = true;
 
-    audio.play()
-        .catch(err => {
-            log("Ошибка аудио: " + err.message);
-            audioPlaying = false;
-        });
-
-    audio.onended = () => {
+    audio.play().catch(err => {
+        log("Ошибка аудио: " + err.message);
         audioPlaying = false;
-    };
+    });
+
+    audio.onended = () => audioPlaying = false;
 }
 
 
@@ -113,10 +110,10 @@ function createSquare(lat, lng, sizeMeters) {
 
 
 // ======================================================
-// 5. СГЛАЖИВАНИЕ МАРШРУТА (Catmull-Rom)
+// 5. СГЛАЖИВАНИЕ (Catmull-Rom)
 // ======================================================
 
-function catmullRomSpline(points, segments = 10) {
+function catmullRomSpline(points, segments = 12) {
     const result = [];
 
     for (let i = 0; i < points.length - 1; i++) {
@@ -130,42 +127,37 @@ function catmullRomSpline(points, segments = 10) {
             const t3 = t2 * t;
 
             const lat =
-                0.5 *
-                ((2 * p1[0]) +
+                0.5 * (
+                    (2 * p1[0]) +
                     (-p0[0] + p2[0]) * t +
                     (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
-                    (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3);
+                    (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3
+                );
 
             const lng =
-                0.5 *
-                ((2 * p1[1]) +
+                0.5 * (
+                    (2 * p1[1]) +
                     (-p0[1] + p2[1]) * t +
                     (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
-                    (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3);
+                    (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3
+                );
 
             result.push([lat, lng]);
         }
     }
 
     return result;
-}// ======================================================
-// 6. ОБРАБОТКА ТОЧЕК (POINT / NAV / TRIGGER / HIDDEN)
+}
+
+
+// ======================================================
+// 6. ОБРАБОТКА ТОЧЕК
 // ======================================================
 
 function handlePoint(p, index) {
     const coords = [p.lat, p.lng];
 
-    // -----------------------------
-    // HIDDEN NAV (НЕ РИСУЕМ)
-    // -----------------------------
-    if (p.hidden === true) {
-        routePoints.push(coords);
-        return;
-    }
-
-    // -----------------------------
-    // POINT (красный круг)
-    // -----------------------------
+    // POINT
     if (p.type === "point") {
         const circle = new ymaps.Circle(
             [coords, 20],
@@ -192,9 +184,7 @@ function handlePoint(p, index) {
         return;
     }
 
-    // -----------------------------
-    // NAV (обычный квадрат)
-    // -----------------------------
+    // NAV
     if (p.type === "nav" && !p.triggerMode) {
         const square = createSquare(p.lat, p.lng, 25);
 
@@ -209,7 +199,6 @@ function handlePoint(p, index) {
         );
         map.geoObjects.add(polygon);
 
-        // стрелка
         let arrow = "";
         if (p.direction === "left") arrow = "←";
         if (p.direction === "right") arrow = "→";
@@ -218,10 +207,7 @@ function handlePoint(p, index) {
         const arrowPlacemark = new ymaps.Placemark(
             coords,
             { iconContent: arrow },
-            {
-                preset: "islands#blueStretchyIcon",
-                iconColor: "#0044ff"
-            }
+            { preset: "islands#blueStretchyIcon" }
         );
         map.geoObjects.add(arrowPlacemark);
 
@@ -237,9 +223,7 @@ function handlePoint(p, index) {
         return;
     }
 
-    // -----------------------------
-    // TRIGGER (двойной)
-    // -----------------------------
+    // TRIGGER
     if (p.type === "nav" && p.triggerMode === "double") {
         const square = createSquare(p.lat, p.lng, 20);
 
@@ -257,15 +241,11 @@ function handlePoint(p, index) {
         let arrow = "";
         if (p.direction === "left") arrow = "←";
         if (p.direction === "right") arrow = "→";
-        if (p.direction === "u-turn") arrow = "⟲";
 
         const arrowPlacemark = new ymaps.Placemark(
             coords,
             { iconContent: arrow },
-            {
-                preset: "islands#redStretchyIcon",
-                iconColor: "#ff0000"
-            }
+            { preset: "islands#redStretchyIcon" }
         );
         map.geoObjects.add(arrowPlacemark);
 
@@ -283,12 +263,7 @@ function handlePoint(p, index) {
         routePoints.push(coords);
         return;
     }
-
-    // AREA — пропускаем
-}
-
-
-// ======================================================
+}// ======================================================
 // 7. ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
 // ======================================================
 
@@ -352,21 +327,24 @@ function moveMarker(coords) {
     userMarker.geometry.setCoordinates(coords);
 
     checkPoints(coords);
-}// ======================================================
+}
+
+
+// ======================================================
 // 9. СИМУЛЯЦИЯ
 // ======================================================
 
 function simulateNextStep() {
     if (!simulationActive) return;
 
-    if (simulationIndex >= smoothRoute.length) {
+    if (simulationIndex >= finalRoute.length) {
         simulationActive = false;
         gpsActive = true;
         setStatus("Симуляция завершена");
         return;
     }
 
-    const next = smoothRoute[simulationIndex];
+    const next = finalRoute[simulationIndex];
     simulationIndex++;
 
     moveMarker(next);
@@ -375,21 +353,21 @@ function simulateNextStep() {
 }
 
 function startSimulation() {
-    if (!smoothRoute.length) return;
+    if (!finalRoute.length) return;
 
     simulationActive = true;
     gpsActive = false;
     simulationIndex = 0;
 
-    moveMarker(smoothRoute[0]);
-    map.setCenter(smoothRoute[0], 16);
+    moveMarker(finalRoute[0]);
+    map.setCenter(finalRoute[0], 16);
 
     setTimeout(simulateNextStep, 1500);
 }
 
 
 // ======================================================
-// 10. ИНИЦИАЛИЗАЦИЯ КАРТЫ
+// 10. ИНИЦИАЛИЗАЦИЯ КАРТЫ + ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ
 // ======================================================
 
 function initMap() {
@@ -401,7 +379,6 @@ function initMap() {
         controls: []
     });
 
-    // Маркер пользователя
     userMarker = new ymaps.Placemark(
         initialCenter,
         {},
@@ -416,27 +393,44 @@ function initMap() {
 
     map.geoObjects.add(userMarker);
 
-    // Загружаем точки
     fetch("points.json")
         .then(r => r.json())
         .then(points => {
 
-            // Сортировка по числовой части ID
+            // сортировка по числовой части ID
             points.sort((a, b) => {
                 const na = parseInt(a.id.match(/\d+/));
                 const nb = parseInt(b.id.match(/\d+/));
                 return na - nb;
             });
 
-            // Обработка точек
+            // обработка всех точек
             points.forEach((p, i) => handlePoint(p, i));
 
-            // Сглаживание маршрута
-            smoothRoute = catmullRomSpline(routePoints, 10);
+            // -----------------------------------------------------
+            // ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ: от p01 до p04
+            // -----------------------------------------------------
 
-            // Рисуем линию маршрута
+            // ищем индексы p01 и p04
+            const idxStart = points.findIndex(p => p.id === "p01_start_clock");
+            const idxEnd   = points.findIndex(p => p.id === "p04_chasha");
+
+            // выделяем участок для сглаживания
+            const segment = routePoints.slice(idxStart, idxEnd + 1);
+
+            // сглаживаем только этот участок
+            const smoothSegment = catmullRomSpline(segment, 12);
+
+            // собираем итоговый маршрут:
+            finalRoute = [
+                ...routePoints.slice(0, idxStart),
+                ...smoothSegment,
+                ...routePoints.slice(idxEnd + 1)
+            ];
+
+            // рисуем линию маршрута
             const routeLine = new ymaps.Polyline(
-                smoothRoute,
+                finalRoute,
                 {},
                 {
                     strokeColor: "#1E90FF",
@@ -447,13 +441,11 @@ function initMap() {
             map.geoObjects.add(routeLine);
 
             setStatus("Готово");
-            log("Все точки загружены и маршрут сглажен");
+            log("Маршрут загружен. Сглажен только участок p01 → p04.");
         });
 
-    // Кнопка симуляции
     document.getElementById("simulate").addEventListener("click", startSimulation);
 
-    // Кнопка включения аудио
     document.getElementById("enableAudio").addEventListener("click", () => {
         const a = new Audio("audio/start.mp3");
         a.play()
@@ -464,7 +456,6 @@ function initMap() {
             .catch(err => log("Ошибка аудио: " + err.message));
     });
 
-    // GPS
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition(
             pos => {
