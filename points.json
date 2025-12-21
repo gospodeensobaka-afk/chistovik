@@ -26,6 +26,52 @@
   },
 
   {
+    "id": "h03_fix_1",
+    "name": "Сглаживание — изгиб 1",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.787930,
+    "lng": 49.113846,
+    "hidden": true
+  },
+  {
+    "id": "h04_fix_2",
+    "name": "Сглаживание — поворот",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.791779,
+    "lng": 49.108442,
+    "hidden": true
+  },
+  {
+    "id": "h05_fix_3",
+    "name": "Сглаживание — длинная прямая",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.797143,
+    "lng": 49.102833,
+    "hidden": true
+  },
+  {
+    "id": "h06_fix_4",
+    "name": "Сглаживание — изгиб 2",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.803052,
+    "lng": 49.101661,
+    "hidden": true
+  },
+  {
+    "id": "h07_fix_5",
+    "name": "Сглаживание — выход к точке 3",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.814320,
+    "lng": 49.106665,
+    "hidden": true
+  },
+
+  {
     "id": "p03_tysyacha",
     "name": "Площадь Тысячелетия",
     "type": "point",
@@ -36,9 +82,7 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  },
-
-  {
+  },  {
     "id": "p04_chasha",
     "name": "Чаша",
     "type": "point",
@@ -101,9 +145,7 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  },
-
-  {
+  },  {
     "id": "k09_rotonda",
     "name": "Поворот налево — Ротонда",
     "type": "nav",
@@ -219,9 +261,7 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  },
-
-  {
+  },  {
     "id": "k18_profsouz_right2",
     "name": "Профсоюзная — второй поворот направо",
     "type": "nav",
