@@ -7,8 +7,12 @@
 
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Подключение API Яндекс.Карт с ключом -->
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=c19fec0e-bee5-4e1e-be7e-ab4b959fd303&lang=ru_RU"></script>
+    <!-- MapLibre -->
+    <link href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js"></script>
+
+    <!-- Turf.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
     <!-- Ваш основной скрипт -->
     <script src="app.js" defer></script>
@@ -20,8 +24,6 @@
 
     <button id="simulate">Симуляция маршрута</button>
     <button id="enableCompass">Включить компас</button>
-
-    <!-- 🔊 Новая кнопка -->
     <button id="enableAudio">Включить звук</button>
 
     <div id="status">Загрузка…</div>
