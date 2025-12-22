@@ -400,51 +400,43 @@ function initMap() {
     map.geoObjects.add(userMarker);
 
     fetch("points.json")
-        .then(r => r.json())
-        .then(points => {
+    .then(r => r.json())
+    .then(points => {
 
-            // сортировка по числовой части ID
-            points.sort((a, b) => {
-                const na = parseInt(a.id.match(/\d+/));
-                const nb = parseInt(b.id.match(/\d+/));
-                return na - nb;
-            });
+        // НИКАКОЙ сортировки — доверяем порядку в файле
+        // points.sort(...);  ← удалить / закомментировать
 
-            // обработка всех точек
-            points.forEach((p, i) => handlePoint(p, i));
+        // обработка всех точек строго по порядку в файле
+        points.forEach((p, i) => handlePoint(p, i));
 
-            // -----------------------------------------------------
-            // ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ: p02 (k02) → hidden → p03 → hidden → p04
-            // -----------------------------------------------------
+        // ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ: p02 (k02) → hidden → p03 → hidden → p04
 
-            const idxP02 = points.findIndex(p => p.id === "k02_pushkina_bulak");
-            const idxP04 = points.findIndex(p => p.id === "p04_chasha");
+        const idxP02 = points.findIndex(p => p.id === "k02_pushkina_bulak");
+        const idxP04 = points.findIndex(p => p.id === "p04_chasha");
 
-            // выделяем участок по routePoints в тех же индексах
-            const segment = routePoints.slice(idxP02, idxP04 + 1);
+        const segment = routePoints.slice(idxP02, idxP04 + 1);
+        const smoothSegment = catmullRomSpline(segment, 12);
 
-            const smoothSegment = catmullRomSpline(segment, 12);
+        finalRoute = [
+            ...routePoints.slice(0, idxP02),
+            ...smoothSegment,
+            ...routePoints.slice(idxP04 + 1)
+        ];
 
-            finalRoute = [
-                ...routePoints.slice(0, idxP02),   // p01 без сглаживания
-                ...smoothSegment,                  // p02 → hidden → p03 → hidden → p04
-                ...routePoints.slice(idxP04 + 1)   // всё после p04 без сглаживания
-            ];
+        const routeLine = new ymaps.Polyline(
+            finalRoute,
+            {},
+            {
+                strokeColor: "#1E90FF",
+                strokeWidth: 4,
+                strokeOpacity: 0.9
+            }
+        );
+        map.geoObjects.add(routeLine);
 
-            const routeLine = new ymaps.Polyline(
-                finalRoute,
-                {},
-                {
-                    strokeColor: "#1E90FF",
-                    strokeWidth: 4,
-                    strokeOpacity: 0.9
-                }
-            );
-            map.geoObjects.add(routeLine);
-
-            setStatus("Готово");
-            log("Маршрут загружен. Сглажен только участок p02 → p04, hidden-точки полностью невидимы.");
-        });
+        setStatus("Готово");
+        log("Маршрут загружен. Порядок строго как в points.json, сглажен только участок p02 → p04.");
+    });
 
     document.getElementById("simulate").addEventListener("click", startSimulation);
 
@@ -473,3 +465,4 @@ function initMap() {
 document.addEventListener("DOMContentLoaded", () => {
     ymaps.ready(initMap);
 });
+
