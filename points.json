@@ -26,8 +26,23 @@
   },
 
   {
-    "id": "h03_fix_1",
-    "name": "Сглаживание — изгиб 1",
+    "id": "h01_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.785018,
+    "lng": 49.118412,
+    "hidden": true
+  },
+  {
+    "id": "h02_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.785138,
+    "lng": 49.118082,
+    "hidden": true
+  },
+  {
+    "id": "h03_seg",
     "type": "nav",
     "shape": "square",
     "lat": 55.787930,
@@ -35,8 +50,15 @@
     "hidden": true
   },
   {
-    "id": "h04_fix_2",
-    "name": "Сглаживание — поворот",
+    "id": "h04_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.790503,
+    "lng": 49.109940,
+    "hidden": true
+  },
+  {
+    "id": "h05_seg",
     "type": "nav",
     "shape": "square",
     "lat": 55.791779,
@@ -44,30 +66,11 @@
     "hidden": true
   },
   {
-    "id": "h05_fix_3",
-    "name": "Сглаживание — длинная прямая",
+    "id": "h06_seg",
     "type": "nav",
     "shape": "square",
-    "lat": 55.797143,
-    "lng": 49.102833,
-    "hidden": true
-  },
-  {
-    "id": "h06_fix_4",
-    "name": "Сглаживание — изгиб 2",
-    "type": "nav",
-    "shape": "square",
-    "lat": 55.803052,
-    "lng": 49.101661,
-    "hidden": true
-  },
-  {
-    "id": "h07_fix_5",
-    "name": "Сглаживание — выход к точке 3",
-    "type": "nav",
-    "shape": "square",
-    "lat": 55.814320,
-    "lng": 49.106665,
+    "lat": 55.796654,
+    "lng": 49.103361,
     "hidden": true
   },
 
@@ -83,6 +86,183 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },  {
+    "id": "h07_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.797143,
+    "lng": 49.102833,
+    "hidden": true
+  },
+  {
+    "id": "h08_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.797394,
+    "lng": 49.102576,
+    "hidden": true
+  },
+  {
+    "id": "h09_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.797621,
+    "lng": 49.102404,
+    "hidden": true
+  },
+  {
+    "id": "h10_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.797958,
+    "lng": 49.102225,
+    "hidden": true
+  },
+  {
+    "id": "h11_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.798252,
+    "lng": 49.102125,
+    "hidden": true
+  },
+  {
+    "id": "h12_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.798599,
+    "lng": 49.102082,
+    "hidden": true
+  },
+  {
+    "id": "h13_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.798989,
+    "lng": 49.102078,
+    "hidden": true
+  },
+  {
+    "id": "h14_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.800681,
+    "lng": 49.102368,
+    "hidden": true
+  },
+  {
+    "id": "h15_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.801017,
+    "lng": 49.102356,
+    "hidden": true
+  },
+  {
+    "id": "h16_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.801604,
+    "lng": 49.102197,
+    "hidden": true
+  },
+  {
+    "id": "h17_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.803052,
+    "lng": 49.101661,
+    "hidden": true
+  },
+  {
+    "id": "h18_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.803480,
+    "lng": 49.101722,
+    "hidden": true
+  },
+  {
+    "id": "h19_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.804207,
+    "lng": 49.101996,
+    "hidden": true
+  },
+  {
+    "id": "h20_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.810617,
+    "lng": 49.102827,
+    "hidden": true
+  },
+  {
+    "id": "h21_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.811953,
+    "lng": 49.102845,
+    "hidden": true
+  },
+  {
+    "id": "h22_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.812321,
+    "lng": 49.102721,
+    "hidden": true
+  },
+  {
+    "id": "h23_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.812592,
+    "lng": 49.102770,
+    "hidden": true
+  },
+  {
+    "id": "h24_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.812814,
+    "lng": 49.102957,
+    "hidden": true
+  },
+  {
+    "id": "h25_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.813375,
+    "lng": 49.104005,
+    "hidden": true
+  },
+  {
+    "id": "h26_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.814198,
+    "lng": 49.105830,
+    "hidden": true
+  },
+  {
+    "id": "h27_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.814367,
+    "lng": 49.106413,
+    "hidden": true
+  },
+  {
+    "id": "h28_seg",
+    "type": "nav",
+    "shape": "square",
+    "lat": 55.814320,
+    "lng": 49.106665,
+    "hidden": true
+  },
+
+  {
     "id": "p04_chasha",
     "name": "Чаша",
     "type": "point",
@@ -93,9 +273,7 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  },
-
-  {
+  },  {
     "id": "k05_riviera",
     "name": "Поворот возле Ривьеры",
     "type": "nav",
@@ -145,7 +323,9 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  },  {
+  },
+
+  {
     "id": "k09_rotonda",
     "name": "Поворот налево — Ротонда",
     "type": "nav",
@@ -261,7 +441,9 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  },  {
+  },
+
+  {
     "id": "k18_profsouz_right2",
     "name": "Профсоюзная — второй поворот направо",
     "type": "nav",
@@ -311,9 +493,7 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  },
-
-  {
+  },  {
     "id": "k22_teatralnaya_left",
     "name": "Театральная → Большая Красная — налево",
     "type": "nav",
