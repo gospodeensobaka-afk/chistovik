@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — LOCAL SMOOTHING ONLY");
+console.log("UPDATED APP JS — LOCAL SMOOTHING p02 → p04 ONLY (hidden-based)");
 
 // ======================================================
 // 1. ГЛОБАЛЬНОЕ СОСТОЯНИЕ
@@ -184,8 +184,8 @@ function handlePoint(p, index) {
         return;
     }
 
-    // NAV
-    if (p.type === "nav" && !p.triggerMode) {
+    // NAV (обычные)
+    if (p.type === "nav" && !p.triggerMode && !p.hidden) {
         const square = createSquare(p.lat, p.lng, 25);
 
         const polygon = new ymaps.Polygon(
@@ -217,6 +217,19 @@ function handlePoint(p, index) {
             coords,
             polygon,
             size: 25
+        });
+
+        routePoints.push(coords);
+        return;
+    }
+
+    // NAV (hidden)
+    if (p.type === "nav" && p.hidden === true) {
+        // НЕ рисуем квадрат, НЕ рисуем стрелку
+        allPoints.push({
+            id: p.id,
+            type: "hidden",
+            coords
         });
 
         routePoints.push(coords);
@@ -408,24 +421,23 @@ function initMap() {
             points.forEach((p, i) => handlePoint(p, i));
 
             // -----------------------------------------------------
-            // ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ: от p01 до p04
+            // ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ: p02 → hidden → p03 → hidden → p04
             // -----------------------------------------------------
 
-            // ищем индексы p01 и p04
-            const idxStart = points.findIndex(p => p.id === "p01_start_clock");
-            const idxEnd   = points.findIndex(p => p.id === "p04_chasha");
+            const idxP02 = points.findIndex(p => p.id === "k02_pushkina_bulak");
+            const idxP04 = points.findIndex(p => p.id === "p04_chasha");
 
-            // выделяем участок для сглаживания
-            const segment = routePoints.slice(idxStart, idxEnd + 1);
+            // выделяем ВСЕ точки между p02 и p04
+            const segment = routePoints.slice(idxP02, idxP04 + 1);
 
             // сглаживаем только этот участок
             const smoothSegment = catmullRomSpline(segment, 12);
 
-            // собираем итоговый маршрут:
+            // итоговый маршрут:
             finalRoute = [
-                ...routePoints.slice(0, idxStart),
-                ...smoothSegment,
-                ...routePoints.slice(idxEnd + 1)
+                ...routePoints.slice(0, idxP02),   // p01 без сглаживания
+                ...smoothSegment,                  // p02 → hidden → p03 → hidden → p04
+                ...routePoints.slice(idxP04 + 1)   // всё после p04 без сглаживания
             ];
 
             // рисуем линию маршрута
@@ -441,7 +453,7 @@ function initMap() {
             map.geoObjects.add(routeLine);
 
             setStatus("Готово");
-            log("Маршрут загружен. Сглажен только участок p01 → p04.");
+            log("Маршрут загружен. Сглажен только участок p02 → p04.");
         });
 
     document.getElementById("simulate").addEventListener("click", startSimulation);
