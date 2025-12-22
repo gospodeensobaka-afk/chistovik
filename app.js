@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — LOCAL SMOOTHING p02 → p04 ONLY (hidden-based)");
+console.log("UPDATED APP JS — NO SMOOTHING, STRICT ORDER");
 
 // ======================================================
 // 1. ГЛОБАЛЬНОЕ СОСТОЯНИЕ
@@ -9,9 +9,9 @@ let userMarker = null;
 
 let lastCoords = null;
 
-let allPoints = [];          // все точки (point/nav/trigger)
-let routePoints = [];        // все точки маршрута (сырые)
-let finalRoute = [];         // итоговый маршрут: сглаженный участок + обычные точки
+let allPoints = [];          // видимые точки (point/nav/trigger)
+let routePoints = [];        // ВСЕ точки маршрута (включая hidden)
+let finalRoute = [];         // итоговый маршрут = routePoints
 
 let triggerStates = {};
 
@@ -110,60 +110,19 @@ function createSquare(lat, lng, sizeMeters) {
 
 
 // ======================================================
-// 5. СГЛАЖИВАНИЕ (Catmull-Rom)
-// ======================================================
-
-function catmullRomSpline(points, segments = 12) {
-    const result = [];
-
-    for (let i = 0; i < points.length - 1; i++) {
-        const p0 = points[i - 1] || points[i];
-        const p1 = points[i];
-        const p2 = points[i + 1];
-        const p3 = points[i + 2] || p2;
-
-        for (let t = 0; t <= 1; t += 1 / segments) {
-            const t2 = t * t;
-            const t3 = t2 * t;
-
-            const lat =
-                0.5 * (
-                    (2 * p1[0]) +
-                    (-p0[0] + p2[0]) * t +
-                    (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
-                    (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3
-                );
-
-            const lng =
-                0.5 * (
-                    (2 * p1[1]) +
-                    (-p0[1] + p2[1]) * t +
-                    (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
-                    (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3
-                );
-
-            result.push([lat, lng]);
-        }
-    }
-
-    return result;
-}
-
-
-// ======================================================
-// 6. ОБРАБОТКА ТОЧЕК
+// 5. ОБРАБОТКА ТОЧЕК
 // ======================================================
 
 function handlePoint(p, index) {
     const coords = [p.lat, p.lng];
 
-    // 6.1. HIDDEN — только геометрия, вообще ничего не рисуем
+    // 5.1. HIDDEN — только добавляем в маршрут, ничего не рисуем
     if (p.hidden === true) {
         routePoints.push(coords);
         return;
     }
 
-    // 6.2. POINT
+    // 5.2. POINT
     if (p.type === "point") {
         const circle = new ymaps.Circle(
             [coords, 20],
@@ -190,7 +149,7 @@ function handlePoint(p, index) {
         return;
     }
 
-    // 6.3. NAV (обычные, видимые)
+    // 5.3. NAV (обычные)
     if (p.type === "nav" && !p.triggerMode) {
         const square = createSquare(p.lat, p.lng, 25);
 
@@ -229,7 +188,7 @@ function handlePoint(p, index) {
         return;
     }
 
-    // 6.4. TRIGGER
+    // 5.4. TRIGGER
     if (p.type === "nav" && p.triggerMode === "double") {
         const square = createSquare(p.lat, p.lng, 20);
 
@@ -373,7 +332,7 @@ function startSimulation() {
 
 
 // ======================================================
-// 10. ИНИЦИАЛИЗАЦИЯ КАРТЫ + ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ
+// 10. ИНИЦИАЛИЗАЦИЯ КАРТЫ (БЕЗ СГЛАЖИВАНИЯ)
 // ======================================================
 
 function initMap() {
@@ -400,43 +359,33 @@ function initMap() {
     map.geoObjects.add(userMarker);
 
     fetch("points.json")
-    .then(r => r.json())
-    .then(points => {
+        .then(r => r.json())
+        .then(points => {
 
-        // НИКАКОЙ сортировки — доверяем порядку в файле
-        // points.sort(...);  ← удалить / закомментировать
+            // ВАЖНО: НЕ сортируем — порядок строго как в файле
+            // points.sort(...); ← удалено
 
-        // обработка всех точек строго по порядку в файле
-        points.forEach((p, i) => handlePoint(p, i));
+            // Обрабатываем точки строго по порядку
+            points.forEach((p, i) => handlePoint(p, i));
 
-        // ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ: p02 (k02) → hidden → p03 → hidden → p04
+            // Итоговый маршрут = все точки по порядку
+            finalRoute = [...routePoints];
 
-        const idxP02 = points.findIndex(p => p.id === "k02_pushkina_bulak");
-        const idxP04 = points.findIndex(p => p.id === "p04_chasha");
+            // Рисуем линию маршрута
+            const routeLine = new ymaps.Polyline(
+                finalRoute,
+                {},
+                {
+                    strokeColor: "#1E90FF",
+                    strokeWidth: 4,
+                    strokeOpacity: 0.9
+                }
+            );
+            map.geoObjects.add(routeLine);
 
-        const segment = routePoints.slice(idxP02, idxP04 + 1);
-        const smoothSegment = catmullRomSpline(segment, 12);
-
-        finalRoute = [
-            ...routePoints.slice(0, idxP02),
-            ...smoothSegment,
-            ...routePoints.slice(idxP04 + 1)
-        ];
-
-        const routeLine = new ymaps.Polyline(
-            finalRoute,
-            {},
-            {
-                strokeColor: "#1E90FF",
-                strokeWidth: 4,
-                strokeOpacity: 0.9
-            }
-        );
-        map.geoObjects.add(routeLine);
-
-        setStatus("Готово");
-        log("Маршрут загружен. Порядок строго как в points.json, сглажен только участок p02 → p04.");
-    });
+            setStatus("Готово");
+            log("Маршрут загружен. БЕЗ сглаживания. Порядок строго как в points.json.");
+        });
 
     document.getElementById("simulate").addEventListener("click", startSimulation);
 
@@ -465,4 +414,3 @@ function initMap() {
 document.addEventListener("DOMContentLoaded", () => {
     ymaps.ready(initMap);
 });
-
