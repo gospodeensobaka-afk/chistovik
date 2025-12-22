@@ -39,34 +39,6 @@
     "lng": 49.118082,
     "hidden": true
   },
-  {
-    "id": "h03_seg",
-    "type": "nav",
-    "lat": 55.787930,
-    "lng": 49.113846,
-    "hidden": true
-  },
-  {
-    "id": "h04_seg",
-    "type": "nav",
-    "lat": 55.790503,
-    "lng": 49.109940,
-    "hidden": true
-  },
-  {
-    "id": "h05_seg",
-    "type": "nav",
-    "lat": 55.791779,
-    "lng": 49.108442,
-    "hidden": true
-  },
-  {
-    "id": "h06_seg",
-    "type": "nav",
-    "lat": 55.796654,
-    "lng": 49.103361,
-    "hidden": true
-  },
 
   {
     "id": "p03_tysyacha",
@@ -79,7 +51,9 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  },  {
+  },
+
+  {
     "id": "h07_seg",
     "type": "nav",
     "lat": 55.797143,
@@ -169,43 +143,7 @@
     "lat": 55.804207,
     "lng": 49.101996,
     "hidden": true
-  },
-  {
-    "id": "h20_seg",
-    "type": "nav",
-    "lat": 55.810617,
-    "lng": 49.102827,
-    "hidden": true
-  },
-  {
-    "id": "h21_seg",
-    "type": "nav",
-    "lat": 55.811953,
-    "lng": 49.102845,
-    "hidden": true
-  },
-  {
-    "id": "h22_seg",
-    "type": "nav",
-    "lat": 55.812321,
-    "lng": 49.102721,
-    "hidden": true
-  },
-  {
-    "id": "h23_seg",
-    "type": "nav",
-    "lat": 55.812592,
-    "lng": 49.102770,
-    "hidden": true
-  },
-  {
-    "id": "h24_seg",
-    "type": "nav",
-    "lat": 55.812814,
-    "lng": 49.102957,
-    "hidden": true
-  },
-  {
+  },  {
     "id": "h25_seg",
     "type": "nav",
     "lat": 55.813375,
@@ -245,7 +183,9 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  },  {
+  },
+
+  {
     "id": "k05_riviera",
     "name": "Поворот возле Ривьеры",
     "type": "nav",
@@ -334,9 +274,7 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  },
-
-  {
+  },  {
     "id": "k12_tatarstan_rebuild_left",
     "name": "Перестроиться влево + разворот",
     "type": "nav",
@@ -530,9 +468,7 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  },
-
-  {
+  },  {
     "id": "p27_petropavlovsky",
     "name": "Петропавловский",
     "type": "point",
