@@ -157,7 +157,13 @@ function catmullRomSpline(points, segments = 12) {
 function handlePoint(p, index) {
     const coords = [p.lat, p.lng];
 
-    // POINT
+    // 6.1. HIDDEN — только геометрия, вообще ничего не рисуем
+    if (p.hidden === true) {
+        routePoints.push(coords);
+        return;
+    }
+
+    // 6.2. POINT
     if (p.type === "point") {
         const circle = new ymaps.Circle(
             [coords, 20],
@@ -184,8 +190,8 @@ function handlePoint(p, index) {
         return;
     }
 
-    // NAV (обычные)
-    if (p.type === "nav" && !p.triggerMode && !p.hidden) {
+    // 6.3. NAV (обычные, видимые)
+    if (p.type === "nav" && !p.triggerMode) {
         const square = createSquare(p.lat, p.lng, 25);
 
         const polygon = new ymaps.Polygon(
@@ -223,20 +229,7 @@ function handlePoint(p, index) {
         return;
     }
 
-    // NAV (hidden)
-    if (p.type === "nav" && p.hidden === true) {
-        // НЕ рисуем квадрат, НЕ рисуем стрелку
-        allPoints.push({
-            id: p.id,
-            type: "hidden",
-            coords
-        });
-
-        routePoints.push(coords);
-        return;
-    }
-
-    // TRIGGER
+    // 6.4. TRIGGER
     if (p.type === "nav" && p.triggerMode === "double") {
         const square = createSquare(p.lat, p.lng, 20);
 
@@ -421,26 +414,23 @@ function initMap() {
             points.forEach((p, i) => handlePoint(p, i));
 
             // -----------------------------------------------------
-            // ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ: p02 → hidden → p03 → hidden → p04
+            // ЛОКАЛЬНОЕ СГЛАЖИВАНИЕ: p02 (k02) → hidden → p03 → hidden → p04
             // -----------------------------------------------------
 
             const idxP02 = points.findIndex(p => p.id === "k02_pushkina_bulak");
             const idxP04 = points.findIndex(p => p.id === "p04_chasha");
 
-            // выделяем ВСЕ точки между p02 и p04
+            // выделяем участок по routePoints в тех же индексах
             const segment = routePoints.slice(idxP02, idxP04 + 1);
 
-            // сглаживаем только этот участок
             const smoothSegment = catmullRomSpline(segment, 12);
 
-            // итоговый маршрут:
             finalRoute = [
                 ...routePoints.slice(0, idxP02),   // p01 без сглаживания
                 ...smoothSegment,                  // p02 → hidden → p03 → hidden → p04
                 ...routePoints.slice(idxP04 + 1)   // всё после p04 без сглаживания
             ];
 
-            // рисуем линию маршрута
             const routeLine = new ymaps.Polyline(
                 finalRoute,
                 {},
@@ -453,7 +443,7 @@ function initMap() {
             map.geoObjects.add(routeLine);
 
             setStatus("Готово");
-            log("Маршрут загружен. Сглажен только участок p02 → p04.");
+            log("Маршрут загружен. Сглажен только участок p02 → p04, hidden-точки полностью невидимы.");
         });
 
     document.getElementById("simulate").addEventListener("click", startSimulation);
