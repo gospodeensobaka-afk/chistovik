@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — NO SMOOTHING, STRICT ORDER");
+console.log("UPDATED APP JS — MAPLIBRE VERSION");
 
 // ======================================================
 // 1. ГЛОБАЛЬНОЕ СОСТОЯНИЕ
@@ -99,152 +99,211 @@ function createSquare(lat, lng, sizeMeters) {
     const dLat = half * meterInDegLat;
     const dLng = half * meterInDegLng;
 
+    // MapLibre требует [lng, lat]
     return [
-        [lat - dLat, lng - dLng],
-        [lat - dLat, lng + dLng],
-        [lat + dLat, lng + dLng],
-        [lat + dLat, lng - dLng],
-        [lat - dLat, lng - dLng]
+        [lng - dLng, lat - dLat],
+        [lng + dLng, lat - dLat],
+        [lng + dLng, lat + dLat],
+        [lng - dLng, lat + dLat],
+        [lng - dLng, lat - dLat]
     ];
 }
 
 
 // ======================================================
-// 5. ОБРАБОТКА ТОЧЕК
+// 5. ДОБАВЛЕНИЕ GEOJSON-ИСТОЧНИКОВ
+// ======================================================
+
+function addGeoJSON(id, data) {
+    if (map.getSource(id)) return;
+    map.addSource(id, {
+        type: "geojson",
+        data
+    });
+}
+
+function updateGeoJSON(id, data) {
+    const src = map.getSource(id);
+    if (src) src.setData(data);
+}
+
+
+// ======================================================
+// 6. ОБРАБОТКА ТОЧЕК
 // ======================================================
 
 function handlePoint(p, index) {
-    const coords = [p.lat, p.lng];
+    const lat = p.lat;
+    const lng = p.lng;
 
-    // 5.1. HIDDEN — только добавляем в маршрут, ничего не рисуем
+    const coordsLatLng = [lat, lng];
+    const coords = [lng, lat]; // MapLibre формат
+
+    // 6.1. HIDDEN — только добавляем в маршрут
     if (p.hidden === true) {
-        routePoints.push(coords);
+        routePoints.push(coordsLatLng);
         return;
     }
 
-    // 5.2. POINT
+    // 6.2. POINT (красные круги)
     if (p.type === "point") {
-        const circle = new ymaps.Circle(
-            [coords, 20],
-            {},
-            {
-                fillColor: "rgba(255,0,0,0.15)",
-                strokeColor: "rgba(255,0,0,0.4)",
-                strokeWidth: 2
+        const id = `point-${p.id}`;
+
+        addGeoJSON(id, {
+            type: "Feature",
+            geometry: {
+                type: "Point",
+                coordinates: coords
             }
-        );
-        map.geoObjects.add(circle);
+        });
+
+        map.addLayer({
+            id,
+            type: "circle",
+            source: id,
+            paint: {
+                "circle-radius": p.radius || 20,
+                "circle-color": p.color || "rgba(255,0,0,0.15)",
+                "circle-stroke-color": p.strokeColor || "rgba(255,0,0,0.4)",
+                "circle-stroke-width": 2
+            }
+        });
 
         allPoints.push({
             id: p.id,
             type: "point",
-            coords,
-            radius: 20,
+            coords: coordsLatLng,
+            radius: p.radius || 20,
             audio: `audio/${index}.mp3`,
             visited: false,
-            circle
+            layerId: id
         });
 
-        routePoints.push(coords);
+        routePoints.push(coordsLatLng);
         return;
     }
 
-    // 5.3. NAV (обычные)
+    // 6.3. NAV (обычные квадраты)
     if (p.type === "nav" && !p.triggerMode) {
-        const square = createSquare(p.lat, p.lng, 25);
+        const square = createSquare(lat, lng, 25);
+        const id = `nav-${p.id}`;
 
-        const polygon = new ymaps.Polygon(
-            [square],
-            {},
-            {
-                fillColor: "rgba(0,120,255,0.15)",
-                strokeColor: "rgba(0,120,255,1)",
-                strokeWidth: 2
+        addGeoJSON(id, {
+            type: "Feature",
+            geometry: {
+                type: "Polygon",
+                coordinates: [square]
             }
-        );
-        map.geoObjects.add(polygon);
+        });
 
+        map.addLayer({
+            id,
+            type: "fill",
+            source: id,
+            paint: {
+                "fill-color": p.color || "rgba(0,120,255,0.15)",
+                "fill-outline-color": p.strokeColor || "rgba(0,120,255,1)"
+            }
+        });
+
+        // стрелка ← → ⟲
         let arrow = "";
         if (p.direction === "left") arrow = "←";
         if (p.direction === "right") arrow = "→";
         if (p.direction === "u-turn") arrow = "⟲";
 
-        const arrowPlacemark = new ymaps.Placemark(
-            coords,
-            { iconContent: arrow },
-            { preset: "islands#blueStretchyIcon" }
-        );
-        map.geoObjects.add(arrowPlacemark);
+        const el = document.createElement("div");
+        el.textContent = arrow;
+        el.style.fontSize = "22px";
+        el.style.fontWeight = "bold";
+
+        new maplibregl.Marker({ element: el })
+            .setLngLat(coords)
+            .addTo(map);
 
         allPoints.push({
             id: p.id,
             type: "nav",
-            coords,
-            polygon,
-            size: 25
+            coords: coordsLatLng,
+            size: 25,
+            polygon: square,
+            layerId: id
         });
 
-        routePoints.push(coords);
+        routePoints.push(coordsLatLng);
         return;
     }
 
-    // 5.4. TRIGGER
+    // 6.4. TRIGGER (двойные)
     if (p.type === "nav" && p.triggerMode === "double") {
-        const square = createSquare(p.lat, p.lng, 20);
+        const square = createSquare(lat, lng, 20);
+        const id = `trigger-${p.id}`;
 
-        const polygon = new ymaps.Polygon(
-            [square],
-            {},
-            {
-                fillColor: "rgba(255,0,0,0.25)",
-                strokeColor: "rgba(0,0,0,1)",
-                strokeWidth: 2
+        addGeoJSON(id, {
+            type: "Feature",
+            geometry: {
+                type: "Polygon",
+                coordinates: [square]
             }
-        );
-        map.geoObjects.add(polygon);
+        });
+
+        map.addLayer({
+            id,
+            type: "fill",
+            source: id,
+            paint: {
+                "fill-color": "rgba(255,0,0,0.25)",
+                "fill-outline-color": "rgba(0,0,0,1)"
+            }
+        });
 
         let arrow = "";
         if (p.direction === "left") arrow = "←";
         if (p.direction === "right") arrow = "→";
 
-        const arrowPlacemark = new ymaps.Placemark(
-            coords,
-            { iconContent: arrow },
-            { preset: "islands#redStretchyIcon" }
-        );
-        map.geoObjects.add(arrowPlacemark);
+        const el = document.createElement("div");
+        el.textContent = arrow;
+        el.style.fontSize = "22px";
+        el.style.fontWeight = "bold";
+        el.style.color = "red";
+
+        new maplibregl.Marker({ element: el })
+            .setLngLat(coords)
+            .addTo(map);
 
         triggerStates[p.id] = 0;
 
         allPoints.push({
             id: p.id,
             type: "trigger",
-            coords,
-            polygon,
+            coords: coordsLatLng,
+            polygon: square,
             size: 20,
-            audio: `audio/${index}.mp3`
+            audio: `audio/${index}.mp3`,
+            layerId: id
         });
 
-        routePoints.push(coords);
+        routePoints.push(coordsLatLng);
         return;
     }
 }// ======================================================
 // 7. ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
 // ======================================================
 
-function checkPoints(coords) {
+function checkPoints(coordsLatLng) {
+    const pointFeature = turf.point([coordsLatLng[1], coordsLatLng[0]]);
+
     allPoints.forEach(p => {
 
         // POINT
         if (p.type === "point") {
-            const dist = distance(coords, p.coords);
+            const dist = distance(coordsLatLng, p.coords);
             if (dist <= p.radius && !p.visited) {
                 p.visited = true;
 
-                p.circle.options.set({
-                    fillColor: "rgba(0,255,0,0.15)",
-                    strokeColor: "rgba(0,255,0,0.4)"
-                });
+                // меняем цвет круга
+                map.setPaintProperty(p.layerId, "circle-color", "rgba(0,255,0,0.25)");
+                map.setPaintProperty(p.layerId, "circle-stroke-color", "rgba(0,255,0,0.4)");
 
                 playAudio(p.audio);
             }
@@ -252,26 +311,22 @@ function checkPoints(coords) {
 
         // TRIGGER
         if (p.type === "trigger") {
-            const square = p.polygon.geometry.getCoordinates()[0];
-
-            const inside = ymaps.util.bounds.containsPoint(
-                ymaps.util.bounds.fromPoints(square),
-                coords
-            );
+            const poly = turf.polygon([p.polygon]);
+            const inside = turf.booleanPointInPolygon(pointFeature, poly);
 
             if (inside) {
                 if (triggerStates[p.id] === 0) {
                     triggerStates[p.id] = 1;
-                    p.polygon.options.set("fillColor", "rgba(255,255,0,0.25)");
+                    map.setPaintProperty(p.layerId, "fill-color", "rgba(255,255,0,0.25)");
                     playAudio(p.audio);
                 } else if (triggerStates[p.id] === 1) {
                     triggerStates[p.id] = 2;
-                    p.polygon.options.set("fillColor", "rgba(0,255,0,0.25)");
+                    map.setPaintProperty(p.layerId, "fill-color", "rgba(0,255,0,0.25)");
                     playAudio(p.audio);
                 }
             } else {
                 triggerStates[p.id] = 0;
-                p.polygon.options.set("fillColor", "rgba(255,0,0,0.25)");
+                map.setPaintProperty(p.layerId, "fill-color", "rgba(255,0,0,0.25)");
             }
         }
     });
@@ -282,16 +337,18 @@ function checkPoints(coords) {
 // 8. ДВИЖЕНИЕ МАРКЕРА
 // ======================================================
 
-function moveMarker(coords) {
+function moveMarker(coordsLatLng) {
+    const coords = [coordsLatLng[1], coordsLatLng[0]];
+
     if (lastCoords) {
-        const angle = calculateAngle(lastCoords, coords);
-        userMarker.options.set("iconImageRotation", angle);
+        const angle = calculateAngle(lastCoords, coordsLatLng);
+        userMarker.getElement().style.transform = `rotate(${angle}deg)`;
     }
 
-    lastCoords = coords;
-    userMarker.geometry.setCoordinates(coords);
+    lastCoords = coordsLatLng;
+    userMarker.setLngLat(coords);
 
-    checkPoints(coords);
+    checkPoints(coordsLatLng);
 }
 
 
@@ -325,68 +382,75 @@ function startSimulation() {
     simulationIndex = 0;
 
     moveMarker(finalRoute[0]);
-    map.setCenter(finalRoute[0], 16);
+    map.flyTo({ center: [finalRoute[0][1], finalRoute[0][0]], zoom: 16 });
 
     setTimeout(simulateNextStep, 1500);
 }
 
 
 // ======================================================
-// 10. ИНИЦИАЛИЗАЦИЯ КАРТЫ (БЕЗ СГЛАЖИВАНИЯ)
+// 10. ИНИЦИАЛИЗАЦИЯ MAPLIBRE
 // ======================================================
 
 function initMap() {
     const initialCenter = [55.78724, 49.121848];
 
-    map = new ymaps.Map("map", {
-        center: initialCenter,
+    map = new maplibregl.Map({
+        container: "map",
+        style: "https://tiles.openfreemap.org/styles/bright",
+        center: [initialCenter[1], initialCenter[0]],
         zoom: 15,
-        controls: []
+        pitch: 45,
+        bearing: 0
     });
 
-    userMarker = new ymaps.Placemark(
-        initialCenter,
-        {},
-        {
-            iconLayout: "default#image",
-            iconImageHref: "arrow.png",
-            iconImageSize: [40, 40],
-            iconImageOffset: [-20, -20],
-            iconRotate: true
-        }
-    );
+    // Маркер пользователя
+    const el = document.createElement("img");
+    el.src = "arrow.png";
+    el.style.width = "40px";
+    el.style.height = "40px";
+    el.style.transformOrigin = "center";
 
-    map.geoObjects.add(userMarker);
+    userMarker = new maplibregl.Marker({ element: el })
+        .setLngLat([initialCenter[1], initialCenter[0]])
+        .addTo(map);
 
+    // Загружаем точки
     fetch("points.json")
         .then(r => r.json())
         .then(points => {
 
-            // ВАЖНО: НЕ сортируем — порядок строго как в файле
-            // points.sort(...); ← удалено
-
-            // Обрабатываем точки строго по порядку
             points.forEach((p, i) => handlePoint(p, i));
 
-            // Итоговый маршрут = все точки по порядку
             finalRoute = [...routePoints];
 
-            // Рисуем линию маршрута
-            const routeLine = new ymaps.Polyline(
-                finalRoute,
-                {},
-                {
-                    strokeColor: "#1E90FF",
-                    strokeWidth: 4,
-                    strokeOpacity: 0.9
+            // Линия маршрута
+            const lineCoords = finalRoute.map(p => [p[1], p[0]]);
+
+            addGeoJSON("route-line", {
+                type: "Feature",
+                geometry: {
+                    type: "LineString",
+                    coordinates: lineCoords
                 }
-            );
-            map.geoObjects.add(routeLine);
+            });
+
+            map.addLayer({
+                id: "route-line",
+                type: "line",
+                source: "route-line",
+                paint: {
+                    "line-color": "#1E90FF",
+                    "line-width": 4,
+                    "line-opacity": 0.9
+                }
+            });
 
             setStatus("Готово");
-            log("Маршрут загружен. БЕЗ сглаживания. Порядок строго как в points.json.");
+            log("Маршрут загружен. MapLibre версия.");
         });
 
+    // Кнопки
     document.getElementById("simulate").addEventListener("click", startSimulation);
 
     document.getElementById("enableAudio").addEventListener("click", () => {
@@ -399,6 +463,7 @@ function initMap() {
             .catch(err => log("Ошибка аудио: " + err.message));
     });
 
+    // GPS
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition(
             pos => {
@@ -411,6 +476,4 @@ function initMap() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    ymaps.ready(initMap);
-});
+document.addEventListener("DOMContentLoaded", initMap);
