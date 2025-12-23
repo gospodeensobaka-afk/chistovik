@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — MAPLIBRE + WORKING ROUTE + POINTS");
+console.log("UPDATED APP JS — MAPLIBRE + MULTI-SEGMENT ROUTE + POINTS");
 
 let map;
 let userMarker = null;
@@ -93,7 +93,7 @@ function createSquare(lat, lng, sizeMeters) {
 }
 
 // ===============================
-//  GEOJSON
+//  GEOJSON HELPERS
 // ===============================
 
 function addGeoJSON(id, data) {
@@ -115,7 +115,6 @@ function handlePoint(p, index) {
     const coordsLatLng = [lat, lng];
     const coords = [lng, lat];
 
-    // скрытые точки полностью игнорируются
     if (p.hidden === true) return;
 
     // POINT
@@ -246,7 +245,9 @@ function handlePoint(p, index) {
 
         return;
     }
-}// ===============================
+}
+
+// ===============================
 //  ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
 // ===============================
 
@@ -307,9 +308,7 @@ function moveMarker(coordsLatLng) {
     userMarker.setLngLat(coords);
 
     checkPoints(coordsLatLng);
-}
-
-// ===============================
+}// ===============================
 //  СИМУЛЯЦИЯ
 // ===============================
 
@@ -384,22 +383,18 @@ function initMap() {
 
                 points.forEach((p, i) => handlePoint(p, i));
 
-                // Загружаем маршрут
+                // ===============================
+                //  НОВАЯ ЗАГРУЗКА МАРШРУТА (FeatureCollection)
+                // ===============================
+
                 fetch("route.json")
                     .then(r => r.json())
-                    .then(route => {
-                        finalRoute = route;
+                    .then(geojson => {
 
-                        const lineCoords = finalRoute.map(p => [p[1], p[0]]);
+                        // Добавляем весь GeoJSON как есть
+                        addGeoJSON("route-line", geojson);
 
-                        addGeoJSON("route-line", {
-                            type: "Feature",
-                            geometry: {
-                                type: "LineString",
-                                coordinates: lineCoords
-                            }
-                        });
-
+                        // Один слой — все сегменты
                         map.addLayer({
                             id: "route-line",
                             type: "line",
@@ -411,8 +406,26 @@ function initMap() {
                             }
                         });
 
+                        // Собираем finalRoute для симуляции
+                        finalRoute = [];
+                        geojson.features.forEach(feat => {
+                            if (
+                                feat.geometry &&
+                                feat.geometry.type === "LineString" &&
+                                Array.isArray(feat.geometry.coordinates)
+                            ) {
+                                feat.geometry.coordinates.forEach(coord => {
+                                    // coord = [lng, lat]
+                                    finalRoute.push([coord[1], coord[0]]);
+                                });
+                            }
+                        });
+
                         setStatus("Готово");
-                        log("Маршрут загружен из route.json");
+                        log("Маршрут загружен из route.json (FeatureCollection)");
+                    })
+                    .catch(err => {
+                        log("Ошибка загрузки route.json: " + err.message);
                     });
             });
     });
