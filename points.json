@@ -179,10 +179,7 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  }
-]
-[
-  {
+  }  {
     "id": "k16_profsouz_right",
     "name": "Профсоюзная — поворот направо",
     "type": "nav",
@@ -367,5 +364,4 @@
     "color": "rgba(0,80,0,0.25)",
     "strokeColor": "rgba(0,120,0,1)",
     "interactive": false
-  }
-]
+  }]
