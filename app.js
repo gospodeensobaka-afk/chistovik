@@ -104,9 +104,7 @@ function addGeoJSON(id, data) {
 function updateGeoJSON(id, data) {
     const src = map.getSource(id);
     if (src) src.setData(data);
-}
-
-// ===============================
+}// ===============================
 //  ОБРАБОТКА ТОЧЕК
 // ===============================
 
@@ -248,10 +246,7 @@ function handlePoint(p, index) {
 
         return;
     }
-}    }
-}
-
-// ===============================
+}// ===============================
 //  ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
 // ===============================
 
@@ -416,7 +411,9 @@ function initMap() {
                     setStatus("Готово");
                     log("Маршрут загружен из route.json");
                 });
-        });    // Кнопка симуляции
+        });
+
+    // Кнопка симуляции
     document.getElementById("simulate").addEventListener("click", startSimulation);
 
     // Кнопка включения аудио
