@@ -118,8 +118,7 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  },
-  {
+  },  {
     "id": "k11_tatarstan_left",
     "name": "Поворот налево — Татарстан",
     "type": "nav",
@@ -179,7 +178,8 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  }  {
+  },
+  {
     "id": "k16_profsouz_right",
     "name": "Профсоюзная — поворот направо",
     "type": "nav",
@@ -298,8 +298,7 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  },
-  {
+  }  {
     "id": "k26_musa_jalil_right",
     "name": "Дзержинского → Мусы Джалиля — направо",
     "type": "nav",
