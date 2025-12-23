@@ -1,449 +1,150 @@
-console.log("UPDATED APP JS — MAPLIBRE + MULTI-SEGMENT ROUTE + POINTS + MAPLIBRE STYLE");
+console.log("UPDATED APP JS — LOCAL STYLE + POINTS + ROUTE + SIMULATION");
 
-let map;
+// Инициализация карты
+const map = new maplibregl.Map({
+    container: "map",
+    style: "style.json", // ЛОКАЛЬНЫЙ СТИЛЬ В КОРНЕ РЕПОЗИТОРИЯ
+    center: [49.1223, 55.7873],
+    zoom: 14,
+    pitch: 0
+});
+
+// Добавляем контролы
+map.addControl(new maplibregl.NavigationControl());
+
+// Глобальные переменные
 let userMarker = null;
-
-let lastCoords = null;
-
-let allPoints = [];
-let finalRoute = [];
-
-let triggerStates = {};
-
-let simulationActive = false;
+let routeCoords = [];
 let simulationIndex = 0;
+let simulationInterval = null;
 
-let gpsActive = true;
+// Загружаем точки
+async function loadPoints() {
+    const response = await fetch("points.json");
+    const points = await response.json();
 
-let audioPlaying = false;
-let audioEnabled = false;
-
-// ===============================
-//  УТИЛИТЫ
-// ===============================
-
-function log(t) {
-    const el = document.getElementById("debug");
-    if (el) {
-        el.textContent += t + "\n";
-        el.scrollTop = el.scrollHeight;
-    }
-}
-
-function setStatus(t) {
-    const el = document.getElementById("status");
-    if (el) el.textContent = t;
-}
-
-function distance(a, b) {
-    const R = 6371000;
-    const dLat = (b[0] - a[0]) * Math.PI / 180;
-    const dLon = (b[1] - a[1]) * Math.PI / 180;
-
-    const lat1 = a[0] * Math.PI / 180;
-    const lat2 = b[0] * Math.PI / 180;
-
-    const x = dLon * Math.cos((lat1 + lat2) / 2);
-    const y = dLat;
-
-    return Math.sqrt(x * x + y * y) * R;
-}
-
-function calculateAngle(prev, curr) {
-    const dx = curr[1] - prev[1];
-    const dy = curr[0] - prev[0];
-    return Math.atan2(dx, dy) * (180 / Math.PI);
-}
-
-// ===============================
-//  АУДИО
-// ===============================
-
-function playAudio(src) {
-    if (!audioEnabled) return;
-    if (audioPlaying) return;
-
-    const audio = new Audio(src);
-    audioPlaying = true;
-
-    audio.play().catch(() => audioPlaying = false);
-    audio.onended = () => audioPlaying = false;
-}
-
-// ===============================
-//  ГЕОМЕТРИЯ КВАДРАТОВ
-// ===============================
-
-function createSquare(lat, lng, sizeMeters) {
-    const half = sizeMeters / 2;
-
-    const meterInDegLat = 1 / 111320;
-    const meterInDegLng = 1 / (111320 * Math.cos(lat * Math.PI / 180));
-
-    const dLat = half * meterInDegLat;
-    const dLng = half * meterInDegLng;
-
-    return [
-        [lng - dLng, lat - dLat],
-        [lng + dLng, lat - dLat],
-        [lng + dLng, lat + dLat],
-        [lng - dLng, lat + dLat],
-        [lng - dLng, lat - dLat]
-    ];
-}
-
-// ===============================
-//  GEOJSON HELPERS
-// ===============================
-
-function addGeoJSON(id, data) {
-    if (map.getSource(id)) return;
-    map.addSource(id, { type: "geojson", data });
-}
-
-function updateGeoJSON(id, data) {
-    const src = map.getSource(id);
-    if (src) src.setData(data);
-}
-
-// ===============================
-//  ОБРАБОТКА ТОЧЕК
-// ===============================
-
-function handlePoint(p, index) {
-    const lat = p.lat;
-    const lng = p.lng;
-
-    const coordsLatLng = [lat, lng];
-    const coords = [lng, lat];
-
-    if (p.hidden === true) return;
-
-    // POINT
-    if (p.type === "point") {
-        const id = `point-${p.id}`;
-
-        addGeoJSON(id, {
-            type: "Feature",
-            geometry: { type: "Point", coordinates: coords }
-        });
-
-        map.addLayer({
-            id,
-            type: "circle",
-            source: id,
-            paint: {
-                "circle-radius": p.radius || 20,
-                "circle-color": p.color || "rgba(255,0,0,0.15)",
-                "circle-stroke-color": p.strokeColor || "rgba(255,0,0,0.4)",
-                "circle-stroke-width": 2
-            }
-        });
-
-        allPoints.push({
-            id: p.id,
-            type: "point",
-            coords: coordsLatLng,
-            radius: p.radius || 20,
-            audio: `audio/${index}.mp3`,
-            visited: false,
-            layerId: id
-        });
-
-        return;
-    }
-
-    // NAV
-    if (p.type === "nav" && !p.triggerMode) {
-        const square = createSquare(lat, lng, 25);
-        const id = `nav-${p.id}`;
-
-        addGeoJSON(id, {
-            type: "Feature",
-            geometry: { type: "Polygon", coordinates: [square] }
-        });
-
-        map.addLayer({
-            id,
-            type: "fill",
-            source: id,
-            paint: {
-                "fill-color": p.color || "rgba(0,120,255,0.15)",
-                "fill-outline-color": p.strokeColor || "rgba(0,120,255,1)"
-            }
-        });
-
-        let arrow = "";
-        if (p.direction === "left") arrow = "←";
-        if (p.direction === "right") arrow = "→";
-        if (p.direction === "u-turn") arrow = "⟲";
-
-        const el = document.createElement("div");
-        el.textContent = arrow;
-        el.style.fontSize = "22px";
-        el.style.fontWeight = "bold";
-
-        new maplibregl.Marker({ element: el })
-            .setLngLat(coords)
-            .addTo(map);
-
-        allPoints.push({
-            id: p.id,
-            type: "nav",
-            coords: coordsLatLng,
-            size: 25,
-            polygon: square,
-            layerId: id
-        });
-
-        return;
-    }
-
-    // TRIGGER
-    if (p.type === "nav" && p.triggerMode === "double") {
-        const square = createSquare(lat, lng, 20);
-        const id = `trigger-${p.id}`;
-
-        addGeoJSON(id, {
-            type: "Feature",
-            geometry: { type: "Polygon", coordinates: [square] }
-        });
-
-        map.addLayer({
-            id,
-            type: "fill",
-            source: id,
-            paint: {
-                "fill-color": "rgba(255,0,0,0.25)",
-                "fill-outline-color": "rgba(0,0,0,1)"
-            }
-        });
-
-        let arrow = "";
-        if (p.direction === "left") arrow = "←";
-        if (p.direction === "right") arrow = "→";
-
-        const el = document.createElement("div");
-        el.textContent = arrow;
-        el.style.fontSize = "22px";
-        el.style.fontWeight = "bold";
-        el.style.color = "red";
-
-        new maplibregl.Marker({ element: el })
-            .setLngLat(coords)
-            .addTo(map);
-
-        triggerStates[p.id] = 0;
-
-        allPoints.push({
-            id: p.id,
-            type: "trigger",
-            coords: coordsLatLng,
-            polygon: square,
-            size: 20,
-            audio: `audio/${index}.mp3`,
-            layerId: id
-        });
-
-        return;
-    }
-}
-
-// ===============================
-//  ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
-// ===============================
-
-function checkPoints(coordsLatLng) {
-    const pointFeature = turf.point([coordsLatLng[1], coordsLatLng[0]]);
-
-    allPoints.forEach(p => {
-
-        // POINT
+    points.forEach(p => {
         if (p.type === "point") {
-            const dist = distance(coordsLatLng, p.coords);
-            if (dist <= p.radius && !p.visited) {
-                p.visited = true;
-
-                map.setPaintProperty(p.layerId, "circle-color", "rgba(0,255,0,0.25)");
-                map.setPaintProperty(p.layerId, "circle-stroke-color", "rgba(0,255,0,0.4)");
-
-                playAudio(p.audio);
-            }
+            new maplibregl.Marker({
+                color: "#ff0000"
+            })
+            .setLngLat([p.lng, p.lat])
+            .addTo(map);
         }
 
-        // TRIGGER
-        if (p.type === "trigger") {
-            const poly = turf.polygon([p.polygon]);
-            const inside = turf.booleanPointInPolygon(pointFeature, poly);
+        if (p.type === "nav") {
+            new maplibregl.Marker({
+                color: "#0078ff"
+            })
+            .setLngLat([p.lng, p.lat])
+            .addTo(map);
+        }
 
-            if (inside) {
-                if (triggerStates[p.id] === 0) {
-                    triggerStates[p.id] = 1;
-                    map.setPaintProperty(p.layerId, "fill-color", "rgba(255,255,0,0.25)");
-                    playAudio(p.audio);
-                } else if (triggerStates[p.id] === 1) {
-                    triggerStates[p.id] = 2;
-                    map.setPaintProperty(p.layerId, "fill-color", "rgba(0,255,0,0.25)");
-                    playAudio(p.audio);
+        if (p.type === "area") {
+            map.addSource(p.id, {
+                type: "geojson",
+                data: {
+                    type: "Feature",
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [
+                            p.coordinates.map(c => [c.lng, c.lat])
+                        ]
+                    }
                 }
-            } else {
-                triggerStates[p.id] = 0;
-                map.setPaintProperty(p.layerId, "fill-color", "rgba(255,0,0,0.25)");
-            }
+            });
+
+            map.addLayer({
+                id: p.id,
+                type: "fill",
+                source: p.id,
+                paint: {
+                    "fill-color": p.color,
+                    "fill-outline-color": p.strokeColor
+                }
+            });
         }
     });
 }
 
-// ===============================
-//  ДВИЖЕНИЕ МАРКЕРА
-// ===============================
+// Загружаем маршрут
+async function loadRoute() {
+    const response = await fetch("route.json");
+    const route = await response.json();
 
-function moveMarker(coordsLatLng) {
-    const coords = [coordsLatLng[1], coordsLatLng[0]];
+    routeCoords = route.features[0].geometry.coordinates;
 
-    if (lastCoords) {
-        const angle = calculateAngle(lastCoords, coordsLatLng);
-        userMarker.getElement().style.transform = `rotate(${angle}deg)`;
-    }
-
-    lastCoords = coordsLatLng;
-    userMarker.setLngLat(coords);
-
-    checkPoints(coordsLatLng);
-}
-
-// ===============================
-//  СИМУЛЯЦИЯ
-// ===============================
-
-function simulateNextStep() {
-    if (!simulationActive) return;
-
-    if (simulationIndex >= finalRoute.length) {
-        simulationActive = false;
-        gpsActive = true;
-        setStatus("Симуляция завершена");
-        return;
-    }
-
-    const next = finalRoute[simulationIndex];
-    simulationIndex++;
-
-    moveMarker(next);
-
-    setTimeout(simulateNextStep, 1500);
-}
-
-function startSimulation() {
-    if (!finalRoute.length) return;
-
-    simulationActive = true;
-    gpsActive = false;
-    simulationIndex = 0;
-
-    moveMarker(finalRoute[0]);
-    map.flyTo({
-        center: [finalRoute[0][1], finalRoute[0][0]],
-        zoom: 16
+    map.addSource("route", {
+        type: "geojson",
+        data: route
     });
 
-    setTimeout(simulateNextStep, 1500);
+    map.addLayer({
+        id: "route-line",
+        type: "line",
+        source: "route",
+        paint: {
+            "line-color": "#ff0000",
+            "line-width": 4
+        }
+    });
 }
 
-// ===============================
-//  ИНИЦИАЛИЗАЦИЯ MAPLIBRE
-// ===============================
-
-function initMap() {
-    const initialCenter = [55.78724, 49.121848];
-
-    map = new maplibregl.Map({
-        container: "map",
-
-        // 🟩 ВОТ ЭТА СТРОКА — ГЛАВНОЕ ИЗМЕНЕНИЕ
-        style: "https://demotiles.maplibre.org/style.json",
-
-        center: [initialCenter[1], initialCenter[0]],
-        zoom: 15,
-        pitch: 45,
-        bearing: 0
-    });
-
-    // Маркер пользователя
-    const el = document.createElement("img");
-    el.src = "arrow.png";
+// Создаём пользовательский маркер
+function createUserMarker() {
+    const el = document.createElement("div");
+    el.className = "user-marker";
     el.style.width = "40px";
     el.style.height = "40px";
-    el.style.transformOrigin = "center";
+    el.style.backgroundImage = "url('arrow.png')";
+    el.style.backgroundSize = "contain";
 
-    userMarker = new maplibregl.Marker({ element: el })
-        .setLngLat([initialCenter[1], initialCenter[0]])
-        .addTo(map);
-
-    map.on("load", () => {
-
-        // Загружаем точки
-        fetch("points.json")
-            .then(r => r.json())
-            .then(points => {
-
-                points.forEach((p, i) => handlePoint(p, i));
-
-                // ===============================
-                //  ЗАГРУЗКА МАРШРУТА
-                // ===============================
-
-                fetch("route.json")
-                    .then(r => r.json())
-                    .then(geojson => {
-
-                        addGeoJSON("route-line", geojson);
-
-                        map.addLayer({
-                            id: "route-line",
-                            type: "line",
-                            source: "route-line",
-                            paint: {
-                                "line-color": "#1E90FF",
-                                "line-width": 4,
-                                "line-opacity": 0.9
-                            }
-                        });
-
-                        // Собираем finalRoute для симуляции
-                        finalRoute = [];
-                        geojson.features.forEach(feat => {
-                            if (
-                                feat.geometry &&
-                                feat.geometry.type === "LineString" &&
-                                Array.isArray(feat.geometry.coordinates)
-                            ) {
-                                feat.geometry.coordinates.forEach(coord => {
-                                    finalRoute.push([coord[1], coord[0]]);
-                                });
-                            }
-                        });
-
-                        setStatus("Готово");
-                        log("Маршрут загружен");
-                    })
-                    .catch(err => {
-                        log("Ошибка загрузки route.json: " + err.message);
-                    });
-            });
-    });
-
-    // GPS
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(
-            pos => {
-                if (!gpsActive) return;
-                moveMarker([pos.coords.latitude, pos.coords.longitude]);
-            },
-            err => log("GPS ошибка: " + err.message),
-            { enableHighAccuracy: true }
-        );
-    }
+    userMarker = new maplibregl.Marker({
+        element: el,
+        rotationAlignment: "map"
+    })
+    .setLngLat([49.1223, 55.7873])
+    .addTo(map);
 }
 
-document.addEventListener("DOMContentLoaded", initMap);
+// Симуляция движения
+function startSimulation() {
+    if (!routeCoords.length) {
+        console.warn("Маршрут ещё не загружен");
+        return;
+    }
+
+    if (simulationInterval) {
+        clearInterval(simulationInterval);
+    }
+
+    simulationIndex = 0;
+
+    simulationInterval = setInterval(() => {
+        if (simulationIndex >= routeCoords.length) {
+            clearInterval(simulationInterval);
+            return;
+        }
+
+        const [lng, lat] = routeCoords[simulationIndex];
+
+        userMarker.setLngLat([lng, lat]);
+        map.flyTo({ center: [lng, lat], zoom: 17, speed: 0.5 });
+
+        simulationIndex++;
+    }, 500);
+}
+
+// Когда карта загрузилась
+map.on("load", async () => {
+    console.log("MAP LOADED");
+
+    createUserMarker();
+    await loadPoints();
+    await loadRoute();
+
+    console.log("POINTS + ROUTE LOADED");
+});
+
+// Кнопка симуляции
+document.getElementById("simulateBtn").addEventListener("click", startSimulation);
