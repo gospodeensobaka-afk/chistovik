@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — MAPLIBRE + MULTI-SEGMENT ROUTE + POINTS + FIXED STYLE");
+console.log("UPDATED APP JS — MAPLIBRE + MULTI-SEGMENT ROUTE + POINTS + CARTO VOYAGER");
 
 let map;
 let userMarker = null;
@@ -359,7 +359,7 @@ function initMap() {
 
     map = new maplibregl.Map({
         container: "map",
-        style: "https://tiles.openfreemap.org/styles/bright/style.json",
+        style: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
         center: [initialCenter[1], initialCenter[0]],
         zoom: 15,
         pitch: 45,
