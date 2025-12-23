@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — MAPLIBRE + MULTI-SEGMENT ROUTE + POINTS + CARTO VOYAGER");
+console.log("UPDATED APP JS — MAPLIBRE + MULTI-SEGMENT ROUTE + POINTS + MAPLIBRE STYLE");
 
 let map;
 let userMarker = null;
@@ -359,7 +359,10 @@ function initMap() {
 
     map = new maplibregl.Map({
         container: "map",
-        style: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
+
+        // 🟩 ВОТ ЭТА СТРОКА — ГЛАВНОЕ ИЗМЕНЕНИЕ
+        style: "https://demotiles.maplibre.org/style.json",
+
         center: [initialCenter[1], initialCenter[0]],
         zoom: 15,
         pitch: 45,
@@ -387,7 +390,7 @@ function initMap() {
                 points.forEach((p, i) => handlePoint(p, i));
 
                 // ===============================
-                //  НОВАЯ ЗАГРУЗКА МАРШРУТА (FeatureCollection)
+                //  ЗАГРУЗКА МАРШРУТА
                 // ===============================
 
                 fetch("route.json")
@@ -422,7 +425,7 @@ function initMap() {
                         });
 
                         setStatus("Готово");
-                        log("Маршрут загружен из route.json (FeatureCollection)");
+                        log("Маршрут загружен");
                     })
                     .catch(err => {
                         log("Ошибка загрузки route.json: " + err.message);
