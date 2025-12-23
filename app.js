@@ -374,57 +374,47 @@ function initMap() {
         .setLngLat([initialCenter[1], initialCenter[0]])
         .addTo(map);
 
-    // Загружаем точки
-    fetch("points.json")
-        .then(r => r.json())
-        .then(points => {
+    // ВАЖНО: ВСЁ ДОБАВЛЯЕМ ТОЛЬКО ПОСЛЕ ЗАГРУЗКИ СТИЛЯ
+    map.on("load", () => {
 
-            points.forEach((p, i) => handlePoint(p, i));
+        // Загружаем точки
+        fetch("points.json")
+            .then(r => r.json())
+            .then(points => {
 
-            // Загружаем маршрут ТОЛЬКО из route.json
-            fetch("route.json")
-                .then(r => r.json())
-                .then(route => {
-                    finalRoute = route;
+                points.forEach((p, i) => handlePoint(p, i));
 
-                    const lineCoords = finalRoute.map(p => [p[1], p[0]]);
+                // Загружаем маршрут
+                fetch("route.json")
+                    .then(r => r.json())
+                    .then(route => {
+                        finalRoute = route;
 
-                    addGeoJSON("route-line", {
-                        type: "Feature",
-                        geometry: {
-                            type: "LineString",
-                            coordinates: lineCoords
-                        }
+                        const lineCoords = finalRoute.map(p => [p[1], p[0]]);
+
+                        addGeoJSON("route-line", {
+                            type: "Feature",
+                            geometry: {
+                                type: "LineString",
+                                coordinates: lineCoords
+                            }
+                        });
+
+                        map.addLayer({
+                            id: "route-line",
+                            type: "line",
+                            source: "route-line",
+                            paint: {
+                                "line-color": "#1E90FF",
+                                "line-width": 4,
+                                "line-opacity": 0.9
+                            }
+                        });
+
+                        setStatus("Готово");
+                        log("Маршрут загружен из route.json");
                     });
-
-                    map.addLayer({
-                        id: "route-line",
-                        type: "line",
-                        source: "route-line",
-                        paint: {
-                            "line-color": "#1E90FF",
-                            "line-width": 4,
-                            "line-opacity": 0.9
-                        }
-                    });
-
-                    setStatus("Готово");
-                    log("Маршрут загружен из route.json");
-                });
-        });
-
-    // Кнопка симуляции
-    document.getElementById("simulate").addEventListener("click", startSimulation);
-
-    // Кнопка включения аудио
-    document.getElementById("enableAudio").addEventListener("click", () => {
-        const a = new Audio("audio/start.mp3");
-        a.play()
-            .then(() => {
-                audioEnabled = true;
-                log("Аудио разрешено");
-            })
-            .catch(err => log("Ошибка аудио: " + err.message));
+            });
     });
 
     // GPS
