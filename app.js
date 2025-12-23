@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — CLEAN ROUTE + CLEAN POINTS + NO HIDDEN");
+console.log("UPDATED APP JS — MAPLIBRE + WORKING ROUTE + POINTS");
 
 let map;
 let userMarker = null;
@@ -356,7 +356,7 @@ function initMap() {
 
     map = new maplibregl.Map({
         container: "map",
-        style: "https://tiles.openfreemap.org/styles/bright",
+        style: "https://demotiles.maplibre.org/style.json",
         center: [initialCenter[1], initialCenter[0]],
         zoom: 15,
         pitch: 45,
