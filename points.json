@@ -11,7 +11,6 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },
-
   {
     "id": "k02_pushkina_bulak",
     "name": "Поворот Пушкина–Булак",
@@ -24,22 +23,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
-  {
-    "id": "h01_seg",
-    "type": "nav",
-    "lat": 55.785018,
-    "lng": 49.118412,
-    "hidden": true
-  },
-  {
-    "id": "h02_seg",
-    "type": "nav",
-    "lat": 55.785138,
-    "lng": 49.118082,
-    "hidden": true
-  },
-
   {
     "id": "p03_tysyacha",
     "name": "Площадь Тысячелетия",
@@ -52,126 +35,6 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },
-
-  {
-    "id": "h07_seg",
-    "type": "nav",
-    "lat": 55.797143,
-    "lng": 49.102833,
-    "hidden": true
-  },
-  {
-    "id": "h08_seg",
-    "type": "nav",
-    "lat": 55.797394,
-    "lng": 49.102576,
-    "hidden": true
-  },
-  {
-    "id": "h09_seg",
-    "type": "nav",
-    "lat": 55.797621,
-    "lng": 49.102404,
-    "hidden": true
-  },
-  {
-    "id": "h10_seg",
-    "type": "nav",
-    "lat": 55.797958,
-    "lng": 49.102225,
-    "hidden": true
-  },
-  {
-    "id": "h11_seg",
-    "type": "nav",
-    "lat": 55.798252,
-    "lng": 49.102125,
-    "hidden": true
-  },
-  {
-    "id": "h12_seg",
-    "type": "nav",
-    "lat": 55.798599,
-    "lng": 49.102082,
-    "hidden": true
-  },
-  {
-    "id": "h13_seg",
-    "type": "nav",
-    "lat": 55.798989,
-    "lng": 49.102078,
-    "hidden": true
-  },
-  {
-    "id": "h14_seg",
-    "type": "nav",
-    "lat": 55.800681,
-    "lng": 49.102368,
-    "hidden": true
-  },
-  {
-    "id": "h15_seg",
-    "type": "nav",
-    "lat": 55.801017,
-    "lng": 49.102356,
-    "hidden": true
-  },
-  {
-    "id": "h16_seg",
-    "type": "nav",
-    "lat": 55.801604,
-    "lng": 49.102197,
-    "hidden": true
-  },
-  {
-    "id": "h17_seg",
-    "type": "nav",
-    "lat": 55.803052,
-    "lng": 49.101661,
-    "hidden": true
-  },
-  {
-    "id": "h18_seg",
-    "type": "nav",
-    "lat": 55.803480,
-    "lng": 49.101722,
-    "hidden": true
-  },
-  {
-    "id": "h19_seg",
-    "type": "nav",
-    "lat": 55.804207,
-    "lng": 49.101996,
-    "hidden": true
-  },  {
-    "id": "h25_seg",
-    "type": "nav",
-    "lat": 55.813375,
-    "lng": 49.104005,
-    "hidden": true
-  },
-  {
-    "id": "h26_seg",
-    "type": "nav",
-    "lat": 55.814198,
-    "lng": 49.105830,
-    "hidden": true
-  },
-  {
-    "id": "h27_seg",
-    "type": "nav",
-    "lat": 55.814367,
-    "lng": 49.106413,
-    "hidden": true
-  },
-  {
-    "id": "h28_seg",
-    "type": "nav",
-    "lat": 55.814320,
-    "lng": 49.106665,
-    "hidden": true
-  },
-
   {
     "id": "p04_chasha",
     "name": "Чаша",
@@ -184,7 +47,6 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },
-
   {
     "id": "k05_riviera",
     "name": "Поворот возле Ривьеры",
@@ -197,7 +59,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k06_peterburgskaya",
     "name": "Поворот направо — Петербургская",
@@ -210,7 +71,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "p07_ekiyat",
     "name": "Экият",
@@ -223,7 +83,6 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },
-
   {
     "id": "p08_tugan",
     "name": "Туган Авылым",
@@ -236,7 +95,6 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },
-
   {
     "id": "k09_rotonda",
     "name": "Поворот налево — Ротонда",
@@ -249,7 +107,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k10_salimzhanova",
     "name": "Поворот направо — Салимжанова",
@@ -262,7 +119,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k11_tatarstan_left",
     "name": "Поворот налево — Татарстан",
@@ -274,7 +130,8 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  },  {
+  },
+  {
     "id": "k12_tatarstan_rebuild_left",
     "name": "Перестроиться влево + разворот",
     "type": "nav",
@@ -286,7 +143,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k13_tatarstan_rebuild_right",
     "name": "Перестроиться вправо + поворот (парковка)",
@@ -299,7 +155,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "t14_kayum_nasiri_trigger1",
     "name": "Каюма Насыри — двойной триггер",
@@ -312,9 +167,7 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true,
     "triggerMode": "double"
-  },
-
-  {
+  },  {
     "id": "k15_tukaya_left",
     "name": "Площадь Тукая — поворот налево",
     "type": "nav",
@@ -326,7 +179,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k16_profsouz_right",
     "name": "Профсоюзная — поворот направо",
@@ -339,7 +191,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "p17_univer",
     "name": "Университет",
@@ -352,7 +203,6 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },
-
   {
     "id": "k18_profsouz_right2",
     "name": "Профсоюзная — второй поворот направо",
@@ -365,7 +215,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "p19_ushkova",
     "name": "Дом Ушковой",
@@ -378,7 +227,6 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },
-
   {
     "id": "k20_lobachevsky_right",
     "name": "Лобачевского → Дзержинского — направо",
@@ -391,7 +239,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k21_dzerzhinsky_left",
     "name": "Дзержинского → Театральная — налево",
@@ -404,7 +251,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k22_teatralnaya_left",
     "name": "Театральная → Большая Красная — налево",
@@ -417,7 +263,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k23_bolshaya_krasnaya_left",
     "name": "Большая Красная → Батурина — налево",
@@ -430,7 +275,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k24_dzerzhinsky_right",
     "name": "Дзержинского → Чернышевского — направо",
@@ -443,7 +287,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k25_black_lake_left",
     "name": "Поворот налево — к Чёрному озеру",
@@ -456,7 +299,6 @@
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
   },
-
   {
     "id": "k26_musa_jalil_right",
     "name": "Дзержинского → Мусы Джалиля — направо",
@@ -468,7 +310,8 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  },  {
+  },
+  {
     "id": "p27_petropavlovsky",
     "name": "Петропавловский",
     "type": "point",
@@ -480,7 +323,6 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },
-
   {
     "id": "t28_kayum_nasiri_trigger2",
     "name": "Каюма Насыри — двойной триггер (поворот налево)",
@@ -493,9 +335,7 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true,
     "triggerMode": "double"
-  },
-
-  {
+  },  {
     "id": "p29_kremlin",
     "name": "Кремль (финал)",
     "type": "point",
@@ -507,7 +347,6 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
   },
-
   {
     "id": "area_sloboda",
     "name": "Старо‑Татарская слобода",
