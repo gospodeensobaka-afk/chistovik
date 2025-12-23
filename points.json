@@ -167,7 +167,8 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true,
     "triggerMode": "double"
-  },  {
+  },
+  {
     "id": "k15_tukaya_left",
     "name": "Площадь Тукая — поворот налево",
     "type": "nav",
@@ -178,7 +179,9 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  },
+  }
+]
+[
   {
     "id": "k16_profsouz_right",
     "name": "Профсоюзная — поворот направо",
@@ -335,7 +338,8 @@
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true,
     "triggerMode": "double"
-  },  {
+  },
+  {
     "id": "p29_kremlin",
     "name": "Кремль (финал)",
     "type": "point",
