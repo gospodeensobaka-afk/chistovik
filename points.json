@@ -142,7 +142,8 @@
     "color": "rgba(0,120,255,0.35)",
     "strokeColor": "rgba(0,120,255,1)",
     "interactive": false
-  }  {
+  },
+  {
     "id": "k13_tatarstan_rebuild_right",
     "name": "Перестроиться вправо + поворот (парковка)",
     "type": "nav",
@@ -322,7 +323,8 @@
     "color": "rgba(200,0,0,1)",
     "strokeColor": "rgba(0,0,0,1)",
     "interactive": true
-  }  {
+  },
+  {
     "id": "t28_kayum_nasiri_trigger2",
     "name": "Каюма Насыри — двойной триггер (поворот налево)",
     "type": "nav",
