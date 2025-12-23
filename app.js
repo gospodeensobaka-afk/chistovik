@@ -1,40 +1,63 @@
-console.log("UPDATED APP JS — LOCAL STYLE + POINTS + ROUTE + SIMULATION");
+console.log("UPDATED APP JS — LOCAL STYLE + POINTS + ROUTE + SIMULATION + ROTATION + CUSTOM MARKERS");
 
-// Инициализация карты
 const map = new maplibregl.Map({
     container: "map",
-    style: "style.json", // ЛОКАЛЬНЫЙ СТИЛЬ В КОРНЕ РЕПОЗИТОРИЯ
+    style: "style.json",
     center: [49.1223, 55.7873],
     zoom: 14,
     pitch: 0
 });
 
-// Добавляем контролы
 map.addControl(new maplibregl.NavigationControl());
 
-// Глобальные переменные
 let userMarker = null;
 let routeCoords = [];
 let simulationIndex = 0;
 let simulationInterval = null;
 
-// Загружаем точки
+function createCircle(color, size) {
+    const el = document.createElement("div");
+    el.style.width = `${size}px`;
+    el.style.height = `${size}px`;
+    el.style.borderRadius = "50%";
+    el.style.backgroundColor = color;
+    el.style.border = "2px solid black";
+    return el;
+}
+
+function createSquare(color, size) {
+    const el = document.createElement("div");
+    el.style.width = `${size}px`;
+    el.style.height = `${size}px`;
+    el.style.backgroundColor = color;
+    el.style.border = "2px solid #0078ff";
+    return el;
+}
+
+function calculateBearing(from, to) {
+    const [lng1, lat1] = from;
+    const [lng2, lat2] = to;
+    const dx = lng2 - lng1;
+    const dy = lat2 - lat1;
+    return Math.atan2(dy, dx) * (180 / Math.PI);
+}
+
 async function loadPoints() {
     const response = await fetch("points.json");
     const points = await response.json();
 
     points.forEach(p => {
         if (p.type === "point") {
-            new maplibregl.Marker({
-                color: "#ff0000"
+            const marker = new maplibregl.Marker({
+                element: createCircle(p.color, p.radius || 20)
             })
             .setLngLat([p.lng, p.lat])
             .addTo(map);
         }
 
         if (p.type === "nav") {
-            new maplibregl.Marker({
-                color: "#0078ff"
+            const marker = new maplibregl.Marker({
+                element: createSquare(p.color, 20)
             })
             .setLngLat([p.lng, p.lat])
             .addTo(map);
@@ -67,7 +90,6 @@ async function loadPoints() {
     });
 }
 
-// Загружаем маршрут
 async function loadRoute() {
     const response = await fetch("route.json");
     const route = await response.json();
@@ -90,7 +112,6 @@ async function loadRoute() {
     });
 }
 
-// Создаём пользовательский маркер
 function createUserMarker() {
     const el = document.createElement("div");
     el.className = "user-marker";
@@ -98,6 +119,7 @@ function createUserMarker() {
     el.style.height = "40px";
     el.style.backgroundImage = "url('arrow.png')";
     el.style.backgroundSize = "contain";
+    el.style.transformOrigin = "center";
 
     userMarker = new maplibregl.Marker({
         element: el,
@@ -107,10 +129,9 @@ function createUserMarker() {
     .addTo(map);
 }
 
-// Симуляция движения
 function startSimulation() {
-    if (!routeCoords.length) {
-        console.warn("Маршрут ещё не загружен");
+    if (!routeCoords.length || !userMarker) {
+        console.warn("Маршрут или маркер не готовы");
         return;
     }
 
@@ -121,21 +142,23 @@ function startSimulation() {
     simulationIndex = 0;
 
     simulationInterval = setInterval(() => {
-        if (simulationIndex >= routeCoords.length) {
+        if (simulationIndex >= routeCoords.length - 1) {
             clearInterval(simulationInterval);
             return;
         }
 
-        const [lng, lat] = routeCoords[simulationIndex];
+        const current = routeCoords[simulationIndex];
+        const next = routeCoords[simulationIndex + 1];
+        const bearing = calculateBearing(current, next);
 
-        userMarker.setLngLat([lng, lat]);
-        map.flyTo({ center: [lng, lat], zoom: 17, speed: 0.5 });
+        userMarker.setLngLat(current);
+        userMarker.setRotation(bearing);
+        map.flyTo({ center: current, zoom: 17, speed: 0.5 });
 
         simulationIndex++;
     }, 500);
 }
 
-// Когда карта загрузилась
 map.on("load", async () => {
     console.log("MAP LOADED");
 
@@ -146,5 +169,4 @@ map.on("load", async () => {
     console.log("POINTS + ROUTE LOADED");
 });
 
-// Кнопка симуляции
-document.getElementById("simulateBtn").addEventListener("click", startSimulation);
+document.getElementById("simulate").addEventListener("click", startSimulation);
