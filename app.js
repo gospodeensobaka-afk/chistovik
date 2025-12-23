@@ -104,7 +104,9 @@ function addGeoJSON(id, data) {
 function updateGeoJSON(id, data) {
     const src = map.getSource(id);
     if (src) src.setData(data);
-}// ===============================
+}
+
+// ===============================
 //  ОБРАБОТКА ТОЧЕК
 // ===============================
 
@@ -308,7 +310,9 @@ function moveMarker(coordsLatLng) {
     userMarker.setLngLat(coords);
 
     checkPoints(coordsLatLng);
-}// ===============================
+}
+
+// ===============================
 //  СИМУЛЯЦИЯ
 // ===============================
 
@@ -373,7 +377,6 @@ function initMap() {
         .setLngLat([initialCenter[1], initialCenter[0]])
         .addTo(map);
 
-    // ВАЖНО: ВСЁ ДОБАВЛЯЕМ ТОЛЬКО ПОСЛЕ ЗАГРУЗКИ СТИЛЯ
     map.on("load", () => {
 
         // Загружаем точки
@@ -391,10 +394,8 @@ function initMap() {
                     .then(r => r.json())
                     .then(geojson => {
 
-                        // Добавляем весь GeoJSON как есть
                         addGeoJSON("route-line", geojson);
 
-                        // Один слой — все сегменты
                         map.addLayer({
                             id: "route-line",
                             type: "line",
@@ -415,7 +416,6 @@ function initMap() {
                                 Array.isArray(feat.geometry.coordinates)
                             ) {
                                 feat.geometry.coordinates.forEach(coord => {
-                                    // coord = [lng, lat]
                                     finalRoute.push([coord[1], coord[0]]);
                                 });
                             }
