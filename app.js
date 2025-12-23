@@ -1,17 +1,13 @@
-console.log("UPDATED APP JS — MAPLIBRE VERSION");
-
-// ======================================================
-// 1. ГЛОБАЛЬНОЕ СОСТОЯНИЕ
-// ======================================================
+console.log("UPDATED APP JS — MAPLIBRE VERSION (FIXED ROUTE + OVERLAP PROTECTION)");
 
 let map;
 let userMarker = null;
 
 let lastCoords = null;
 
-let allPoints = [];          // видимые точки (point/nav/trigger)
-let routePoints = [];        // ВСЕ точки маршрута (включая hidden)
-let finalRoute = [];         // итоговый маршрут = routePoints
+let allPoints = [];
+let routePoints = [];
+let finalRoute = [];
 
 let triggerStates = {};
 
@@ -23,10 +19,9 @@ let gpsActive = true;
 let audioPlaying = false;
 let audioEnabled = false;
 
-
-// ======================================================
-// 2. УТИЛИТЫ
-// ======================================================
+// ===============================
+//  УТИЛИТЫ
+// ===============================
 
 function log(t) {
     const el = document.getElementById("debug");
@@ -61,10 +56,9 @@ function calculateAngle(prev, curr) {
     return Math.atan2(dx, dy) * (180 / Math.PI);
 }
 
-
-// ======================================================
-// 3. АУДИО
-// ======================================================
+// ===============================
+//  АУДИО
+// ===============================
 
 function playAudio(src) {
     if (!audioEnabled) {
@@ -85,10 +79,9 @@ function playAudio(src) {
     audio.onended = () => audioPlaying = false;
 }
 
-
-// ======================================================
-// 4. ГЕОМЕТРИЯ КВАДРАТОВ
-// ======================================================
+// ===============================
+//  ГЕОМЕТРИЯ КВАДРАТОВ
+// ===============================
 
 function createSquare(lat, lng, sizeMeters) {
     const half = sizeMeters / 2;
@@ -99,7 +92,6 @@ function createSquare(lat, lng, sizeMeters) {
     const dLat = half * meterInDegLat;
     const dLng = half * meterInDegLng;
 
-    // MapLibre требует [lng, lat]
     return [
         [lng - dLng, lat - dLat],
         [lng + dLng, lat - dLat],
@@ -109,10 +101,9 @@ function createSquare(lat, lng, sizeMeters) {
     ];
 }
 
-
-// ======================================================
-// 5. ДОБАВЛЕНИЕ GEOJSON-ИСТОЧНИКОВ
-// ======================================================
+// ===============================
+//  GEOJSON
+// ===============================
 
 function addGeoJSON(id, data) {
     if (map.getSource(id)) return;
@@ -127,34 +118,28 @@ function updateGeoJSON(id, data) {
     if (src) src.setData(data);
 }
 
-
-// ======================================================
-// 6. ОБРАБОТКА ТОЧЕК
-// ======================================================
+// ===============================
+//  ОБРАБОТКА ТОЧЕК
+// ===============================
 
 function handlePoint(p, index) {
     const lat = p.lat;
     const lng = p.lng;
 
     const coordsLatLng = [lat, lng];
-    const coords = [lng, lat]; // MapLibre формат
+    const coords = [lng, lat];
 
-    // 6.1. HIDDEN — только добавляем в маршрут
     if (p.hidden === true) {
         routePoints.push(coordsLatLng);
         return;
     }
 
-    // 6.2. POINT (красные круги)
     if (p.type === "point") {
         const id = `point-${p.id}`;
 
         addGeoJSON(id, {
             type: "Feature",
-            geometry: {
-                type: "Point",
-                coordinates: coords
-            }
+            geometry: { type: "Point", coordinates: coords }
         });
 
         map.addLayer({
@@ -181,19 +166,14 @@ function handlePoint(p, index) {
 
         routePoints.push(coordsLatLng);
         return;
-    }
-
-    // 6.3. NAV (обычные квадраты)
+    }    // NAV (обычные квадраты)
     if (p.type === "nav" && !p.triggerMode) {
         const square = createSquare(lat, lng, 25);
         const id = `nav-${p.id}`;
 
         addGeoJSON(id, {
             type: "Feature",
-            geometry: {
-                type: "Polygon",
-                coordinates: [square]
-            }
+            geometry: { type: "Polygon", coordinates: [square] }
         });
 
         map.addLayer({
@@ -206,7 +186,6 @@ function handlePoint(p, index) {
             }
         });
 
-        // стрелка ← → ⟲
         let arrow = "";
         if (p.direction === "left") arrow = "←";
         if (p.direction === "right") arrow = "→";
@@ -234,17 +213,14 @@ function handlePoint(p, index) {
         return;
     }
 
-    // 6.4. TRIGGER (двойные)
+    // TRIGGER (двойные)
     if (p.type === "nav" && p.triggerMode === "double") {
         const square = createSquare(lat, lng, 20);
         const id = `trigger-${p.id}`;
 
         addGeoJSON(id, {
             type: "Feature",
-            geometry: {
-                type: "Polygon",
-                coordinates: [square]
-            }
+            geometry: { type: "Polygon", coordinates: [square] }
         });
 
         map.addLayer({
@@ -286,9 +262,11 @@ function handlePoint(p, index) {
         routePoints.push(coordsLatLng);
         return;
     }
-}// ======================================================
-// 7. ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
-// ======================================================
+}
+
+// ===============================
+//  ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
+// ===============================
 
 function checkPoints(coordsLatLng) {
     const pointFeature = turf.point([coordsLatLng[1], coordsLatLng[0]]);
@@ -301,7 +279,6 @@ function checkPoints(coordsLatLng) {
             if (dist <= p.radius && !p.visited) {
                 p.visited = true;
 
-                // меняем цвет круга
                 map.setPaintProperty(p.layerId, "circle-color", "rgba(0,255,0,0.25)");
                 map.setPaintProperty(p.layerId, "circle-stroke-color", "rgba(0,255,0,0.4)");
 
@@ -332,10 +309,12 @@ function checkPoints(coordsLatLng) {
     });
 }
 
+// ===============================
+//  ДВИЖЕНИЕ МАРКЕРА
+// ===============================
 
-// ======================================================
-// 8. ДВИЖЕНИЕ МАРКЕРА
-// ======================================================
+let stableCounter = 0;
+let previousDistance = Infinity;
 
 function moveMarker(coordsLatLng) {
     const coords = [coordsLatLng[1], coordsLatLng[0]];
@@ -349,12 +328,11 @@ function moveMarker(coordsLatLng) {
     userMarker.setLngLat(coords);
 
     checkPoints(coordsLatLng);
-}
+}}
 
-
-// ======================================================
-// 9. СИМУЛЯЦИЯ
-// ======================================================
+// ===============================
+//  СИМУЛЯЦИЯ С ЗАЩИТОЙ ОТ ПЕРЕСКОКОВ
+// ===============================
 
 function simulateNextStep() {
     if (!simulationActive) return;
@@ -382,15 +360,17 @@ function startSimulation() {
     simulationIndex = 0;
 
     moveMarker(finalRoute[0]);
-    map.flyTo({ center: [finalRoute[0][1], finalRoute[0][0]], zoom: 16 });
+    map.flyTo({
+        center: [finalRoute[0][1], finalRoute[0][0]],
+        zoom: 16
+    });
 
     setTimeout(simulateNextStep, 1500);
 }
 
-
-// ======================================================
-// 10. ИНИЦИАЛИЗАЦИЯ MAPLIBRE
-// ======================================================
+// ===============================
+//  ИНИЦИАЛИЗАЦИЯ MAPLIBRE
+// ===============================
 
 function initMap() {
     const initialCenter = [55.78724, 49.121848];
@@ -422,9 +402,10 @@ function initMap() {
 
             points.forEach((p, i) => handlePoint(p, i));
 
+            // ВАЖНО: finalRoute = твой новый маршрут
             finalRoute = [...routePoints];
 
-            // Линия маршрута
+            // Рисуем линию маршрута
             const lineCoords = finalRoute.map(p => [p[1], p[0]]);
 
             addGeoJSON("route-line", {
@@ -450,9 +431,10 @@ function initMap() {
             log("Маршрут загружен. MapLibre версия.");
         });
 
-    // Кнопки
+    // Кнопка симуляции
     document.getElementById("simulate").addEventListener("click", startSimulation);
 
+    // Кнопка включения аудио
     document.getElementById("enableAudio").addEventListener("click", () => {
         const a = new Audio("audio/start.mp3");
         a.play()
