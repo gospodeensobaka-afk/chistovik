@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — MAPLIBRE VERSION (FIXED ROUTE + OVERLAP PROTECTION)");
+console.log("UPDATED APP JS — MAPLIBRE VERSION (ROUTE.JSON + CLEAN POINTS)");
 
 let map;
 let userMarker = null;
@@ -6,7 +6,6 @@ let userMarker = null;
 let lastCoords = null;
 
 let allPoints = [];
-let routePoints = [];
 let finalRoute = [];
 
 let triggerStates = {};
@@ -61,21 +60,13 @@ function calculateAngle(prev, curr) {
 // ===============================
 
 function playAudio(src) {
-    if (!audioEnabled) {
-        log("Аудио заблокировано — нажми 'Включить звук'");
-        return;
-    }
-
+    if (!audioEnabled) return;
     if (audioPlaying) return;
 
     const audio = new Audio(src);
     audioPlaying = true;
 
-    audio.play().catch(err => {
-        log("Ошибка аудио: " + err.message);
-        audioPlaying = false;
-    });
-
+    audio.play().catch(() => audioPlaying = false);
     audio.onended = () => audioPlaying = false;
 }
 
@@ -107,10 +98,7 @@ function createSquare(lat, lng, sizeMeters) {
 
 function addGeoJSON(id, data) {
     if (map.getSource(id)) return;
-    map.addSource(id, {
-        type: "geojson",
-        data
-    });
+    map.addSource(id, { type: "geojson", data });
 }
 
 function updateGeoJSON(id, data) {
@@ -129,11 +117,10 @@ function handlePoint(p, index) {
     const coordsLatLng = [lat, lng];
     const coords = [lng, lat];
 
-    if (p.hidden === true) {
-        routePoints.push(coordsLatLng);
-        return;
-    }
+    // скрытые точки полностью игнорируются
+    if (p.hidden === true) return;
 
+    // POINT
     if (p.type === "point") {
         const id = `point-${p.id}`;
 
@@ -164,9 +151,10 @@ function handlePoint(p, index) {
             layerId: id
         });
 
-        routePoints.push(coordsLatLng);
         return;
-    }    // NAV (обычные квадраты)
+    }
+
+    // NAV
     if (p.type === "nav" && !p.triggerMode) {
         const square = createSquare(lat, lng, 25);
         const id = `nav-${p.id}`;
@@ -209,11 +197,10 @@ function handlePoint(p, index) {
             layerId: id
         });
 
-        routePoints.push(coordsLatLng);
         return;
     }
 
-    // TRIGGER (двойные)
+    // TRIGGER
     if (p.type === "nav" && p.triggerMode === "double") {
         const square = createSquare(lat, lng, 20);
         const id = `trigger-${p.id}`;
@@ -259,10 +246,9 @@ function handlePoint(p, index) {
             layerId: id
         });
 
-        routePoints.push(coordsLatLng);
         return;
     }
-}
+}}
 
 // ===============================
 //  ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
@@ -328,10 +314,10 @@ function moveMarker(coordsLatLng) {
     userMarker.setLngLat(coords);
 
     checkPoints(coordsLatLng);
-}}
+}
 
 // ===============================
-//  СИМУЛЯЦИЯ С ЗАЩИТОЙ ОТ ПЕРЕСКОКОВ
+//  СИМУЛЯЦИЯ
 // ===============================
 
 function simulateNextStep() {
@@ -366,7 +352,7 @@ function startSimulation() {
     });
 
     setTimeout(simulateNextStep, 1500);
-}
+}}
 
 // ===============================
 //  ИНИЦИАЛИЗАЦИЯ MAPLIBRE
@@ -402,33 +388,36 @@ function initMap() {
 
             points.forEach((p, i) => handlePoint(p, i));
 
-            // ВАЖНО: finalRoute = твой новый маршрут
-            finalRoute = [...routePoints];
+            // Загружаем маршрут ТОЛЬКО из route.json
+            fetch("route.json")
+                .then(r => r.json())
+                .then(route => {
+                    finalRoute = route;
 
-            // Рисуем линию маршрута
-            const lineCoords = finalRoute.map(p => [p[1], p[0]]);
+                    const lineCoords = finalRoute.map(p => [p[1], p[0]]);
 
-            addGeoJSON("route-line", {
-                type: "Feature",
-                geometry: {
-                    type: "LineString",
-                    coordinates: lineCoords
-                }
-            });
+                    addGeoJSON("route-line", {
+                        type: "Feature",
+                        geometry: {
+                            type: "LineString",
+                            coordinates: lineCoords
+                        }
+                    });
 
-            map.addLayer({
-                id: "route-line",
-                type: "line",
-                source: "route-line",
-                paint: {
-                    "line-color": "#1E90FF",
-                    "line-width": 4,
-                    "line-opacity": 0.9
-                }
-            });
+                    map.addLayer({
+                        id: "route-line",
+                        type: "line",
+                        source: "route-line",
+                        paint: {
+                            "line-color": "#1E90FF",
+                            "line-width": 4,
+                            "line-opacity": 0.9
+                        }
+                    });
 
-            setStatus("Готово");
-            log("Маршрут загружен. MapLibre версия.");
+                    setStatus("Готово");
+                    log("Маршрут загружен из route.json");
+                });
         });
 
     // Кнопка симуляции
