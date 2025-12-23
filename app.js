@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — MAPLIBRE + MULTI-SEGMENT ROUTE + POINTS");
+console.log("UPDATED APP JS — MAPLIBRE + MULTI-SEGMENT ROUTE + POINTS + FIXED STYLE");
 
 let map;
 let userMarker = null;
@@ -359,7 +359,7 @@ function initMap() {
 
     map = new maplibregl.Map({
         container: "map",
-        style: "https://demotiles.maplibre.org/style.json",
+        style: "https://tiles.openfreemap.org/styles/bright/style.json",
         center: [initialCenter[1], initialCenter[0]],
         zoom: 15,
         pitch: 45,
