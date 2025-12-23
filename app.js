@@ -1,4 +1,4 @@
-console.log("UPDATED APP JS — MAPLIBRE VERSION (ROUTE.JSON + CLEAN POINTS)");
+console.log("UPDATED APP JS — CLEAN ROUTE + CLEAN POINTS + NO HIDDEN");
 
 let map;
 let userMarker = null;
@@ -248,7 +248,8 @@ function handlePoint(p, index) {
 
         return;
     }
-}}
+}    }
+}
 
 // ===============================
 //  ПРОВЕРКА ПОПАДАНИЯ В ТОЧКИ
@@ -298,9 +299,6 @@ function checkPoints(coordsLatLng) {
 // ===============================
 //  ДВИЖЕНИЕ МАРКЕРА
 // ===============================
-
-let stableCounter = 0;
-let previousDistance = Infinity;
 
 function moveMarker(coordsLatLng) {
     const coords = [coordsLatLng[1], coordsLatLng[0]];
@@ -352,7 +350,7 @@ function startSimulation() {
     });
 
     setTimeout(simulateNextStep, 1500);
-}}
+}
 
 // ===============================
 //  ИНИЦИАЛИЗАЦИЯ MAPLIBRE
@@ -418,9 +416,7 @@ function initMap() {
                     setStatus("Готово");
                     log("Маршрут загружен из route.json");
                 });
-        });
-
-    // Кнопка симуляции
+        });    // Кнопка симуляции
     document.getElementById("simulate").addEventListener("click", startSimulation);
 
     // Кнопка включения аудио
