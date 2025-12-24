@@ -20,7 +20,7 @@
       "maxzoom": 19,
       "paint": {
         "raster-brightness-min": 0.05,
-        "raster-brightness-max": 1.05,
+        "raster-brightness-max": 1.0,
         "raster-contrast": 0.12,
         "raster-saturation": 0.25,
         "raster-hue-rotate": 4
@@ -28,3 +28,4 @@
     }
   ]
 }
+
