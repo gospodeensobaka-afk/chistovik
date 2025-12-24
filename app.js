@@ -1,172 +1,258 @@
-console.log("UPDATED APP JS — LOCAL STYLE + POINTS + ROUTE + SIMULATION + ROTATION + CUSTOM MARKERS");
-
-const map = new maplibregl.Map({
-    container: "map",
-    style: "style.json",
-    center: [49.1223, 55.7873],
-    zoom: 14,
-    pitch: 0
-});
-
-map.addControl(new maplibregl.NavigationControl());
-
+let map;
 let userMarker = null;
-let routeCoords = [];
+let arrowEl = null;
+
+let lastCoords = null;
+let zones = [];
+
+let simulationActive = false;
+let simulationPoints = [];
 let simulationIndex = 0;
-let simulationInterval = null;
 
-function createCircle(color, size) {
-    const el = document.createElement("div");
-    el.style.width = `${size}px`;
-    el.style.height = `${size}px`;
-    el.style.borderRadius = "50%";
-    el.style.backgroundColor = color;
-    el.style.border = "2px solid black";
-    return el;
+let gpsActive = true;
+
+let audioPlaying = false;
+let audioEnabled = false;
+
+function distance(a, b) {
+    const R = 6371000;
+    const dLat = (b[0] - a[0]) * Math.PI / 180;
+    const dLon = (b[1] - a[1]) * Math.PI / 180;
+    const lat1 = a[0] * Math.PI / 180;
+    const lat2 = b[0] * Math.PI / 180;
+    const x = dLon * Math.cos((lat1 + lat2) / 2);
+    const y = dLat;
+    return Math.sqrt(x * x + y * y) * R;
 }
 
-function createSquare(color, size) {
-    const el = document.createElement("div");
-    el.style.width = `${size}px`;
-    el.style.height = `${size}px`;
-    el.style.backgroundColor = color;
-    el.style.border = "2px solid #0078ff";
-    return el;
+function calculateAngle(prev, curr) {
+    const dx = curr[1] - prev[1];
+    const dy = curr[0] - prev[0];
+    return Math.atan2(dx, dy) * (180 / Math.PI);
 }
 
-function calculateBearing(from, to) {
-    const [lng1, lat1] = from;
-    const [lng2, lat2] = to;
-    const dx = lng2 - lng1;
-    const dy = lat2 - lat1;
-    return Math.atan2(dy, dx) * (180 / Math.PI);
+function playZoneAudio(src) {
+    if (!audioEnabled) return;
+    if (audioPlaying) return;
+    const audio = new Audio(src);
+    audioPlaying = true;
+    audio.play().catch(() => audioPlaying = false);
+    audio.onended = () => audioPlaying = false;
 }
 
-async function loadPoints() {
-    const response = await fetch("points.json");
-    const points = await response.json();
+function updateCircleColors() {
+    const source = map.getSource("audio-circles");
+    if (!source) return;
+    source.setData({
+        type: "FeatureCollection",
+        features: zones
+            .filter(z => z.type === "audio")
+            .map(z => ({
+                type: "Feature",
+                properties: { id: z.id, visited: z.visited },
+                geometry: { type: "Point", coordinates: [z.lng, z.lat] }
+            }))
+    });
+}
 
-    points.forEach(p => {
-        if (p.type === "point") {
-            const marker = new maplibregl.Marker({
-                element: createCircle(p.color, p.radius || 20)
-            })
-            .setLngLat([p.lng, p.lat])
-            .addTo(map);
-        }
-
-        if (p.type === "nav") {
-            const marker = new maplibregl.Marker({
-                element: createSquare(p.color, 20)
-            })
-            .setLngLat([p.lng, p.lat])
-            .addTo(map);
-        }
-
-        if (p.type === "area") {
-            map.addSource(p.id, {
-                type: "geojson",
-                data: {
-                    type: "Feature",
-                    geometry: {
-                        type: "Polygon",
-                        coordinates: [
-                            p.coordinates.map(c => [c.lng, c.lat])
-                        ]
-                    }
-                }
-            });
-
-            map.addLayer({
-                id: p.id,
-                type: "fill",
-                source: p.id,
-                paint: {
-                    "fill-color": p.color,
-                    "fill-outline-color": p.strokeColor
-                }
-            });
+function checkZones(coords) {
+    zones.forEach(z => {
+        if (z.type !== "audio") return;
+        const dist = distance(coords, [z.lat, z.lng]);
+        if (dist <= z.radius && !z.visited) {
+            z.visited = true;
+            updateCircleColors();
+            if (z.audio) playZoneAudio(z.audio);
         }
     });
 }
 
-async function loadRoute() {
-    const response = await fetch("route.json");
-    const route = await response.json();
-
-    routeCoords = route.features[0].geometry.coordinates;
-
-    map.addSource("route", {
-        type: "geojson",
-        data: route
-    });
-
-    map.addLayer({
-        id: "route-line",
-        type: "line",
-        source: "route",
-        paint: {
-            "line-color": "#ff0000",
-            "line-width": 4
-        }
-    });
+function moveMarker(coords) {
+    if (lastCoords) {
+        const angle = calculateAngle(lastCoords, coords);
+        arrowEl.style.transform = `rotate(${angle}deg)`;
+    }
+    lastCoords = coords;
+    userMarker.setLngLat([coords[1], coords[0]]);
+    checkZones(coords);
 }
 
-function createUserMarker() {
-    const el = document.createElement("div");
-    el.className = "user-marker";
-    el.style.width = "40px";
-    el.style.height = "40px";
-    el.style.backgroundImage = "url('arrow.png')";
-    el.style.backgroundSize = "contain";
-    el.style.transformOrigin = "center";
-
-    userMarker = new maplibregl.Marker({
-        element: el,
-        rotationAlignment: "map"
-    })
-    .setLngLat([49.1223, 55.7873])
-    .addTo(map);
+function simulateNextStep() {
+    if (!simulationActive) return;
+    if (simulationIndex >= simulationPoints.length) {
+        simulationActive = false;
+        gpsActive = true;
+        return;
+    }
+    const next = simulationPoints[simulationIndex];
+    simulationIndex++;
+    moveMarker(next);
+    setTimeout(simulateNextStep, 1200);
 }
 
 function startSimulation() {
-    if (!routeCoords.length || !userMarker) {
-        console.warn("Маршрут или маркер не готовы");
-        return;
-    }
-
-    if (simulationInterval) {
-        clearInterval(simulationInterval);
-    }
-
+    if (!simulationPoints.length) return;
+    simulationActive = true;
+    gpsActive = false;
     simulationIndex = 0;
-
-    simulationInterval = setInterval(() => {
-        if (simulationIndex >= routeCoords.length - 1) {
-            clearInterval(simulationInterval);
-            return;
-        }
-
-        const current = routeCoords[simulationIndex];
-        const next = routeCoords[simulationIndex + 1];
-        const bearing = calculateBearing(current, next);
-
-        userMarker.setLngLat(current);
-        userMarker.setRotation(bearing);
-        map.flyTo({ center: current, zoom: 17, speed: 0.5 });
-
-        simulationIndex++;
-    }, 500);
+    moveMarker(simulationPoints[0]);
+    map.easeTo({
+        center: [simulationPoints[0][1], simulationPoints[0][0]],
+        duration: 500
+    });
+    setTimeout(simulateNextStep, 1200);
 }
 
-map.on("load", async () => {
-    console.log("MAP LOADED");
+async function initMap() {
+    const initialCenter = [49.082118, 55.826584];
 
-    createUserMarker();
-    await loadPoints();
-    await loadRoute();
+    map = new maplibregl.Map({
+        container: "map",
+        style: "style.json",
+        center: initialCenter,
+        zoom: 18
+    });
 
-    console.log("POINTS + ROUTE LOADED");
-});
+    map.on("load", async () => {
+        const points = await fetch("points.json").then(r => r.json());
+        const route = await fetch("route.json").then(r => r.json());
 
-document.getElementById("simulate").addEventListener("click", startSimulation);
+        map.addSource("route", { type: "geojson", data: route });
+        map.addLayer({
+            id: "route-line",
+            type: "line",
+            source: "route",
+            paint: { "line-color": "#007aff", "line-width": 4 }
+        });
+
+        arrowEl = document.createElement("img");
+        arrowEl.src = "arrow.png";
+        arrowEl.style.width = "40px";
+        arrowEl.style.height = "40px";
+        arrowEl.style.transformOrigin = "center center";
+
+        userMarker = new maplibregl.Marker({ element: arrowEl })
+            .setLngLat(initialCenter)
+            .addTo(map);
+
+        const circleFeatures = [];
+        const squareFeatures = [];        points.forEach(p => {
+            zones.push({
+                id: p.id,
+                name: p.name,
+                lat: p.lat,
+                lng: p.lng,
+                radius: p.radius || 20,
+                visited: false,
+                type: p.type,
+                audio: p.type === "audio" ? `audio/${p.id}.mp3` : null
+            });
+
+            if (p.type === "audio") {
+                circleFeatures.push({
+                    type: "Feature",
+                    properties: { id: p.id, visited: false },
+                    geometry: {
+                        type: "Point",
+                        coordinates: [p.lng, p.lat]
+                    }
+                });
+            }
+
+            if (p.type === "square") {
+                console.log("КВАДРАТ:", p.id, p.lat, p.lng);
+
+                const size = 0.000045;
+
+                squareFeatures.push({
+                    type: "Feature",
+                    properties: { id: p.id },
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [[
+                            [p.lng - size, p.lat - size],
+                            [p.lng + size, p.lat - size],
+                            [p.lng + size, p.lat + size],
+                            [p.lng - size, p.lat + size],
+                            [p.lng - size, p.lat - size]
+                        ]]
+                    }
+                });
+            }
+        });
+
+        map.addSource("audio-circles", {
+            type: "geojson",
+            data: {
+                type: "FeatureCollection",
+                features: circleFeatures
+            }
+        });
+
+        map.addLayer({
+            id: "audio-circles-layer",
+            type: "circle",
+            source: "audio-circles",
+            paint: {
+                "circle-radius": 20,
+                "circle-color": [
+                    "case",
+                    ["boolean", ["get", "visited"], false],
+                    "rgba(0,255,0,0.25)",
+                    "rgba(255,0,0,0.15)"
+                ],
+                "circle-stroke-color": [
+                    "case",
+                    ["boolean", ["get", "visited"], false],
+                    "rgba(0,255,0,0.6)",
+                    "rgba(255,0,0,0.4)"
+                ],
+                "circle-stroke-width": 2
+            }
+        });
+
+        map.addSource("blue-squares", {
+            type: "geojson",
+            data: {
+                type: "FeatureCollection",
+                features: squareFeatures
+            }
+        });
+
+        map.addLayer({
+            id: "blue-squares-layer",
+            type: "fill",
+            source: "blue-squares",
+            paint: {
+                "fill-color": "rgba(0,0,255,0.3)",
+                "fill-outline-color": "rgba(0,0,255,0.6)"
+            }
+        });
+
+        simulationPoints = route.geometry.coordinates.map(c => [c[1], c[0]]);
+
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(
+                pos => {
+                    if (!gpsActive) return;
+                    moveMarker([pos.coords.latitude, pos.coords.longitude]);
+                },
+                err => console.log("GPS error:", err),
+                { enableHighAccuracy: true }
+            );
+        }
+
+        console.log("Карта готова");
+    });
+
+    document.getElementById("simulate").onclick = startSimulation;
+
+    document.getElementById("enableAudio").onclick = () => {
+        const a = new Audio("audio/1.mp3");
+        a.play()
+            .then(() => audioEnabled = true)
+            .catch(() => console.log("Ошибка разрешения аудио"));
+    };
+}
+
+document.addEventListener("DOMContentLoaded", initMap);
