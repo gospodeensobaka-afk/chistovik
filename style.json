@@ -1,11 +1,11 @@
 {
   "version": 8,
-  "name": "Minimal Light",
+  "name": "Carto Light",
   "sources": {
-    "osm": {
+    "carto": {
       "type": "raster",
       "tiles": [
-        "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png"
+        "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
       ],
       "tileSize": 256,
       "attribution": "© OpenStreetMap contributors"
@@ -13,9 +13,9 @@
   },
   "layers": [
     {
-      "id": "osm-base",
+      "id": "carto-base",
       "type": "raster",
-      "source": "osm",
+      "source": "carto",
       "minzoom": 0,
       "maxzoom": 19
     }
