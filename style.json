@@ -1,6 +1,6 @@
 {
   "version": 8,
-  "name": "Carto Light Enhanced",
+  "name": "Carto Light Warm",
   "sources": {
     "carto": {
       "type": "raster",
@@ -19,12 +19,12 @@
       "minzoom": 0,
       "maxzoom": 19,
       "paint": {
-        "raster-brightness-min": 0.05,
-        "raster-brightness-max": 1,
-        "raster-contrast": 0.25,
-        "raster-saturation": 0.35
+        "raster-brightness-min": 0.0,
+        "raster-brightness-max": 1.0,
+        "raster-contrast": 0.12,
+        "raster-saturation": 0.18,
+        "raster-hue-rotate": 8
       }
     }
   ]
 }
-
