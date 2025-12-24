@@ -1,6 +1,6 @@
 {
   "version": 8,
-  "name": "Carto Light",
+  "name": "Carto Light Enhanced",
   "sources": {
     "carto": {
       "type": "raster",
@@ -17,7 +17,13 @@
       "type": "raster",
       "source": "carto",
       "minzoom": 0,
-      "maxzoom": 19
+      "maxzoom": 19,
+      "paint": {
+        "raster-brightness-min": 0.05,
+        "raster-brightness-max": 1.25,
+        "raster-contrast": 0.25,
+        "raster-saturation": 0.35
+      }
     }
   ]
 }
