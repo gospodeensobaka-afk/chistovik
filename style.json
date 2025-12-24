@@ -1,11 +1,11 @@
 {
   "version": 8,
-  "name": "Local OSM Raster",
+  "name": "Minimal Light",
   "sources": {
     "osm": {
       "type": "raster",
       "tiles": [
-        "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png"
       ],
       "tileSize": 256,
       "attribution": "© OpenStreetMap contributors"
