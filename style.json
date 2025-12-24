@@ -1,11 +1,11 @@
 {
   "version": 8,
-  "name": "Carto Light Warm",
+  "name": "OpenFreeMap Bright",
   "sources": {
-    "carto": {
+    "ofm": {
       "type": "raster",
       "tiles": [
-        "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
       ],
       "tileSize": 256,
       "attribution": "© OpenStreetMap contributors"
@@ -13,17 +13,17 @@
   },
   "layers": [
     {
-      "id": "carto-base",
+      "id": "ofm-base",
       "type": "raster",
-      "source": "carto",
+      "source": "ofm",
       "minzoom": 0,
       "maxzoom": 19,
       "paint": {
-        "raster-brightness-min": 0.0,
-        "raster-brightness-max": 1.0,
+        "raster-brightness-min": 0.05,
+        "raster-brightness-max": 1.05,
         "raster-contrast": 0.12,
-        "raster-saturation": 0.18,
-        "raster-hue-rotate": 8
+        "raster-saturation": 0.25,
+        "raster-hue-rotate": 4
       }
     }
   ]
