@@ -640,69 +640,76 @@ globalAudio.autoplay = true;
                // ВЫЗЫВАЕМ ПОСЛЕ удаления слоёв, но ДО загрузки данных
                updateProgress();
                
-               /* ========================================================
-                  ======================= LOAD DATA =======================
-                  ======================================================== */
-               
-                       const points = await fetch("points.json").then(r => r.json());
-                       const route = await fetch("route.json").then(r => r.json());
-               
-                       fullRoute = route.geometry.coordinates.map(c => ({
-                           coord: [c[0], c[1]]
-                       }));
-               // создаём слои маршрута
-               routeSegments = [];
-               for (let i = 0; i < fullRoute.length - 1; i++) {
-                   routeSegments.push({
-                       start: fullRoute[i].coord,
-                       end: fullRoute[i + 1].coord,
-                       passed: false
-                   });
-               }
-                       simulationPoints = route.geometry.coordinates.map(c => [c[1], c[0]]);
-               
-                       /* ========================================================
-                          ===================== ROUTE SOURCES ====================
-                          ======================================================== */
-               
-                       map.addSource("route-passed", {
-                           type: "geojson",
-                           data: {
-                               type: "Feature",
-                               geometry: { type: "LineString", coordinates: [] }
-                           }
-                       });
-               
-                       map.addSource("route-remaining", {
-                           type: "geojson",
-                           data: {
-                               type: "Feature",
-                               geometry: {
-                                   type: "LineString",
-                                   coordinates: fullRoute.map(pt => pt.coord)
-                               }
-                           }
-                       });
-               
-                       /* ========================================================
-                          ====================== ROUTE LAYERS =====================
-                          ======================================================== */
-               
-                       map.addLayer({
-                           id: "route-remaining-line",
-                           type: "line",
-                           source: "route-remaining",
-                           layout: { "line-join": "round", "line-cap": "round" },
-                           paint: { "line-width": 4, "line-color": "#007aff" }
-                       });
-               
-                       map.addLayer({
-                           id: "route-passed-line",
-                           type: "line",
-                           source: "route-passed",
-                           layout: { "line-join": "round", "line-cap": "round" },
-                           paint: { "line-width": 4, "line-color": "#333333" }
-                       });
+             /* ========================================================
+   ======================= LOAD DATA =======================
+   ======================================================== */
+
+const points = await fetch("points.json").then(r => r.json());
+const route = await fetch("route.json").then(r => r.json());
+
+/* === 1) Собираем ВСЕ координаты из FeatureCollection === */
+let allCoords = [];
+route.features.forEach(f => {
+    if (f.geometry && f.geometry.type === "LineString") {
+        allCoords = allCoords.concat(f.geometry.coordinates);
+    }
+});
+
+/* === 2) fullRoute для перекраски маршрута === */
+fullRoute = allCoords.map(c => ({
+    coord: [c[0], c[1]]
+}));
+
+/* === 3) Сегменты маршрута === */
+routeSegments = [];
+for (let i = 0; i < fullRoute.length - 1; i++) {
+    routeSegments.push({
+        start: fullRoute[i].coord,
+        end: fullRoute[i + 1].coord,
+        passed: false
+    });
+}
+
+/* === 4) Симуляция — идём по всем точкам подряд === */
+simulationPoints = allCoords.map(c => [c[1], c[0]]);
+
+/* ========================================================
+   ===================== ROUTE SOURCES =====================
+   ======================================================== */
+
+/* === 5) Рисуем три отдельные линии, как в старом проекте === */
+map.addSource("route-remaining", {
+    type: "geojson",
+    data: route   // ← ВАЖНО: отдаём весь FeatureCollection
+});
+
+map.addSource("route-passed", {
+    type: "geojson",
+    data: {
+        type: "FeatureCollection",
+        features: [] // сюда будем добавлять пройденные куски
+    }
+});
+
+/* ========================================================
+   ====================== ROUTE LAYERS =====================
+   ======================================================== */
+
+map.addLayer({
+    id: "route-remaining-line",
+    type: "line",
+    source: "route-remaining",
+    layout: { "line-join": "round", "line-cap": "round" },
+    paint: { "line-width": 4, "line-color": "#007aff" }
+});
+
+map.addLayer({
+    id: "route-passed-line",
+    type: "line",
+    source: "route-passed",
+    layout: { "line-join": "round", "line-cap": "round" },
+    paint: { "line-width": 4, "line-color": "#333333" }
+});
                        /* ========================================================
                   ====================== AUDIO ZONES ======================
                   ======================================================== */
@@ -1114,5 +1121,6 @@ if (type === "photo") {
 }
 
 document.addEventListener("DOMContentLoaded", initMap);
+
 
 /* ==================== END OF APP.JS ====================== */
