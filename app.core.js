@@ -640,7 +640,7 @@ globalAudio.autoplay = true;
                // ВЫЗЫВАЕМ ПОСЛЕ удаления слоёв, но ДО загрузки данных
                updateProgress();
                
-             /* ========================================================
+              /* ========================================================
    ======================= LOAD DATA =======================
    ======================================================== */
 
@@ -680,7 +680,7 @@ simulationPoints = allCoords.map(c => [c[1], c[0]]);
 /* === 5) Рисуем три отдельные линии, как в старом проекте === */
 map.addSource("route-remaining", {
     type: "geojson",
-    data: route   // ← ВАЖНО: отдаём весь FeatureCollection
+    data: route   // ← отдаём весь FeatureCollection
 });
 
 map.addSource("route-passed", {
@@ -1121,6 +1121,5 @@ if (type === "photo") {
 }
 
 document.addEventListener("DOMContentLoaded", initMap);
-
 
 /* ==================== END OF APP.JS ====================== */
