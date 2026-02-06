@@ -1,31 +1,20 @@
 {
   "version": 8,
-  "name": "OpenFreeMap Bright",
+  "name": "Mini Bright",
   "sources": {
-    "ofm": {
+    "osm": {
       "type": "raster",
       "tiles": [
         "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
       ],
-      "tileSize": 256,
-      "attribution": "© OpenStreetMap contributors"
+      "tileSize": 256
     }
   },
   "layers": [
     {
-      "id": "ofm-base",
+      "id": "osm-base",
       "type": "raster",
-      "source": "ofm",
-      "minzoom": 0,
-      "maxzoom": 19,
-      "paint": {
-        "raster-brightness-min": 0.05,
-        "raster-brightness-max": 1.0,
-        "raster-contrast": 0.12,
-        "raster-saturation": 0.25,
-        "raster-hue-rotate": 4
-      }
+      "source": "osm"
     }
   ]
 }
-
