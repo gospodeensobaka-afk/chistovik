@@ -1,0 +1,50 @@
+[
+  {
+    "id": 0,
+    "type": "audio",
+    "lat": 55.786306,
+    "lng": 49.120693,
+    "radius": 25,
+    "audio": "audio/0.mp3"
+  },
+  {
+    "id": 1,
+    "type": "audio",
+    "lat": 55.786306,
+    "lng": 49.120693,
+    "radius": 25,
+    "audio": "audio/1.mp3"
+  },
+  {
+    "id": 2,
+    "type": "audio",
+    "lat": 55.789089,
+    "lng": 49.112107,
+    "radius": 25,
+    "audio": "audio/2.mp3"
+  },
+  {
+    "id": 3,
+    "type": "audio",
+    "lat": 55.796189,
+    "lng": 49.103842,
+    "radius": 25,
+    "audio": "audio/3.mp3"
+  },
+  {
+    "id": 4,
+    "type": "audio",
+    "lat": 55.800140,
+    "lng": 49.102452,
+    "radius": 25,
+    "audio": "audio/4.mp3"
+  },
+  {
+    "id": 5,
+    "type": "audio",
+    "lat": 55.813650,
+    "lng": 49.106449,
+    "radius": 25,
+    "audio": "audio/5.mp3"
+  }
+]
