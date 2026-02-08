@@ -768,7 +768,7 @@ map.addLayer({
                        el.style.justifyContent = "center";
                
                        const img = document.createElement("img");
-                       img.src = `https://gospodeensobaka-afk.github.io/kazan-audioguide/icons/left.png`;
+                      img.src = p.icon;;
                        img.style.width = "32px";
                        img.style.height = "32px";
                
@@ -1123,3 +1123,4 @@ if (type === "photo") {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
