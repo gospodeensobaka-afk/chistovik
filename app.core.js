@@ -971,8 +971,8 @@ if (notReadyBtn && galleryOverlay) {
         });
 
         galleryOverlay.classList.remove("hidden");
-    };
-}
+    };   // ← ЭТА СКОБКА БЫЛА ОТСУТСТВУЮЩЕЙ
+}        // ← И ЭТА ТОЖЕ
 
 if (galleryOverlay) {
     galleryOverlay.onclick = (e) => {
@@ -981,7 +981,6 @@ if (galleryOverlay) {
         }
     };
 }
-
                /* ========================================================
                   ===================== START TOUR BTN ====================
                   ======================================================== */
@@ -1115,3 +1114,4 @@ function showFullscreenMedia(src, type) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
