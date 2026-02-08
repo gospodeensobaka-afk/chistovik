@@ -46,7 +46,7 @@
     "lng": 49.106449,
     "radius": 25,
     "audio": "audio/5.mp3"
-  }
+  },
 {
   "id": 101,
   "type": "square",
@@ -104,3 +104,4 @@
   "icon": "icons/i1.png"
 }
 ]
+
