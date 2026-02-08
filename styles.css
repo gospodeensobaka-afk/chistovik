@@ -15,14 +15,13 @@ html, body {
 
 #simulate {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 95px;
+    left: 16px;
     padding: 10px 14px;
     background: white;
     border-radius: 6px;
     cursor: pointer;
-    z-index: 10;
-
+    z-index: 1000;
 }
 .photo-btn {
   position: absolute;
@@ -96,59 +95,63 @@ html, body {
 }
 /* === FIX START TOUR BUTTON CLICK === */
 #startTourBtn {
-    position: absolute;
-    z-index: 5000;
+    padding: 14px 22px;
+    font-size: 18px;
+    border-radius: 12px;
+    background: #007aff;
+    color: white;
+    border: none;
+    white-space: nowrap; /* текст не переносится */
+    max-width: 80%; /* чтобы не вылезал за экран */
+    text-align: center;
 }
 #notReadyBtn {
-    
     position: absolute;
-    top: 210px; /* под кнопкой компаса */
-    left: 10px;
+    top: 140px;
+    left: 16px;
     padding: 10px 14px;
     background: white;
     border-radius: 6px;
     cursor: pointer;
-    z-index: 1000;
     border: none;
     font-size: 14px;
+    z-index: 1000;
 }
-#globalAudio {
+/* === AUDIO WRAPPER (фиксированная позиция и высота) === */
+#audioWrapper {
     position: absolute;
-    top: 100px;
-    left: 1px;
-    width: 300px;
-    z-index: 999999;
-}
-#galleryOverlay {
-    position: fixed;
-    inset: auto;
-    width: 80%;
-    height: 25%;
-    top: 70%;
-    left: 10%;
-    border-radius: 20px;
-    background: rgba(0, 0, 0, 0.5);
+    top: 10px;
+    left: 10px;
+
+    height: 36px; /* одинаковая высота с прогрессом */
+    width: calc(100% - 140px); /* место под прогресс справа */
 
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 20px;
-    justify-content: center;
-    align-items: flex-start;
-    overflow-y: auto;
-    z-index: 200000;
+    align-items: center;
+
+    z-index: 999999;
 }
-#enableAudio {
-    position: absolute;
-    top: 60px;
-    right: 2px;
-    z-index: 10;
+
+/* === AUDIO ELEMENT === */
+#globalAudio {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
 }
+
+
 #enableCompass {
     position: absolute;
-    top: 85px;
-    right: 1px;
-    z-index: 10;
+    top: 53px;
+    left: 13px;
+    padding: 10px 14px;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    z-index: 1000;
 }
 .control-btn {
     position: absolute;
@@ -160,17 +163,21 @@ html, body {
     font-size: 14px;
     z-index: 1000;
 }
-#simulate { top: 10px; left: 10px; }
-#enableAudio { top: 60px; left: 10px; }
-#enableCompass { top: 110px; left: 10px; }
-#notReadyBtn { top: 160px; left: 10px; }
+
+
+.ui-editable {
+    position: absolute !important;
+    cursor: move !important;
+    user-select: none !important;
+    z-index: 999999 !important;
+}
+.ui-editable.edit-mode {
+    outline: 2px dashed #00ff00;
+}
 
 @media (max-width: 600px) {
 
-    #simulate { top: 10px; left: 10px; }
-    #enableAudio { top: 60px; left: 10px; }
-    #enableCompass { top: 110px; left: 10px; }
-    #notReadyBtn { top: 160px; left: 10px; }
+    
 
     #globalAudio {
         top: 210px;
@@ -178,10 +185,54 @@ html, body {
         width: calc(100% - 20px);
     }
 
-    #galleryOverlay {
-        width: 90%;
-        height: 35%;
-        top: 60%;
-        left: 5%;
-    }
+   
 }
+/* === GALLERY OVERLAY — компактная нижняя панель === */
+#galleryOverlay {
+    position: fixed;
+    bottom: 10px;                 /* прибили к низу */
+    left: 50%;                    /* центрируем */
+    transform: translateX(-50%);  /* центрирование */
+
+    width: 70%;                   /* на 30% уже */
+    height: 18%;                  /* в 2 раза ниже чем было */
+
+    background: rgba(0, 0, 0, 0.55);
+    border-radius: 16px;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;            /* фото в одну линию */
+    overflow-x: auto;             /* свайп влево-вправо */
+    overflow-y: hidden;           /* вертикаль отключена */
+
+    gap: 12px;
+    padding: 12px;
+
+    z-index: 200000;
+
+    scrollbar-width: none;        /* Firefox */
+}
+
+#galleryOverlay::-webkit-scrollbar {
+    display: none;                /* Chrome/Safari */
+}
+#uiEditorToggle {
+    position: absolute;
+    top: 184px;
+    left: 17px;
+    padding: 10px 14px;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    z-index: 1000;
+}
+
+
+
+
+
+
+
