@@ -1,4 +1,4 @@
-               /* ========================================================
+/* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             
@@ -568,8 +568,7 @@ if (audioPlaying) {
                    simulationIndex++;
                    setTimeout(simulateNextStep, 1200);
                }
-               
-               /* ========================================================
+                /* ========================================================
                   ================== START SIMULATION =====================
                   ======================================================== */
                
@@ -921,7 +920,7 @@ map.addLayer({
                        console.log("Карта готова");
                    });
                
-                  /* ========================================================
+                   /* ========================================================
                   ========================= BUTTONS ======================
                   ======================================================== */
 /* === NOT READY BUTTON + GALLERY === */
@@ -962,17 +961,17 @@ if (notReadyBtn && galleryOverlay) {
             }
 
             thumb.onclick = () => {
-                galleryOverlay.classList.add("hidden");
-                window.__openedFromGallery = true;
-                showFullscreenMedia(item.src, item.type);
+                galleryOverlay.classList.add("hidden");   // прячем галерею
+                window.__openedFromGallery = true;        // флаг для showFullscreenMedia
+                showFullscreenMedia(item.src, item.type); // открываем медиа
             };
 
             galleryOverlay.appendChild(thumb);
         });
 
         galleryOverlay.classList.remove("hidden");
-    };   // ← ЭТА СКОБКА БЫЛА ОТСУТСТВУЮЩЕЙ
-}        // ← И ЭТА ТОЖЕ
+    };
+}
 
 if (galleryOverlay) {
     galleryOverlay.onclick = (e) => {
@@ -1001,7 +1000,15 @@ if (galleryOverlay) {
                const simBtn = document.getElementById("simulate");
                if (simBtn) simBtn.onclick = startSimulation;
                
-          
+               const audioBtn = document.getElementById("enableAudio");
+               if (audioBtn) {
+                   audioBtn.onclick = () => {
+                       const a = new Audio("audio/1.mp3");
+                       a.play()
+                           .then(() => audioEnabled = true)
+                           .catch(() => console.log("Ошибка разрешения аудио"));
+                   };
+               }
                
                const compassBtn = document.getElementById("enableCompass");
                if (compassBtn) compassBtn.onclick = startCompass;
@@ -1018,6 +1025,7 @@ if (galleryOverlay) {
                /* ========================================================
                   ====================== DOM EVENTS =======================
                   ======================================================== */
+             /* === FULLSCREEN MEDIA (PHOTO + VIDEO) === */
 /* === FULLSCREEN MEDIA (PHOTO + VIDEO) === */
 function showFullscreenMedia(src, type) {
     let overlay = document.getElementById("fsMediaOverlay");
@@ -1041,7 +1049,7 @@ function showFullscreenMedia(src, type) {
         overlay.style.display = "flex";
         overlay.style.alignItems = "center";
         overlay.style.justifyContent = "center";
-        overlay.style.zIndex = "300000";
+        overlay.style.zIndex = "300000"; // выше галереи
         document.body.appendChild(overlay);
 
         media = document.createElement("img");
@@ -1101,17 +1109,16 @@ function showFullscreenMedia(src, type) {
         return;
     }
 
-    // авто‑закрытие только для фото
-    if (type === "photo") {
-        setTimeout(() => {
-            if (overlay && overlay.style.display !== "none") {
-                overlay.style.display = "none";
-            }
-        }, 3000);
+   // авто‑закрытие только для фото
+if (type === "photo") {
+    setTimeout(() => {
+        if (overlay && overlay.style.display !== "none") {
+            overlay.style.display = "none";
+        }
+   }, 3000);
     }
 }
 
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
-
