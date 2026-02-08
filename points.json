@@ -47,4 +47,60 @@
     "radius": 25,
     "audio": "audio/5.mp3"
   }
+{
+  "id": 101,
+  "type": "square",
+  "lat": 55.813650,
+  "lng": 49.106449,
+  "icon": "icons/i1.png"
+},
+{
+  "id": 102,
+  "type": "square",
+  "lat": 55.797139,
+  "lng": 49.103025,
+  "icon": "icons/i1.png"
+},
+{
+  "id": 103,
+  "type": "square",
+  "lat": 55.779176,
+  "lng": 49.138629,
+  "icon": "icons/i1.png"
+},
+{
+  "id": 104,
+  "type": "square",
+  "lat": 55.780078,
+  "lng": 49.136650,
+  "icon": "icons/i1.png"
+},
+{
+  "id": 105,
+  "type": "square",
+  "lat": 55.780770,
+  "lng": 49.115689,
+  "icon": "icons/i1.png"
+},
+{
+  "id": 106,
+  "type": "square",
+  "lat": 55.791094,
+  "lng": 49.122121,
+  "icon": "icons/i1.png"
+},
+{
+  "id": 107,
+  "type": "square",
+  "lat": 55.798440,
+  "lng": 49.113723,
+  "icon": "icons/i1.png"
+},
+{
+  "id": 108,
+  "type": "square",
+  "lat": 55.793398,
+  "lng": 49.113957,
+  "icon": "icons/i1.png"
+}
 ]
