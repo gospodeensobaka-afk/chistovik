@@ -42,13 +42,13 @@
   },
 
   {
-  "id": 41,
-  "type": "audio",
-  "lat": 55.814104,
-  "lng": 49.106623,
-  "radius": 25,
-  "audio": "audio/4-Chasha+pravila.m4a"
-},
+    "id": 41,
+    "type": "audio",
+    "lat": 55.814104,
+    "lng": 49.106623,
+    "radius": 25,
+    "audio": "audio/4-Chasha+pravila.m4a"
+  },
 
   {
     "id": 5,
@@ -88,7 +88,7 @@
     "lat": 55.806151,
     "lng": 49.144806,
     "radius": 25,
-    "audio": "audio/9-v’ezhaem- v-center,arskoe.m4a"
+    "audio": "audio/9-vezhaem-v-center-arskoe.m4a"
   },
   {
     "id": 10,
@@ -216,7 +216,7 @@
     "lat": 55.781648,
     "lng": 49.114934,
     "radius": 25,
-    "audio": "audio/25-put’na-pl-tukaya-stih.m4a"
+    "audio": "audio/25-put-na-pl-tukaya-stih.m4a"
   },
   {
     "id": 26,
@@ -224,7 +224,7 @@
     "lat": 55.786788,
     "lng": 49.121801,
     "radius": 25,
-    "audio": "audio/26-plochad’tukaya(mozhno-pro-shalyapina-dobavit).m4a"
+    "audio": "audio/26-plochad-tukaya(mozhno-pro-shalyapina-dobavit).m4a"
   },
   {
     "id": 27,
@@ -280,7 +280,7 @@
     "lat": 55.796357,
     "lng": 49.124353,
     "radius": 25,
-    "audio": "audio/33-ploschad’svobodi.m4a"
+    "audio": "audio/33-ploschad-svobodi.m4a"
   },
   {
     "id": 34,
@@ -288,7 +288,7 @@
     "lat": 55.797558,
     "lng": 49.123602,
     "radius": 25,
-    "audio": "audio/34-put’na-bogorodickiy(bolshaya-krasnay).m4a"
+    "audio": "audio/34-put-na-bogorodickiy(bolshaya-krasnay).m4a"
   },
   {
     "id": 35,
@@ -304,7 +304,7 @@
     "lat": 55.798726,
     "lng": 49.111706,
     "radius": 25,
-    "audio": "audio/36-put’na-petropavlovskiy.m4a"
+    "audio": "audio/36-put-na-petropavlovskiy.m4a"
   },
   {
     "id": 37,
@@ -380,4 +380,3 @@
     "icon": "icons/i1.png"
   }
 ]
-
