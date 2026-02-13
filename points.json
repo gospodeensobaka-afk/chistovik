@@ -42,12 +42,13 @@
   },
 
   {
-    "id": 41,
-    "type": "audio",
-    "lat": 55.814104,
-    "lng": 49.106623,
-    "radius": 25
-  },
+  "id": 41,
+  "type": "audio",
+  "lat": 55.814104,
+  "lng": 49.106623,
+  "radius": 25,
+  "audio": "audio/4-Chasha+pravila.m4a"
+},
 
   {
     "id": 5,
@@ -379,3 +380,4 @@
     "icon": "icons/i1.png"
   }
 ]
+
