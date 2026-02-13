@@ -717,18 +717,18 @@ map.addLayer({
                const circleFeatures = [];
                
                points.forEach(p => {
-                   zones.push({
-                       id: p.id,
-                       name: p.name,
-                       lat: p.lat,
-                       lng: p.lng,
-                       radius: p.radius || 20,
-                       visited: false,
-                       entered: false,
-                       type: p.type,
-                       audio: p.type === "audio" ? `audio/${p.id}.mp3` : null,
-                       image: p.image || null
-                   });
+                  zones.push({
+    id: p.id,
+    name: p.name,
+    lat: p.lat,
+    lng: p.lng,
+    radius: p.radius || 20,
+    visited: false,
+    entered: false,
+    type: p.type,
+    audio: p.audio || null,
+    image: p.image || null
+});
                
                    if (p.type === "audio") totalAudioZones++;
                
@@ -1114,3 +1114,4 @@ function showFullscreenMedia(src, type) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
