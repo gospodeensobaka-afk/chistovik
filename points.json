@@ -5,103 +5,377 @@
     "lat": 55.786306,
     "lng": 49.120693,
     "radius": 25,
-    "audio": "audio/0.mp3"
+    "audio": "audio/start.mp3"
   },
+
   {
     "id": 1,
     "type": "audio",
-    "lat": 55.786306,
-    "lng": 49.120693,
+    "lat": 55.786308,
+    "lng": 49.120687,
     "radius": 25,
-    "audio": "audio/1.mp3"
+    "audio": "audio/1-2005.m4a"
   },
   {
     "id": 2,
     "type": "audio",
-    "lat": 55.789089,
-    "lng": 49.112107,
+    "lat": 55.789079,
+    "lng": 49.112080,
     "radius": 25,
-    "audio": "audio/2.mp3"
+    "audio": "audio/2-bulak.m4a"
   },
   {
     "id": 3,
     "type": "audio",
-    "lat": 55.796189,
-    "lng": 49.103842,
+    "lat": 55.796000,
+    "lng": 49.104035,
     "radius": 25,
-    "audio": "audio/3.mp3"
+    "audio": "audio/3-ploschad-tisyacheletia.m4a"
   },
   {
     "id": 4,
     "type": "audio",
-    "lat": 55.800140,
-    "lng": 49.102452,
+    "lat": 55.801080,
+    "lng": 49.102341,
     "radius": 25,
-    "audio": "audio/4.mp3"
+    "audio": "audio/4-Chasha+pravila.m4a"
   },
+
+  {
+    "id": 41,
+    "type": "audio",
+    "lat": 55.814104,
+    "lng": 49.106623,
+    "radius": 25
+  },
+
   {
     "id": 5,
     "type": "audio",
+    "lat": 55.814590,
+    "lng": 49.106903,
+    "radius": 25,
+    "audio": "audio/5-NovoSavinovskiy.m4a"
+  },
+  {
+    "id": 6,
+    "type": "audio",
+    "lat": 55.816409,
+    "lng": 49.129496,
+    "radius": 25,
+    "audio": "audio/6-riviera-koleso.m4a"
+  },
+  {
+    "id": 7,
+    "type": "audio",
+    "lat": 55.812283,
+    "lng": 49.133739,
+    "radius": 25,
+    "audio": "audio/7-edinobor-Millenium.m4a"
+  },
+  {
+    "id": 8,
+    "type": "audio",
+    "lat": 55.807732,
+    "lng": 49.138888,
+    "radius": 25,
+    "audio": "audio/8-sport-na-mileniume.m4a"
+  },
+  {
+    "id": 9,
+    "type": "audio",
+    "lat": 55.806151,
+    "lng": 49.144806,
+    "radius": 25,
+    "audio": "audio/9-v’ezhaem- v-center,arskoe.m4a"
+  },
+  {
+    "id": 10,
+    "type": "audio",
+    "lat": 55.792645,
+    "lng": 49.153270,
+    "radius": 25,
+    "audio": "audio/10-vishnevskogo-avik.m4a"
+  },
+  {
+    "id": 11,
+    "type": "audio",
+    "lat": 55.785781,
+    "lng": 49.150655,
+    "radius": 25,
+    "audio": "audio/11-zdes-bil-les-put-na-sukonku.m4a"
+  },
+  {
+    "id": 12,
+    "type": "audio",
+    "lat": 55.776770,
+    "lng": 49.144213,
+    "radius": 25,
+    "audio": "audio/12-znachok-metro.m4a"
+  },
+  {
+    "id": 13,
+    "type": "audio",
+    "lat": 55.776814,
+    "lng": 49.143539,
+    "radius": 25,
+    "audio": "audio/13-tramvai-piterskie-doma.m4a"
+  },
+  {
+    "id": 14,
+    "type": "audio",
+    "lat": 55.779171,
+    "lng": 49.138610,
+    "radius": 25,
+    "audio": "audio/14-ekiyat.m4a"
+  },
+  {
+    "id": 15,
+    "type": "audio",
+    "lat": 55.779988,
+    "lng": 49.136762,
+    "radius": 25,
+    "audio": "audio/15-tugan.m4a"
+  },
+  {
+    "id": 16,
+    "type": "audio",
+    "lat": 55.780433,
+    "lng": 49.135753,
+    "radius": 25,
+    "audio": "audio/16-hram-gde-poyavilsya-ekiyat.m4a"
+  },
+  {
+    "id": 17,
+    "type": "audio",
+    "lat": 55.780634,
+    "lng": 49.135249,
+    "radius": 25,
+    "audio": "audio/17-staroobryadci.m4a"
+  },
+  {
+    "id": 18,
+    "type": "audio",
+    "lat": 55.783495,
+    "lng": 49.128847,
+    "radius": 25,
+    "audio": "audio/18-rotonda.m4a"
+  },
+  {
+    "id": 19,
+    "type": "audio",
+    "lat": 55.783351,
+    "lng": 49.127446,
+    "radius": 25,
+    "audio": "audio/19-kostel.m4a"
+  },
+  {
+    "id": 20,
+    "type": "audio",
+    "lat": 55.782596,
+    "lng": 49.125915,
+    "radius": 25,
+    "audio": "audio/20-basketholl-fontan-v-vide-kazana.m4a"
+  },
+  {
+    "id": 21,
+    "type": "audio",
+    "lat": 55.782017,
+    "lng": 49.124614,
+    "radius": 25,
+    "audio": "audio/21-vot-vam-mesto.m4a"
+  },
+  {
+    "id": 22,
+    "type": "audio",
+    "lat": 55.784589,
+    "lng": 49.119430,
+    "radius": 25,
+    "audio": "audio/22-kakaya-sts-po-gabaritam.m4a"
+  },
+  {
+    "id": 23,
+    "type": "audio",
+    "lat": 55.783624,
+    "lng": 49.117075,
+    "radius": 25,
+    "audio": "audio/23-teatr-3h-smehov.m4a"
+  },
+  {
+    "id": 24,
+    "type": "audio",
+    "lat": 55.780895,
+    "lng": 49.115552,
+    "radius": 25,
+    "audio": "audio/24-stska-glavniy-tezis.m4a"
+  },
+  {
+    "id": 25,
+    "type": "audio",
+    "lat": 55.781648,
+    "lng": 49.114934,
+    "radius": 25,
+    "audio": "audio/25-put’na-pl-tukaya-stih.m4a"
+  },
+  {
+    "id": 26,
+    "type": "audio",
+    "lat": 55.786788,
+    "lng": 49.121801,
+    "radius": 25,
+    "audio": "audio/26-plochad’tukaya(mozhno-pro-shalyapina-dobavit).m4a"
+  },
+  {
+    "id": 27,
+    "type": "audio",
+    "lat": 55.787924,
+    "lng": 49.123078,
+    "radius": 25,
+    "audio": "audio/27-universitetskaya.m4a"
+  },
+  {
+    "id": 28,
+    "type": "audio",
+    "lat": 55.790085,
+    "lng": 49.123213,
+    "radius": 25,
+    "audio": "audio/28-kfu.m4a"
+  },
+  {
+    "id": 29,
+    "type": "audio",
+    "lat": 55.791645,
+    "lng": 49.120670,
+    "radius": 25,
+    "audio": "audio/29-bivshaya-voskresenskaya.m4a"
+  },
+  {
+    "id": 30,
+    "type": "audio",
+    "lat": 55.792581,
+    "lng": 49.120477,
+    "radius": 25,
+    "audio": "audio/30-nostalgiya.m4a"
+  },
+  {
+    "id": 31,
+    "type": "audio",
+    "lat": 55.793902,
+    "lng": 49.121523,
+    "radius": 25,
+    "audio": "audio/31.m4a"
+  },
+  {
+    "id": 32,
+    "type": "audio",
+    "lat": 55.794832,
+    "lng": 49.123841,
+    "radius": 25,
+    "audio": "audio/32-tatgoip.m4a"
+  },
+  {
+    "id": 33,
+    "type": "audio",
+    "lat": 55.796357,
+    "lng": 49.124353,
+    "radius": 25,
+    "audio": "audio/33-ploschad’svobodi.m4a"
+  },
+  {
+    "id": 34,
+    "type": "audio",
+    "lat": 55.797558,
+    "lng": 49.123602,
+    "radius": 25,
+    "audio": "audio/34-put’na-bogorodickiy(bolshaya-krasnay).m4a"
+  },
+  {
+    "id": 35,
+    "type": "audio",
+    "lat": 55.799351,
+    "lng": 49.113248,
+    "radius": 25,
+    "audio": "audio/35-yellow-zone-ikona.m4a"
+  },
+  {
+    "id": 36,
+    "type": "audio",
+    "lat": 55.798726,
+    "lng": 49.111706,
+    "radius": 25,
+    "audio": "audio/36-put’na-petropavlovskiy.m4a"
+  },
+  {
+    "id": 37,
+    "type": "audio",
+    "lat": 55.793360,
+    "lng": 49.114008,
+    "radius": 25,
+    "audio": "audio/37-petropavlovskiy.m4a"
+  },
+  {
+    "id": 38,
+    "type": "audio",
+    "lat": 55.794239,
+    "lng": 49.114350,
+    "radius": 25,
+    "audio": "audio/38-istoriya-vzyatiya-kazani.m4a"
+  },
+
+  {
+    "id": 101,
+    "type": "square",
     "lat": 55.813650,
     "lng": 49.106449,
-    "radius": 25,
-    "audio": "audio/5.mp3"
+    "icon": "icons/i1.png"
   },
-{
-  "id": 101,
-  "type": "square",
-  "lat": 55.813650,
-  "lng": 49.106449,
-  "icon": "icons/i1.png"
-},
-{
-  "id": 102,
-  "type": "square",
-  "lat": 55.797139,
-  "lng": 49.103025,
-  "icon": "icons/i1.png"
-},
-{
-  "id": 103,
-  "type": "square",
-  "lat": 55.779176,
-  "lng": 49.138629,
-  "icon": "icons/i1.png"
-},
-{
-  "id": 104,
-  "type": "square",
-  "lat": 55.780078,
-  "lng": 49.136650,
-  "icon": "icons/i1.png"
-},
-{
-  "id": 105,
-  "type": "square",
-  "lat": 55.780770,
-  "lng": 49.115689,
-  "icon": "icons/i1.png"
-},
-{
-  "id": 106,
-  "type": "square",
-  "lat": 55.791094,
-  "lng": 49.122121,
-  "icon": "icons/i1.png"
-},
-{
-  "id": 107,
-  "type": "square",
-  "lat": 55.798440,
-  "lng": 49.113723,
-  "icon": "icons/i1.png"
-},
-{
-  "id": 108,
-  "type": "square",
-  "lat": 55.793398,
-  "lng": 49.113957,
-  "icon": "icons/i1.png"
-}
+  {
+    "id": 102,
+    "type": "square",
+    "lat": 55.797139,
+    "lng": 49.103025,
+    "icon": "icons/i1.png"
+  },
+  {
+    "id": 103,
+    "type": "square",
+    "lat": 55.779176,
+    "lng": 49.138629,
+    "icon": "icons/i1.png"
+  },
+  {
+    "id": 104,
+    "type": "square",
+    "lat": 55.780078,
+    "lng": 49.136650,
+    "icon": "icons/i1.png"
+  },
+  {
+    "id": 105,
+    "type": "square",
+    "lat": 55.780770,
+    "lng": 49.115689,
+    "icon": "icons/i1.png"
+  },
+  {
+    "id": 106,
+    "type": "square",
+    "lat": 55.791094,
+    "lng": 49.122121,
+    "icon": "icons/i1.png"
+  },
+  {
+    "id": 107,
+    "type": "square",
+    "lat": 55.798440,
+    "lng": 49.113723,
+    "icon": "icons/i1.png"
+  },
+  {
+    "id": 108,
+    "type": "square",
+    "lat": 55.793398,
+    "lng": 49.113957,
+    "icon": "icons/i1.png"
+  }
 ]
-
