@@ -385,33 +385,45 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
     updateProgress();
     updateCircleColors();
 
-    if (z.audio) {
-        if (!audioEnabled) audioEnabled = true;
+    if (!z.audio) {
+        console.warn("У зоны нет аудио:", z.id);
+        return;
+    }
 
-        // Полный сброс аудио, чтобы браузер считал это новым запуском
-        globalAudio.pause();
-        globalAudio.removeAttribute("src");
-        globalAudio.load();
-document.body.addEventListener("click", () => {
-    globalAudio.play().catch(() => {});
-}, { once: true });
+    if (!audioEnabled) audioEnabled = true;
+
+    // Полный сброс аудио, чтобы браузер считал это новым запуском
+    globalAudio.pause();
+    globalAudio.removeAttribute("src");
+    globalAudio.load();
+
+    // Сбрасываем старые таймеры
+    globalAudio.ontimeupdate = null;
+    globalAudio.onended = () => {
+        audioPlaying = false;
+    };
+
+    // Функция реального старта аудио — вызывается ТОЛЬКО после клика
+    const startSimulatedAudio = () => {
         globalAudio.src = z.audio;
         globalAudio.currentTime = 0;
-
-        // Сбрасываем старый таймер
-        globalAudio.ontimeupdate = null;
 
         // ВАЖНО: тайминги ДО play()
         setupPhotoTimingsForAudio(globalAudio, id);
 
-        // Запуск аудио
-        globalAudio.play().catch(() => {});
-
         audioPlaying = true;
-        globalAudio.onended = () => audioPlaying = false;
-    }
+        globalAudio.play().catch(() => {
+            audioPlaying = false;
+            console.warn("Не удалось запустить аудио в симуляции для зоны", id);
+        });
+    };
 
-    console.log("Simulated audio zone:", id);
+    // Ждём ОДИН клик по документу, чтобы браузер счёл это user gesture
+    document.body.addEventListener("click", () => {
+        startSimulatedAudio();
+    }, { once: true });
+
+    console.log("Simulated audio zone (waiting for click):", id);
 }
               /* ========================================================
    ========== PHOTO TIMINGS FOR AUDIO ZONES ================
@@ -1114,4 +1126,5 @@ function showFullscreenMedia(src, type) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
