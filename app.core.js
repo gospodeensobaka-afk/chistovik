@@ -803,7 +803,7 @@ map.addLayer({
     layout: { "line-join": "round", "line-cap": "round" },
     paint: { "line-width": 4, "line-color": "#333333" }
 });
-                      /* ========================================================
+  /* ========================================================
    ====================== AUDIO ZONES ======================
    ======================================================== */
 
@@ -834,7 +834,7 @@ points.forEach(p => {
         });
     }
 
-    /* === MEDIA ZONES (иконки + фото/видео) === */
+    /* === MEDIA ZONES === */
     if (p.type === "media") {
         const el = document.createElement("img");
         el.src = p.icon;
@@ -959,60 +959,6 @@ function updateAudioCircleRadius() {
 
 map.on("zoom", updateAudioCircleRadius);
 map.on("load", updateAudioCircleRadius);
-               /* ========================================================
-                  ==================== AUDIO CIRCLES ======================
-                  ======================================================== */
-               
-                       map.addSource("audio-circles", {
-                           type: "geojson",
-                           data: { type: "FeatureCollection", features: circleFeatures }
-                       });
-               
-                       map.addLayer({
-                           id: "audio-circles-layer",
-                           type: "circle",
-                           source: "audio-circles",
-                           paint: {
-                               "circle-radius": 0,
-                               "circle-color": [
-                                   "case",
-                                   ["boolean", ["get", "visited"], false],
-                                   "rgba(0,255,0,0.25)",
-                                   "rgba(255,0,0,0.15)"
-                               ],
-                               "circle-stroke-color": [
-                                   "case",
-                                   ["boolean", ["get", "visited"], false],
-                                   "rgba(0,255,0,0.6)",
-                                   "rgba(255,0,0,0.4)"
-                               ],
-                               "circle-stroke-width": 2
-                           }
-                       });
-                      // === SIMULATE AUDIO ZONE ON CLICK ===
-               map.on("click", "audio-circles-layer", (e) => {
-                   const id = e.features[0].properties.id;
-                   simulateAudioZone(id);
-               });
-               // FIX_PHYSICAL_AUDIO_RADIUS — визуальный радиус = физический радиус (метры → пиксели)
-               function updateAudioCircleRadius() {
-                   const zoom = map.getZoom();
-                   const center = map.getCenter();
-                   const lat = center.lat;
-               
-                   const metersPerPixel =
-                       156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, zoom);
-               
-                   zones.forEach(z => {
-                       if (z.type === "audio") {
-                           const radiusPixels = z.radius / metersPerPixel;
-                           map.setPaintProperty("audio-circles-layer", "circle-radius", radiusPixels);
-                       }
-                   });
-               }
-               
-               map.on("zoom", updateAudioCircleRadius);
-               map.on("load", updateAudioCircleRadius);
                        /* ========================================================
                           ==================== PHOTO CIRCLES ======================
                           ======================================================== */
@@ -1284,6 +1230,7 @@ function showFullscreenMedia(src, type) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
