@@ -200,7 +200,7 @@
     "lat": 55.783624,
     "lng": 49.117075,
     "radius": 25,
-    "audio": "audio/23-teatr-3h-smehov.m4a"
+    "audio": "audio/23-teatr-3h-smehov.mp3"
   },
   {
     "id": 24,
@@ -208,7 +208,7 @@
     "lat": 55.780895,
     "lng": 49.115552,
     "radius": 25,
-    "audio": "audio/24-stska-glavniy-tezis.m4a"
+    "audio": "audio/24-stska-glavniy-tezis.mp3"
   },
   {
     "id": 25,
@@ -240,7 +240,7 @@
     "lat": 55.790085,
     "lng": 49.123213,
     "radius": 25,
-    "audio": "audio/28-kfu.m4a"
+    "audio": "audio/28-kfu.mp3"
   },
   {
     "id": 29,
@@ -296,7 +296,7 @@
     "lat": 55.799351,
     "lng": 49.113248,
     "radius": 25,
-    "audio": "audio/35-yellow-zone-ikona.m4a"
+    "audio": "audio/35-yellow-zone-ikona.mp3"
   },
   {
     "id": 36,
@@ -320,7 +320,7 @@
     "lat": 55.794239,
     "lng": 49.114350,
     "radius": 25,
-    "audio": "audio/38-istoriya-vzyatiya-kazani.m4a"
+    "audio": "audio/38-istoriya-vzyatiya-kazani.mp3"
   },
 
   {
@@ -380,3 +380,4 @@
     "icon": "icons/i1.png"
   }
 ]
+
