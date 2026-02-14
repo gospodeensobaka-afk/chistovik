@@ -9,10 +9,11 @@ html, body {
 #map {
     width: 100%;
     height: 100%;
-    position: relative;   /* ← добавили */
-    z-index: 1;           /* ← добавили */
+    position: relative;
+    z-index: 1;
 }
 
+/* === SIMULATE BUTTON === */
 #simulate {
     position: absolute;
     top: 95px;
@@ -23,6 +24,8 @@ html, body {
     cursor: pointer;
     z-index: 1000;
 }
+
+/* === PHOTO BUTTON === */
 .photo-btn {
   position: absolute;
   bottom: 20px;
@@ -32,15 +35,16 @@ html, body {
   background: #ffffff;
   border-radius: 8px;
   border: none;
-  font-size: 13px;        /* ↓ уменьшили */
-  line-height: 16px;      /* ↓ чтобы текст не прыгал */
-  white-space: nowrap;    /* ↓ запрет переноса */
-  overflow: hidden;       /* ↓ если вдруг не влезет */
-  text-overflow: ellipsis;/* ↓ троеточие вместо переноса */
+  font-size: 13px;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   cursor: pointer;
 }
 
+/* === PHOTO OVERLAY === */
 .photo-overlay {
   position: absolute;
   inset: 0;
@@ -81,19 +85,23 @@ html, body {
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
+
 .photo-btn-glow {
     box-shadow: 0 0 8px 2px rgba(0, 150, 255, 0.6);
     border: 1px solid rgba(0, 150, 255, 0.8);
     transition: box-shadow 0.2s ease, border 0.2s ease;
 }
+
 .hidden {
     display: none !important;
 }
+
 /* === HIDE SUPER DEBUG PANEL === */
 #superDebug {
     display: none !important;
 }
-/* === FIX START TOUR BUTTON CLICK === */
+
+/* === START TOUR BUTTON === */
 #startTourBtn {
     padding: 14px 22px;
     font-size: 18px;
@@ -101,10 +109,12 @@ html, body {
     background: #007aff;
     color: white;
     border: none;
-    white-space: nowrap; /* текст не переносится */
-    max-width: 80%; /* чтобы не вылезал за экран */
+    white-space: nowrap;
+    max-width: 80%;
     text-align: center;
 }
+
+/* === NOT READY BUTTON === */
 #notReadyBtn {
     position: absolute;
     top: 140px;
@@ -117,22 +127,19 @@ html, body {
     font-size: 14px;
     z-index: 1000;
 }
-/* === AUDIO WRAPPER (фиксированная позиция и высота) === */
+
+/* === AUDIO WRAPPER === */
 #audioWrapper {
     position: absolute;
     top: 10px;
     left: 10px;
-
-    height: 36px; /* одинаковая высота с прогрессом */
-    width: calc(100% - 140px); /* место под прогресс справа */
-
+    height: 36px;
+    width: calc(100% - 140px);
     display: flex;
     align-items: center;
-
     z-index: 999999;
 }
 
-/* === AUDIO ELEMENT === */
 #globalAudio {
     width: 100%;
     height: 100%;
@@ -140,7 +147,7 @@ html, body {
     object-fit: contain;
 }
 
-
+/* === COMPASS BUTTON === */
 #enableCompass {
     position: absolute;
     top: 53px;
@@ -153,6 +160,8 @@ html, body {
     font-size: 14px;
     z-index: 1000;
 }
+
+/* === GENERIC CONTROL BUTTON === */
 .control-btn {
     position: absolute;
     padding: 10px 14px;
@@ -164,59 +173,52 @@ html, body {
     z-index: 1000;
 }
 
-
+/* === UI EDITOR === */
 .ui-editable {
     position: absolute !important;
     cursor: move !important;
     user-select: none !important;
     z-index: 999999 !important;
 }
+
 .ui-editable.edit-mode {
     outline: 2px dashed #00ff00;
 }
 
+/* === MOBILE FIXES === */
 @media (max-width: 600px) {
-
-    
-
     #globalAudio {
         top: 210px;
         left: 10px;
         width: calc(100% - 20px);
     }
-
-   
 }
-/* === GALLERY OVERLAY — компактная нижняя панель === */
+
+/* === GALLERY OVERLAY === */
 #galleryOverlay {
     position: fixed;
-    bottom: 10px;                 /* прибили к низу */
-    left: 50%;                    /* центрируем */
-    transform: translateX(-50%);  /* центрирование */
-
-    width: 70%;                   /* на 30% уже */
-    height: 18%;                  /* в 2 раза ниже чем было */
-
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 18%;
     background: rgba(0, 0, 0, 0.55);
     border-radius: 16px;
-
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;            /* фото в одну линию */
-    overflow-x: auto;             /* свайп влево-вправо */
-    overflow-y: hidden;           /* вертикаль отключена */
-
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
     gap: 12px;
     padding: 12px;
-
     z-index: 200000;
-
-    scrollbar-width: none;        /* Firefox */
+    scrollbar-width: none;
 }
 
 #galleryOverlay::-webkit-scrollbar {
-    display: none;                /* Chrome/Safari */
+    display: none;
 }
+
 #uiEditorToggle {
     position: absolute;
     top: 184px;
@@ -229,53 +231,17 @@ html, body {
     font-size: 14px;
     z-index: 1000;
 }
-#preloadOverlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999999;
+
+/* === MINI PRELOAD STATUS (новая маленькая плашка) === */
+#miniPreloadStatus {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    z-index: 999999;
+    display: none;
 }
-
-#preloadBox {
-  width: 80%;
-  max-width: 320px;
-  text-align: center;
-}
-
-#preloadTitle {
-  color: white;
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-#preloadBarBg {
-  width: 100%;
-  height: 8px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-#preloadBar {
-  width: 0%;
-  height: 100%;
-  background: #0a84ff;
-  transition: width 0.2s ease;
-}
-
-#preloadPercent {
-  margin-top: 10px;
-  color: white;
-  font-size: 16px;
-}
-
-
-
-
-
-
-
