@@ -1,4 +1,4 @@
-               /* ========================================================
+  /* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             
@@ -385,45 +385,32 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
     updateProgress();
     updateCircleColors();
 
-    if (!z.audio) {
-        console.warn("У зоны нет аудио:", z.id);
-        return;
-    }
+    if (!z.audio) return;
 
-    if (!audioEnabled) audioEnabled = true;
-
-    // Полный сброс аудио, чтобы браузер считал это новым запуском
+    // Полный сброс аудио
     globalAudio.pause();
     globalAudio.removeAttribute("src");
     globalAudio.load();
 
-    // Сбрасываем старые таймеры
+    globalAudio.src = z.audio;
+    globalAudio.currentTime = 0;
+
+    // Сбрасываем старый таймер
     globalAudio.ontimeupdate = null;
-    globalAudio.onended = () => {
+
+    // Тайминги ДО play()
+    setupPhotoTimingsForAudio(globalAudio, id);
+
+    audioPlaying = true;
+
+    globalAudio.play().catch(() => {
         audioPlaying = false;
-    };
+        console.warn("Не удалось запустить аудио в симуляции для зоны", id);
+    });
 
-    // Функция реального старта аудио — вызывается ТОЛЬКО после клика
-    const startSimulatedAudio = () => {
-        globalAudio.src = z.audio;
-        globalAudio.currentTime = 0;
+    globalAudio.onended = () => audioPlaying = false;
 
-        // ВАЖНО: тайминги ДО play()
-        setupPhotoTimingsForAudio(globalAudio, id);
-
-        audioPlaying = true;
-        globalAudio.play().catch(() => {
-            audioPlaying = false;
-            console.warn("Не удалось запустить аудио в симуляции для зоны", id);
-        });
-    };
-
-    // Ждём ОДИН клик по документу, чтобы браузер счёл это user gesture
-    document.body.addEventListener("click", () => {
-        startSimulatedAudio();
-    }, { once: true });
-
-    console.log("Simulated audio zone (waiting for click):", id);
+    console.log("Simulated audio zone:", id);
 }
               /* ========================================================
    ========== PHOTO TIMINGS FOR AUDIO ZONES ================
@@ -580,7 +567,6 @@ if (audioPlaying) {
                    simulationIndex++;
                    setTimeout(simulateNextStep, 1200);
                }
-               
                /* ========================================================
                   ================== START SIMULATION =====================
                   ======================================================== */
@@ -626,6 +612,14 @@ if (audioPlaying) {
                      globalAudio.muted = false;
 globalAudio.autoplay = true;
                      globalAudio.load();
+                     // === UNLOCK AUDIO CONTEXT FOR SIMULATION ===
+// Один раз разрешаем браузеру воспроизводить аудио
+document.body.addEventListener("click", () => {
+    if (!audioEnabled) {
+        audioEnabled = true;
+        globalAudio.play().catch(() => {});
+    }
+}, { once: true });
                       map.getCanvas().addEventListener("pointerdown", () => {
                    userTouching = true;
                });
@@ -1126,5 +1120,3 @@ function showFullscreenMedia(src, type) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
-
-
