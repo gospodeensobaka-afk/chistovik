@@ -764,25 +764,7 @@ for (let i = 0; i < fullRoute.length - 1; i++) {
 
 /* === 4) Симуляция — идём по всем точкам подряд === */
 simulationPoints = allCoords.map(c => [c[1], c[0]]);
-/* === SMART PRELOAD: FIRST 3 AUDIO ZONES === */
-const audioZones = zones.filter(z => z.type === "audio");
 
-const firstThree = audioZones.slice(0, 3);
-let initialFiles = [];
-
-firstThree.forEach(z => {
-    if (z.audio) initialFiles.push(z.audio);
-
-    const key = z.audio;
-    if (photoTimings[key]) {
-        initialFiles.push(...Object.values(photoTimings[key]));
-    }
-    if (videoTimings[key]) {
-        initialFiles.push(...Object.values(videoTimings[key]));
-    }
-});
-
-queuePreload(initialFiles);
                      
 /* ========================================================
    ===================== ROUTE SOURCES =====================
@@ -821,26 +803,84 @@ map.addLayer({
     layout: { "line-join": "round", "line-cap": "round" },
     paint: { "line-width": 4, "line-color": "#333333" }
 });
-                       /* ========================================================
-                  ====================== AUDIO ZONES ======================
-                  ======================================================== */
-               
-               const circleFeatures = [];
-               
-               points.forEach(p => {
-                  zones.push({
-    id: p.id,
-    name: p.name,
-    lat: p.lat,
-    lng: p.lng,
-    radius: p.radius || 20,
-    visited: false,
-    entered: false,
-    type: p.type,
-    audio: p.audio || null,
-    image: p.image || null
+                      /* ========================================================
+   ====================== AUDIO ZONES ======================
+   ======================================================== */
+
+const circleFeatures = [];
+
+/* === 1. СОБИРАЕМ ZONES И МАРКЕРЫ === */
+points.forEach(p => {
+    zones.push({
+        id: p.id,
+        name: p.name,
+        lat: p.lat,
+        lng: p.lng,
+        radius: p.radius || 20,
+        visited: false,
+        entered: false,
+        type: p.type,
+        audio: p.audio || null,
+        image: p.image || null
+    });
+
+    if (p.type === "audio") totalAudioZones++;
+
+    if (p.type === "audio") {
+        circleFeatures.push({
+            type: "Feature",
+            properties: { id: p.id, visited: false },
+            geometry: { type: "Point", coordinates: [p.lng, p.lat] }
+        });
+    }
+
+    /* === MEDIA ZONES (иконки + фото/видео) === */
+    if (p.type === "media") {
+        const el = document.createElement("img");
+        el.src = p.icon;
+        el.style.width = "40px";
+        el.style.height = "40px";
+        el.style.cursor = "pointer";
+
+        el.onclick = () => {
+            if (p.photo) showFullscreenMedia(p.photo, "photo");
+            if (p.video) showFullscreenMedia(p.video, "video");
+        };
+
+        new maplibregl.Marker({ element: el })
+            .setLngLat([p.lng, p.lat])
+            .addTo(map);
+    }
+
+    /* === PNG markers === */
+    if (p.type === "square") {
+        const el = document.createElement("div");
+        el.style.width = "40px";
+        el.style.height = "40px";
+        el.style.display = "flex";
+        el.style.alignItems = "center";
+        el.style.justifyContent = "center";
+
+        const img = document.createElement("img");
+        img.src = p.icon;
+        img.style.width = "32px";
+        img.style.height = "32px";
+
+        img.onload = () => { iconsPngStatus = "ok"; };
+        img.onerror = () => {
+            iconsPngStatus = "error";
+            debugUpdate("none", null, "PNG_LOAD_FAIL");
+        };
+
+        el.appendChild(img);
+
+        new maplibregl.Marker({ element: el })
+            .setLngLat([p.lng, p.lat])
+            .addTo(map);
+    }
 });
- /* === SMART PRELOAD: FIRST 3 AUDIO ZONES === */
+
+/* === 2. СТАРТОВАЯ ПОДГРУЗКА (ТОЛЬКО ЗДЕСЬ!) === */
 const audioZones = zones.filter(z => z.type === "audio");
 
 const firstThree = audioZones.slice(0, 3);
@@ -858,66 +898,67 @@ firstThree.forEach(z => {
     }
 });
 
-queuePreload(initialFiles);              
-                   if (p.type === "audio") totalAudioZones++;
-               
-                   if (p.type === "audio") {
-                       circleFeatures.push({
-                           type: "Feature",
-                           properties: { id: p.id, visited: false },
-                           geometry: { type: "Point", coordinates: [p.lng, p.lat] }
-                       });
-                   }
+queuePreload(initialFiles);
 
-    /* === MEDIA ZONES (новые точки с иконкой и видео) === */
-    if (p.type === "media") {
-        const el = document.createElement("img");
-        el.src = p.icon;
-        el.style.width = "40px";
-        el.style.height = "40px";
-        el.style.cursor = "pointer";
+/* === 3. ОБНОВЛЯЕМ ПРОГРЕСС === */
+updateProgress();
 
-        el.onclick = () => {
-            if (p.photo) showFullscreenMedia(p.photo, "photo");
-            if (p.video) showFullscreenMedia(p.video, "video");
-        };
+/* ========================================================
+   ==================== AUDIO CIRCLES ======================
+   ======================================================== */
 
-        new maplibregl.Marker({ element: el })
-            .setLngLat([p.lng, p.lat])
-            .addTo(map);
+map.addSource("audio-circles", {
+    type: "geojson",
+    data: { type: "FeatureCollection", features: circleFeatures }
+});
+
+map.addLayer({
+    id: "audio-circles-layer",
+    type: "circle",
+    source: "audio-circles",
+    paint: {
+        "circle-radius": 0,
+        "circle-color": [
+            "case",
+            ["boolean", ["get", "visited"], false],
+            "rgba(0,255,0,0.25)",
+            "rgba(255,0,0,0.15)"
+        ],
+        "circle-stroke-color": [
+            "case",
+            ["boolean", ["get", "visited"], false],
+            "rgba(0,255,0,0.6)",
+            "rgba(255,0,0,0.4)"
+        ],
+        "circle-stroke-width": 2
     }
-                 
-                   /* PNG markers */
-                   if (p.type === "square") {
-                       const el = document.createElement("div");
-                       el.style.width = "40px";
-                       el.style.height = "40px";
-                       el.style.display = "flex";
-                       el.style.alignItems = "center";
-                       el.style.justifyContent = "center";
-               
-                       const img = document.createElement("img");
-                      img.src = p.icon;;
-                       img.style.width = "32px";
-                       img.style.height = "32px";
-               
-                       img.onload = () => { iconsPngStatus = "ok"; };
-                       img.onerror = () => {
-                           iconsPngStatus = "error";
-                           debugUpdate("none", null, "PNG_LOAD_FAIL");
-                       };
-               
-                       el.appendChild(img);
-               
-                       new maplibregl.Marker({ element: el })
-                           .setLngLat([p.lng, p.lat])
-                           .addTo(map);
-                   }
-               });
-               
-               // ← ВАЖНО: обновляем прогресс ПОСЛЕ цикла
-               updateProgress();
-               
+});
+
+/* === КЛИК ПО АУДИОЗОНЕ → СИМУЛЯЦИЯ === */
+map.on("click", "audio-circles-layer", (e) => {
+    const id = e.features[0].properties.id;
+    simulateAudioZone(id);
+});
+
+/* === РАДИУС В ПИКСЕЛЯХ === */
+function updateAudioCircleRadius() {
+    const zoom = map.getZoom();
+    const center = map.getCenter();
+    const lat = center.lat;
+
+    const metersPerPixel =
+        156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, zoom);
+
+    zones.forEach(z => {
+        if (z.type === "audio") {
+            const radiusPixels = z.radius / metersPerPixel;
+            map.setPaintProperty("audio-circles-layer", "circle-radius", radiusPixels);
+        }
+    });
+}
+
+map.on("zoom", updateAudioCircleRadius);
+map.on("load", updateAudioCircleRadius);
                /* ========================================================
                   ==================== AUDIO CIRCLES ======================
                   ======================================================== */
@@ -1243,6 +1284,7 @@ function showFullscreenMedia(src, type) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
