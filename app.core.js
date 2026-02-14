@@ -2,10 +2,41 @@
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             /* === SMART PRELOAD QUEUE (AUDIO + PHOTO/VIDEO TIMINGS) === */
+/* === DEBUG: список предзагруженных зон (только будущие) === */
+let preloadDebugList = [];
+
+function updateDebugStatus() {
+    const el = document.getElementById("miniPreloadStatus");
+    if (!el) return;
+
+    if (preloadDebugList.length === 0) {
+        el.innerHTML = "Загрузка…";
+        return;
+    }
+
+    let html = "Загрузка…<br>Предзагружено наперёд:<br>";
+    preloadDebugList.forEach(item => {
+        html += `→ зона ${item.zoneId} (${item.file})<br>`;
+    });
+
+    el.innerHTML = html;
+}
 let preloadQueue = [];
 let preloadInProgress = false;
 
-function queuePreload(files) {
+function queuePreload(files, zoneId = null) {
+
+    // DEBUG: фиксируем, что именно подгружается
+    if (zoneId !== null) {
+        files.forEach(f => {
+            preloadDebugList.push({
+                zoneId: zoneId,
+                file: f
+            });
+        });
+        updateDebugStatus();
+    }
+
     preloadQueue.push(...files);
     runPreloadQueue();
 }
@@ -277,7 +308,7 @@ if (next && !next.preloadTriggered) {
         files.push(...Object.values(videoTimings[key]));
     }
 
-    queuePreload(files);
+   queuePreload(files, next.id);
 }
                    if (z.type === "audio") {
                        visitedAudioZones++;
@@ -1230,6 +1261,7 @@ function showFullscreenMedia(src, type) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
