@@ -1,7 +1,74 @@
                /* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
-            
+            /* === SMART PRELOAD QUEUE (AUDIO + PHOTO/VIDEO TIMINGS) === */
+let preloadQueue = [];
+let preloadInProgress = false;
+
+function queuePreload(files) {
+    preloadQueue.push(...files);
+    runPreloadQueue();
+}
+
+async function runPreloadQueue() {
+    if (preloadInProgress) return;
+    preloadInProgress = true;
+
+    // показываем мини‑плашку
+    showMiniStatus("Загрузка…");
+
+    while (preloadQueue.length > 0) {
+        const src = preloadQueue.shift();
+        await preloadSingle(src);
+    }
+
+    // скрываем мини‑плашку
+    hideMiniStatus();
+
+    preloadInProgress = false;
+}
+
+function preloadSingle(src) {
+    return new Promise(resolve => {
+        if (!src) return resolve();
+
+        // AUDIO
+        if (src.endsWith(".mp3") || src.endsWith(".m4a")) {
+            const a = new Audio();
+            a.src = src;
+            a.preload = "auto";
+            a.oncanplaythrough = resolve;
+            a.onerror = resolve;
+            return;
+        }
+
+        // IMAGES
+        if (src.match(/\.(jpg|jpeg|png)$/i)) {
+            const img = new Image();
+            img.src = src;
+            img.onload = resolve;
+            img.onerror = resolve;
+            return;
+        }
+
+        // VIDEO — НЕ грузим заранее
+        resolve();
+    });
+}
+
+/* === MINI STATUS BAR (можно скрыть позже) === */
+function showMiniStatus(text) {
+    const el = document.getElementById("miniPreloadStatus");
+    if (!el) return;
+    el.textContent = text;
+    el.style.display = "block";
+}
+
+function hideMiniStatus() {
+    const el = document.getElementById("miniPreloadStatus");
+    if (!el) return;
+    el.style.display = "none";
+}
                // TOUR START FLAG
                let tourStarted = false;
                let map;
@@ -191,7 +258,27 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
                        // СТАРАЯ НАДЁЖНАЯ ЛОГИКА: один раз при входе
                        if (!z.visited && dist <= z.radius) {
                    z.visited = true;
-               
+               /* === SMART PRELOAD NEXT ZONE === */
+const audioZonesList = zones.filter(a => a.type === "audio");
+const idx = audioZonesList.findIndex(a => a.id === z.id);
+const next = audioZonesList[idx + 1];
+
+if (next && !next.preloadTriggered) {
+    next.preloadTriggered = true;
+
+    let files = [];
+    if (next.audio) files.push(next.audio);
+
+    const key = next.audio;
+    if (photoTimings[key]) {
+        files.push(...Object.values(photoTimings[key]));
+    }
+    if (videoTimings[key]) {
+        files.push(...Object.values(videoTimings[key]));
+    }
+
+    queuePreload(files);
+}
                    if (z.type === "audio") {
                        visitedAudioZones++;
                        updateProgress();
@@ -677,16 +764,25 @@ for (let i = 0; i < fullRoute.length - 1; i++) {
 
 /* === 4) Симуляция — идём по всем точкам подряд === */
 simulationPoints = allCoords.map(c => [c[1], c[0]]);
-/* === PRELOAD ALL MEDIA BEFORE SHOWING UI === */
-const mediaIndex = await fetch("media-index.json").then(r => r.json());
+/* === SMART PRELOAD: FIRST 3 AUDIO ZONES === */
+const audioZones = zones.filter(z => z.type === "audio");
 
-await preloadAllMedia(mediaIndex, progress => {
-    document.getElementById("preloadBar").style.width = (progress * 100) + "%";
-    document.getElementById("preloadPercent").textContent =
-        Math.round(progress * 100) + "%";
+const firstThree = audioZones.slice(0, 3);
+let initialFiles = [];
+
+firstThree.forEach(z => {
+    if (z.audio) initialFiles.push(z.audio);
+
+    const key = z.audio;
+    if (photoTimings[key]) {
+        initialFiles.push(...Object.values(photoTimings[key]));
+    }
+    if (videoTimings[key]) {
+        initialFiles.push(...Object.values(videoTimings[key]));
+    }
 });
 
-document.getElementById("preloadOverlay").style.display = "none";
+queuePreload(initialFiles);
                      
 /* ========================================================
    ===================== ROUTE SOURCES =====================
@@ -1127,48 +1223,8 @@ function showFullscreenMedia(src, type) {
 }
 
 document.addEventListener("DOMContentLoaded", initMap);
-/* ========================================================
-   =============== UNIVERSAL MEDIA PRELOADER ===============
-   ======================================================== */
 
-async function preloadAllMedia(mediaIndex, onProgress) {
-    const audioFiles = mediaIndex.audio || [];
-    const imageFiles = mediaIndex.photos || [];
-    const videoFiles = mediaIndex.videos || [];
-
-    const total = audioFiles.length + imageFiles.length + videoFiles.length;
-    let loaded = 0;
-
-    function tick() {
-        loaded++;
-        if (onProgress) onProgress(loaded / total);
-    }
-
-    const audioPromises = audioFiles.map(src => new Promise(resolve => {
-        const a = new Audio();
-        a.src = src;
-        a.preload = "auto";
-        a.oncanplaythrough = () => { tick(); resolve(); };
-        a.onerror = () => { tick(); resolve(); };
-    }));
-
-    const imagePromises = imageFiles.map(src => new Promise(resolve => {
-        const img = new Image();
-        img.src = src;
-        img.onload = () => { tick(); resolve(); };
-        img.onerror = () => { tick(); resolve(); };
-    }));
-
-    const videoPromises = videoFiles.map(src => new Promise(resolve => {
-        const v = document.createElement("video");
-        v.src = src;
-        v.preload = "auto";
-        v.onloadeddata = () => { tick(); resolve(); };
-        v.onerror = () => { tick(); resolve(); };
-    }));
-
-    await Promise.all([...audioPromises, ...imagePromises, ...videoPromises]);
-}
 /* ==================== END OF APP.JS ====================== */
+
 
 
