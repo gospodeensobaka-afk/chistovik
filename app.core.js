@@ -392,9 +392,15 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
         globalAudio.pause();
         globalAudio.removeAttribute("src");
         globalAudio.load();
-document.body.addEventListener("click", () => {
-    globalAudio.play().catch(() => {});
-}, { once: true });
+// === ГЛАВНЫЙ ФИКС АВТОПЛЕЯ ДЛЯ СИМУЛЯЦИИ ===
+if (!window.__simUserGestureBound) {
+    window.__simUserGestureBound = true;
+
+    document.body.addEventListener("click", () => {
+        // После первого клика браузер разрешит любые play()
+        globalAudio.play().catch(() => {});
+    }, { once: true });
+}
         globalAudio.src = z.audio;
         globalAudio.currentTime = 0;
 
@@ -1114,3 +1120,4 @@ function showFullscreenMedia(src, type) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
