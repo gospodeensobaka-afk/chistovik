@@ -677,7 +677,17 @@ for (let i = 0; i < fullRoute.length - 1; i++) {
 
 /* === 4) Симуляция — идём по всем точкам подряд === */
 simulationPoints = allCoords.map(c => [c[1], c[0]]);
+/* === PRELOAD ALL MEDIA BEFORE SHOWING UI === */
+const mediaIndex = await fetch("media-index.json").then(r => r.json());
 
+await preloadAllMedia(mediaIndex, progress => {
+    document.getElementById("preloadBar").style.width = (progress * 100) + "%";
+    document.getElementById("preloadPercent").textContent =
+        Math.round(progress * 100) + "%";
+});
+
+document.getElementById("preloadOverlay").style.display = "none";
+                     
 /* ========================================================
    ===================== ROUTE SOURCES =====================
    ======================================================== */
@@ -1117,6 +1127,48 @@ function showFullscreenMedia(src, type) {
 }
 
 document.addEventListener("DOMContentLoaded", initMap);
+/* ========================================================
+   =============== UNIVERSAL MEDIA PRELOADER ===============
+   ======================================================== */
 
+async function preloadAllMedia(mediaIndex, onProgress) {
+    const audioFiles = mediaIndex.audio || [];
+    const imageFiles = mediaIndex.photos || [];
+    const videoFiles = mediaIndex.videos || [];
+
+    const total = audioFiles.length + imageFiles.length + videoFiles.length;
+    let loaded = 0;
+
+    function tick() {
+        loaded++;
+        if (onProgress) onProgress(loaded / total);
+    }
+
+    const audioPromises = audioFiles.map(src => new Promise(resolve => {
+        const a = new Audio();
+        a.src = src;
+        a.preload = "auto";
+        a.oncanplaythrough = () => { tick(); resolve(); };
+        a.onerror = () => { tick(); resolve(); };
+    }));
+
+    const imagePromises = imageFiles.map(src => new Promise(resolve => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => { tick(); resolve(); };
+        img.onerror = () => { tick(); resolve(); };
+    }));
+
+    const videoPromises = videoFiles.map(src => new Promise(resolve => {
+        const v = document.createElement("video");
+        v.src = src;
+        v.preload = "auto";
+        v.onloadeddata = () => { tick(); resolve(); };
+        v.onerror = () => { tick(); resolve(); };
+    }));
+
+    await Promise.all([...audioPromises, ...imagePromises, ...videoPromises]);
+}
 /* ==================== END OF APP.JS ====================== */
+
 
