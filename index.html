@@ -45,17 +45,21 @@
 <button id="enableCompass" class="control-btn ui-editable">Включить компас</button>
 <button id="notReadyBtn" class="control-btn ui-editable">Не успеваю</button>
 <button id="uiEditorToggle" class="control-btn ui-editable">UI</button>
-<div id="preloadOverlay">
-  <div id="preloadBox">
-    <div id="preloadTitle">Загрузка экскурсии…</div>
-    <div id="preloadBarBg">
-      <div id="preloadBar"></div>
-    </div>
-    <div id="preloadPercent">0%</div>
-  </div>
-</div>    
+<div id="miniPreloadStatus" style="
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    z-index: 999999;
+    display: none;
+">Загрузка…</div>  
 </body>
 </html>
+
 
 
 
