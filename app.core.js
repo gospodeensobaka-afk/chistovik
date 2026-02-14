@@ -840,7 +840,25 @@ map.addLayer({
     audio: p.audio || null,
     image: p.image || null
 });
-               
+ /* === SMART PRELOAD: FIRST 3 AUDIO ZONES === */
+const audioZones = zones.filter(z => z.type === "audio");
+
+const firstThree = audioZones.slice(0, 3);
+let initialFiles = [];
+
+firstThree.forEach(z => {
+    if (z.audio) initialFiles.push(z.audio);
+
+    const key = z.audio;
+    if (photoTimings[key]) {
+        initialFiles.push(...Object.values(photoTimings[key]));
+    }
+    if (videoTimings[key]) {
+        initialFiles.push(...Object.values(videoTimings[key]));
+    }
+});
+
+queuePreload(initialFiles);              
                    if (p.type === "audio") totalAudioZones++;
                
                    if (p.type === "audio") {
@@ -1225,6 +1243,7 @@ function showFullscreenMedia(src, type) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
