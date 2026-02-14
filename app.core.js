@@ -1,4 +1,4 @@
-  /* ========================================================
+               /* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             
@@ -385,30 +385,31 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
     updateProgress();
     updateCircleColors();
 
-    if (!z.audio) return;
+    if (z.audio) {
+        if (!audioEnabled) audioEnabled = true;
 
-    // Полный сброс аудио
-    globalAudio.pause();
-    globalAudio.removeAttribute("src");
-    globalAudio.load();
+        // Полный сброс аудио, чтобы браузер считал это новым запуском
+        globalAudio.pause();
+        globalAudio.removeAttribute("src");
+        globalAudio.load();
+document.body.addEventListener("click", () => {
+    globalAudio.play().catch(() => {});
+}, { once: true });
+        globalAudio.src = z.audio;
+        globalAudio.currentTime = 0;
 
-    globalAudio.src = z.audio;
-    globalAudio.currentTime = 0;
+        // Сбрасываем старый таймер
+        globalAudio.ontimeupdate = null;
 
-    // Сбрасываем старый таймер
-    globalAudio.ontimeupdate = null;
+        // ВАЖНО: тайминги ДО play()
+        setupPhotoTimingsForAudio(globalAudio, id);
 
-    // Тайминги ДО play()
-    setupPhotoTimingsForAudio(globalAudio, id);
+        // Запуск аудио
+        globalAudio.play().catch(() => {});
 
-    audioPlaying = true;
-
-    globalAudio.play().catch(() => {
-        audioPlaying = false;
-        console.warn("Не удалось запустить аудио в симуляции для зоны", id);
-    });
-
-    globalAudio.onended = () => audioPlaying = false;
+        audioPlaying = true;
+        globalAudio.onended = () => audioPlaying = false;
+    }
 
     console.log("Simulated audio zone:", id);
 }
@@ -567,6 +568,7 @@ if (audioPlaying) {
                    simulationIndex++;
                    setTimeout(simulateNextStep, 1200);
                }
+               
                /* ========================================================
                   ================== START SIMULATION =====================
                   ======================================================== */
@@ -612,14 +614,6 @@ if (audioPlaying) {
                      globalAudio.muted = false;
 globalAudio.autoplay = true;
                      globalAudio.load();
-                     // === UNLOCK AUDIO CONTEXT FOR SIMULATION ===
-// Один раз разрешаем браузеру воспроизводить аудио
-document.body.addEventListener("click", () => {
-    if (!audioEnabled) {
-        audioEnabled = true;
-        globalAudio.play().catch(() => {});
-    }
-}, { once: true });
                       map.getCanvas().addEventListener("pointerdown", () => {
                    userTouching = true;
                });
