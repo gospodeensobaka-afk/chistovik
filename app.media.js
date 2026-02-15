@@ -229,3 +229,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     galleryOverlay.classList.remove("hidden");
 };
+});
+
