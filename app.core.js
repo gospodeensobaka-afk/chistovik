@@ -224,6 +224,7 @@ function hideMiniStatus() {
                   ======================================================== */
                
             function playZoneAudio(src, id) {
+              window.__currentZoneId = id;
     if (!audioEnabled) audioEnabled = true;
 
     globalAudio.src = src;
@@ -1077,6 +1078,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
