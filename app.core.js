@@ -481,6 +481,7 @@ if (next && !next.preloadTriggered) {
     updateCircleColors();
 
     if (z.audio) {
+      window.__currentZoneId = id;
         if (!audioEnabled) audioEnabled = true;
 
         // Полный сброс аудио, чтобы браузер считал это новым запуском
@@ -1067,6 +1068,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
