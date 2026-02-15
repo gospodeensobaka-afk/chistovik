@@ -4,9 +4,9 @@
 
 /* === PHOTO & VIDEO TIMINGS === */
 const photoTimings = {
-    "audio/3.mp3": {
-        3: "images/zone3_photo.jpg"
-    },
+"audio/1-2005.m4a": {
+    46: "images/president.jpeg"
+},
     "audio/5.mp3": {
         3: "images/zone5_photo.jpg"
     }
@@ -207,4 +207,5 @@ document.addEventListener("DOMContentLoaded", () => {
             galleryOverlay.classList.add("hidden");
         }
     };
+
 });
