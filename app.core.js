@@ -275,12 +275,7 @@ if (next && !next.preloadTriggered) {
     if (next.audio) files.push(next.audio);
 
     const key = next.audio;
-    if (photoTimings[key]) {
-        files.push(...Object.values(photoTimings[key]));
-    }
-    if (videoTimings[key]) {
-        files.push(...Object.values(videoTimings[key]));
-    }
+    
 
    queuePreload(files, next.id);
 }
@@ -1072,6 +1067,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
