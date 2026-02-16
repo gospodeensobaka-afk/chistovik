@@ -859,51 +859,43 @@ points.forEach(p => {
             .addTo(map);
     }
 
-    /* === PNG markers === */
-    if (p.type === "square") {
-        const el = document.createElement("div");
-        el.style.width = "40px";
-        el.style.height = "40px";
-        el.style.display = "flex";
-        el.style.alignItems = "center";
-        el.style.justifyContent = "center";
+  /* ========================================================
+   ======================= PNG MARKERS =====================
+   ======================================================== */
 
-        const img = document.createElement("img");
-        img.src = p.icon;
-        img.style.width = "32px";
-        img.style.height = "32px";
+zones
+  .filter(p => p.type === "square")
+  .forEach(p => {
+      const el = document.createElement("div");
+      el.style.width = "40px";
+      el.style.height = "40px";
+      el.style.display = "flex";
+      el.style.alignItems = "center";
+      el.style.justifyContent = "center";
+      el.style.transform = "translate(-50%, -50%)";
+      el.style.pointerEvents = "none"; // чтобы не мешали кликам
 
-        img.onload = () => { iconsPngStatus = "ok"; };
-        img.onerror = () => {
-            iconsPngStatus = "error";
-            debugUpdate("none", null, "PNG_LOAD_FAIL");
-        };
+      const img = document.createElement("img");
+      img.src = p.icon;
+      img.style.width = "32px";
+      img.style.height = "32px";
+      img.style.objectFit = "contain";
 
-        el.appendChild(img);
+      img.onload = () => { iconsPngStatus = "ok"; };
+      img.onerror = () => {
+          iconsPngStatus = "error";
+          debugUpdate("none", null, "PNG_LOAD_FAIL");
+      };
 
-        new maplibregl.Marker({ element: el })
-            .setLngLat([p.lng, p.lat])
-            .addTo(map);
-    }
-});
+      el.appendChild(img);
 
-/* === 2. СТАРТОВАЯ ПОДГРУЗКА (ТОЛЬКО ЗДЕСЬ!) === */
-const audioZones = zones.filter(z => z.type === "audio");
-
-const firstThree = audioZones.slice(0, 3);
-let initialFiles = [];
-
-firstThree.forEach(z => {
-    if (z.audio) initialFiles.push(z.audio);
-
-    
-});
-
-queuePreload(initialFiles);
-
-/* === 3. ОБНОВЛЯЕМ ПРОГРЕСС === */
-updateProgress();
-
+      new maplibregl.Marker({
+          element: el,
+          anchor: "center"
+      })
+      .setLngLat([p.lng, p.lat])
+      .addTo(map);
+  });
 /* ========================================================
    ==================== AUDIO CIRCLES ======================
    ======================================================== */
@@ -1092,6 +1084,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
