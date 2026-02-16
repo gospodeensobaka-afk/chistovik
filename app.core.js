@@ -752,18 +752,19 @@ allCoords.forEach(c => bounds.extend([c[0], c[1]]));
 
 map.fitBounds(bounds, {
     padding: 50,
-    duration: 0
+    duration: 0 // мгновенно, без анимации
 });
 
-/* === 6) Плавный зум ко второй точке === */
+/* === 6) Через 4 секунды — плавный зум ко второй точке === */
 setTimeout(() => {
-    const start = allCoords[1]; // [lng, lat]
+    const start = allCoords[1]; // точка №2
+
     map.easeTo({
         center: [start[0], start[1]],
-        zoom: 17.033856502041463,
+        zoom: 16.428207749768852,
         duration: 1500
     });
-}, 1200);
+}, 4000);
                      
 /* ========================================================
    ===================== ROUTE SOURCES =====================
@@ -1084,6 +1085,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
