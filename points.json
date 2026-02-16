@@ -7,7 +7,6 @@
     "radius": 25,
     "audio": "audio/start.mp3"
   },
-
   {
     "id": 1,
     "type": "audio",
@@ -40,7 +39,6 @@
     "radius": 25,
     "audio": "audio/4-Chasha+pravila.m4a"
   },
-
   {
     "id": 41,
     "type": "audio",
@@ -49,7 +47,6 @@
     "radius": 25,
     "audio": "audio/4-Chasha+pravila.m4a"
   },
-
   {
     "id": 5,
     "type": "audio",
@@ -378,6 +375,27 @@
     "lat": 55.793398,
     "lng": 49.113957,
     "icon": "icons/i1.png"
+  },
+
+  {
+    "id": 201,
+    "type": "square",
+    "lat": 55.787232,
+    "lng": 49.121880,
+    "icon": "icons/start.png"
+  },
+  {
+    "id": 202,
+    "type": "square",
+    "lat": 55.784975,
+    "lng": 49.118708,
+    "icon": "icons/here.png"
+  },
+  {
+    "id": 203,
+    "type": "square",
+    "lat": 55.796388,
+    "lng": 49.108829,
+    "icon": "icons/finish.png"
   }
 ]
-
