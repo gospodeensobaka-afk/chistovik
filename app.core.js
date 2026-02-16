@@ -776,33 +776,6 @@ setTimeout(() => {
    ===================== PNG START / ARROW / FINISH =======
    ======================================================== */
 
-// Универсальная функция для PNG-иконок
-function addPngMarker(lng, lat, iconUrl, angle) {
-    const el = document.createElement("div");
-    el.style.width = "40px";
-    el.style.height = "40px";
-    el.style.display = "flex";
-    el.style.alignItems = "center";
-    el.style.justifyContent = "center";
-
-    const img = document.createElement("img");
-    img.src = iconUrl;
-    img.style.width = "32px";
-    img.style.height = "32px";
-    img.style.transformOrigin = "center center";
-    img.style.transform = `rotate(${angle}deg)`;
-
-    el.appendChild(img);
-
-    // ВАЖНО: только эти 3 маркера статичны
-    new maplibregl.Marker({
-        element: el,
-        rotationAlignment: "viewport"
-    })
-    .setLngLat([lng, lat])
-    .addTo(map);
-}
-
 // === 1. УГОЛ СТАРТА (1 → 2 точка)
 const startCoord = fullRoute[0].coord;      // [lng, lat]
 const secondCoord = fullRoute[1].coord;
@@ -821,15 +794,7 @@ const finishAngle = calculateAngle(
     [lastCoord[1], lastCoord[0]]
 );
 
-// === 3. СТАВИМ СТАРТ
-addPngMarker(
-    startCoord[0],
-    startCoord[1],
-    "icons/start.png",
-    startAngle
-);
-
-// === 4. СТРЕЛКА: проецируем твою желаемую точку на маршрут
+// === 3. СТРЕЛКА: проецируем твою желаемую точку на маршрут
 const desiredArrowPoint = [55.786833, 49.121359]; // lat, lng
 
 let nearestProj = null;
@@ -847,21 +812,75 @@ for (let i = 0; i < fullRoute.length - 1; i++) {
     }
 }
 
-// === 5. СТАВИМ СТРЕЛКУ (смотрит в сторону 2-й точки)
-addPngMarker(
-    nearestProj[0],
-    nearestProj[1],
-    "icons/strelka.png",
-    startAngle
-);
+// === 4. ГРУЗИМ PNG В КАРТУ
+map.loadImage("icons/start.png", (err, img) => {
+    if (!err) map.addImage("start-icon", img);
+});
 
-// === 6. СТАВИМ ФИНИШ
-addPngMarker(
-    lastCoord[0],
-    lastCoord[1],
-    "icons/finish.png",
-    finishAngle
-);
+map.loadImage("icons/strelka.png", (err, img) => {
+    if (!err) map.addImage("arrow-icon", img);
+});
+
+map.loadImage("icons/finish.png", (err, img) => {
+    if (!err) map.addImage("finish-icon", img);
+});
+
+// === 5. СТАРТ (СТАТИЧНЫЙ)
+map.addLayer({
+    id: "start-marker",
+    type: "symbol",
+    source: {
+        type: "geojson",
+        data: {
+            type: "Feature",
+            geometry: { type: "Point", coordinates: startCoord }
+        }
+    },
+    layout: {
+        "icon-image": "start-icon",
+        "icon-size": 0.7,
+        "icon-rotate": startAngle,
+        "icon-rotation-alignment": "viewport"
+    }
+});
+
+// === 6. СТРЕЛКА (СТАТИЧНАЯ)
+map.addLayer({
+    id: "arrow-marker",
+    type: "symbol",
+    source: {
+        type: "geojson",
+        data: {
+            type: "Feature",
+            geometry: { type: "Point", coordinates: nearestProj }
+        }
+    },
+    layout: {
+        "icon-image": "arrow-icon",
+        "icon-size": 0.7,
+        "icon-rotate": startAngle,
+        "icon-rotation-alignment": "viewport"
+    }
+});
+
+// === 7. ФИНИШ (СТАТИЧНЫЙ)
+map.addLayer({
+    id: "finish-marker",
+    type: "symbol",
+    source: {
+        type: "geojson",
+        data: {
+            type: "Feature",
+            geometry: { type: "Point", coordinates: lastCoord }
+        }
+    },
+    layout: {
+        "icon-image": "finish-icon",
+        "icon-size": 0.7,
+        "icon-rotate": finishAngle,
+        "icon-rotation-alignment": "viewport"
+    }
+});
 /* ========================================================
    ===================== ROUTE SOURCES =====================
    ======================================================== */
@@ -1181,5 +1200,6 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
