@@ -773,128 +773,117 @@ setTimeout(() => {
 });
 }, 4000);
 /* ========================================================
-   ===================== PNG START / ARROW / FINISH =======
+   ========== PNG START / ARROW / FINISH (FIXED) ==========
    ======================================================== */
 
-// === 1. УГОЛ СТАРТА (1 → 2 точка)
-const startCoord = fullRoute[0].coord;      // [lng, lat]
-const secondCoord = fullRoute[1].coord;
+map.on("load", () => {
 
-const startAngle = calculateAngle(
-    [startCoord[1], startCoord[0]],
-    [secondCoord[1], secondCoord[0]]
-);
+    Promise.all([
+        new Promise(res => map.loadImage("icons/start.png",  (_, img) => { map.addImage("start-icon", img); res(); })),
+        new Promise(res => map.loadImage("icons/strelka.png", (_, img) => { map.addImage("arrow-icon", img); res(); })),
+        new Promise(res => map.loadImage("icons/finish.png", (_, img) => { map.addImage("finish-icon", img); res(); }))
+    ]).then(() => {
 
-// === 2. УГОЛ ФИНИША (предпоследняя → последняя)
-const lastCoord = fullRoute[fullRoute.length - 1].coord;
-const prevCoord = fullRoute[fullRoute.length - 2].coord;
+        // === 1. УГОЛЫ
+        const startCoord = fullRoute[0].coord;
+        const secondCoord = fullRoute[1].coord;
 
-const finishAngle = calculateAngle(
-    [prevCoord[1], prevCoord[0]],
-    [lastCoord[1], lastCoord[0]]
-);
+        const startAngle = calculateAngle(
+            [startCoord[1], startCoord[0]],
+            [secondCoord[1], secondCoord[0]]
+        );
 
-// === 3. СТРЕЛКА: проецируем твою желаемую точку на маршрут
-const desiredArrowPoint = [55.786833, 49.121359]; // lat, lng
+        const lastCoord = fullRoute[fullRoute.length - 1].coord;
+        const prevCoord = fullRoute[fullRoute.length - 2].coord;
 
-let nearestProj = null;
-let nearestDist = Infinity;
+        const finishAngle = calculateAngle(
+            [prevCoord[1], prevCoord[0]],
+            [lastCoord[1], lastCoord[0]]
+        );
 
-for (let i = 0; i < fullRoute.length - 1; i++) {
-    const a = fullRoute[i].coord;     // [lng, lat]
-    const b = fullRoute[i+1].coord;
+        // === 2. ПРОЕКЦИЯ СТРЕЛКИ
+        const desiredArrowPoint = [55.786833, 49.121359];
 
-    const info = pointToSegmentInfo(desiredArrowPoint, a, b);
+        let nearestProj = null;
+        let nearestDist = Infinity;
 
-    if (info.dist < nearestDist) {
-        nearestDist = info.dist;
-        nearestProj = info.projLngLat; // ← точка на маршруте [lng, lat]
-    }
-}
+        for (let i = 0; i < fullRoute.length - 1; i++) {
+            const a = fullRoute[i].coord;
+            const b = fullRoute[i+1].coord;
 
-// === 4. ГРУЗИМ PNG В КАРТУ (один раз)
-map.loadImage("icons/start.png", (err, img) => {
-    if (!err && !map.hasImage("start-icon")) {
-        map.addImage("start-icon", img);
-    }
-});
+            const info = pointToSegmentInfo(desiredArrowPoint, a, b);
 
-map.loadImage("icons/strelka.png", (err, img) => {
-    if (!err && !map.hasImage("arrow-icon")) {
-        map.addImage("arrow-icon", img);
-    }
-});
-
-map.loadImage("icons/finish.png", (err, img) => {
-    if (!err && !map.hasImage("finish-icon")) {
-        map.addImage("finish-icon", img);
-    }
-});
-
-// === 5. СТАРТ (СТАТИЧНЫЙ, МЕЛКИЙ, НЕ ПРОПАДАЕТ)
-map.addLayer({
-    id: "start-marker",
-    type: "symbol",
-    source: {
-        type: "geojson",
-        data: {
-            type: "Feature",
-            geometry: { type: "Point", coordinates: startCoord }
+            if (info.dist < nearestDist) {
+                nearestDist = info.dist;
+                nearestProj = info.projLngLat;
+            }
         }
-    },
-    layout: {
-        "icon-image": "start-icon",
-        "icon-size": 0.12,                    // уменьшили
-        "icon-rotate": startAngle,
-        "icon-rotation-alignment": "viewport",
-        "icon-pitch-alignment": "viewport",
-        "icon-anchor": "center",
-        "icon-allow-overlap": true
-    }
-});
 
-// === 6. СТРЕЛКА (СТАТИЧНАЯ, МЕЛКАЯ)
-map.addLayer({
-    id: "arrow-marker",
-    type: "symbol",
-    source: {
-        type: "geojson",
-        data: {
-            type: "Feature",
-            geometry: { type: "Point", coordinates: nearestProj }
-        }
-    },
-    layout: {
-        "icon-image": "arrow-icon",
-        "icon-size": 0.12,
-        "icon-rotate": startAngle,
-        "icon-rotation-alignment": "viewport",
-        "icon-pitch-alignment": "viewport",
-        "icon-anchor": "center",
-        "icon-allow-overlap": true
-    }
-});
+        // === 3. СТАРТ
+        map.addLayer({
+            id: "start-marker",
+            type: "symbol",
+            source: {
+                type: "geojson",
+                data: {
+                    type: "Feature",
+                    geometry: { type: "Point", coordinates: startCoord }
+                }
+            },
+            layout: {
+                "icon-image": "start-icon",
+                "icon-size": 0.12,
+                "icon-rotate": startAngle,
+                "icon-rotation-alignment": "viewport",
+                "icon-pitch-alignment": "viewport",
+                "icon-allow-overlap": true
+            }
+        });
 
-// === 7. ФИНИШ (СТАТИЧНЫЙ, МЕЛКИЙ)
-map.addLayer({
-    id: "finish-marker",
-    type: "symbol",
-    source: {
-        type: "geojson",
-        data: {
-            type: "Feature",
-            geometry: { type: "Point", coordinates: lastCoord }
-        }
-    },
-    layout: {
-        "icon-image": "finish-icon",
-        "icon-size": 0.12,
-        "icon-rotate": finishAngle,
-        "icon-rotation-alignment": "viewport",
-        "icon-pitch-alignment": "viewport",
-        "icon-anchor": "center",
-        "icon-allow-overlap": true
-    }
+        // === 4. СТРЕЛКА
+        map.addLayer({
+            id: "arrow-marker",
+            type: "symbol",
+            source: {
+                type: "geojson",
+                data: {
+                    type: "Feature",
+                    geometry: { type: "Point", coordinates: nearestProj }
+                }
+            },
+            layout: {
+                "icon-image": "arrow-icon",
+                "icon-size": 0.12,
+                "icon-rotate": startAngle,
+                "icon-rotation-alignment": "viewport",
+                "icon-pitch-alignment": "viewport",
+                "icon-allow-overlap": true
+            }
+        });
+
+        // === 5. ФИНИШ
+        map.addLayer({
+            id: "finish-marker",
+            type: "symbol",
+            source: {
+                type: "geojson",
+                data: {
+                    type: "Feature",
+                    geometry: { type: "Point", coordinates: lastCoord }
+                }
+            },
+            layout: {
+                "icon-image": "finish-icon",
+                "icon-size": 0.12,
+                "icon-rotate": finishAngle,
+                "icon-rotation-alignment": "viewport",
+                "icon-pitch-alignment": "viewport",
+                "icon-allow-overlap": true
+            }
+        });
+
+    });
+
 });
 /* ========================================================
    ===================== ROUTE SOURCES =====================
@@ -1215,6 +1204,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
