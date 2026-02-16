@@ -40,36 +40,40 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
 
     if (!pTimings && !vTimings) return;
 
-    const shownPhoto = {};
-    const shownVideo = {};
+   const shownPhoto = {};
+const shownVideo = {};
+let lastTime = 0;
 
-    audio.ontimeupdate = () => {
-        const current = audio.currentTime;
+audio.ontimeupdate = () => {
+    const current = audio.currentTime;
 
-        // === PHOTOS ===
-        if (pTimings) {
-            for (const timeStr in pTimings) {
-                const target = parseFloat(timeStr);
+    // === PHOTOS ===
+    if (pTimings) {
+        for (const timeStr in pTimings) {
+            const target = parseFloat(timeStr);
 
-                if (!shownPhoto[target] && current >= target && current < target + 0.15) {
-                    shownPhoto[target] = true;
-                    showFullscreenMedia(pTimings[timeStr], "photo");
-                }
+            // ловим момент, когда мы ПРОШЛИ через target
+            if (!shownPhoto[target] && lastTime < target && current >= target) {
+                shownPhoto[target] = true;
+                showFullscreenMedia(pTimings[timeStr], "photo");
             }
         }
+    }
 
-        // === VIDEOS ===
-        if (vTimings) {
-            for (const timeStr in vTimings) {
-                const target = parseFloat(timeStr);
+    // === VIDEOS ===
+    if (vTimings) {
+        for (const timeStr in vTimings) {
+            const target = parseFloat(timeStr);
 
-                if (!shownVideo[target] && current >= target && current < target + 0.15) {
-                    shownVideo[target] = true;
-                    showFullscreenMedia(vTimings[timeStr], "video");
-                }
+            if (!shownVideo[target] && lastTime < target && current >= target) {
+                shownVideo[target] = true;
+                showFullscreenMedia(vTimings[timeStr], "video");
             }
         }
-    };
+    }
+
+    lastTime = current;
+};
 }
 
 /* ========================================================
@@ -242,3 +246,4 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
