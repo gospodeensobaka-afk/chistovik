@@ -794,9 +794,13 @@ function addPngMarker(lng, lat, iconUrl, angle) {
 
     el.appendChild(img);
 
-    new maplibregl.Marker({ element: el })
-        .setLngLat([lng, lat])
-        .addTo(map);
+    // ВАЖНО: только эти 3 маркера статичны
+    new maplibregl.Marker({
+        element: el,
+        rotationAlignment: "viewport"
+    })
+    .setLngLat([lng, lat])
+    .addTo(map);
 }
 
 // === 1. УГОЛ СТАРТА (1 → 2 точка)
@@ -857,7 +861,7 @@ addPngMarker(
     lastCoord[1],
     "icons/finish.png",
     finishAngle
-);                     
+);
 /* ========================================================
    ===================== ROUTE SOURCES =====================
    ======================================================== */
@@ -1177,4 +1181,5 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
