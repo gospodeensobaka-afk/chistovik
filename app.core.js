@@ -672,11 +672,15 @@ if (audioPlaying) {
                async function initMap() {
                    
                
-                   map = new maplibregl.Map({
-                       container: "map",
-                       style: "style.json?v=2",
-                      
-                   });
+                  map = new maplibregl.Map({
+    container: "map",
+    style: "style.json?v=2",
+
+    // Временный центр, чтобы не было карты мира
+    center: [49.12169747999815, 55.7872919881855],
+    zoom: 12,
+    bearing: -141.20322070183164
+});
                
                    const mapContainer = document.getElementById("map");
                    if (mapContainer && getComputedStyle(mapContainer).position === "static") {
@@ -758,10 +762,10 @@ map.fitBounds(bounds, {
 /* === 6) Через 4 секунды — плавный зум к нужной точке === */
 setTimeout(() => {
     map.easeTo({
-        center: [49.12169747999815, 55.7872919881855], // твой точный центр
-        zoom: 16.125383373632552,                      // твой точный зум
-        duration: 1500
-    });
+    center: [49.12169747999815, 55.7872919881855],
+    zoom: 16.125383373632552,
+    duration: 1500
+});
 }, 4000);
                      
 /* ========================================================
@@ -1083,6 +1087,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
