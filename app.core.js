@@ -752,16 +752,14 @@ allCoords.forEach(c => bounds.extend([c[0], c[1]]));
 
 map.fitBounds(bounds, {
     padding: 50,
-    duration: 0 // мгновенно, без анимации
+    duration: 0
 });
 
-/* === 6) Через 4 секунды — плавный зум ко второй точке === */
+/* === 6) Через 4 секунды — плавный зум к нужной точке === */
 setTimeout(() => {
-    const start = allCoords[1]; // точка №2
-
     map.easeTo({
-        center: [start[0], start[1]],
-        zoom: 16.428207749768852,
+        center: [49.12169747999815, 55.7872919881855], // твой точный центр
+        zoom: 16.125383373632552,                      // твой точный зум
         duration: 1500
     });
 }, 4000);
@@ -1085,6 +1083,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
