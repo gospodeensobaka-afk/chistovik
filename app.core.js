@@ -810,7 +810,7 @@ map.addLayer({
     layout: { "line-join": "round", "line-cap": "round" },
     paint: { "line-width": 4, "line-color": "#333333" }
 });
-  /* ========================================================
+ /* ========================================================
    ====================== AUDIO ZONES ======================
    ======================================================== */
 
@@ -828,7 +828,8 @@ points.forEach(p => {
         entered: false,
         type: p.type,
         audio: p.audio || null,
-        image: p.image || null
+        image: p.image || null,
+        icon: p.icon || null   // ← ★ ФИКС: теперь icon попадает в zones
     });
 
     if (p.type === "audio") totalAudioZones++;
@@ -859,7 +860,8 @@ points.forEach(p => {
             .addTo(map);
     }
 });
-  /* ========================================================
+
+/* ========================================================
    ======================= PNG MARKERS =====================
    ======================================================== */
 
@@ -876,7 +878,7 @@ zones
       el.style.pointerEvents = "none"; // чтобы не мешали кликам
 
       const img = document.createElement("img");
-      img.src = p.icon;
+      img.src = p.icon;   // ← теперь НЕ undefined
       img.style.width = "32px";
       img.style.height = "32px";
       img.style.objectFit = "contain";
@@ -1084,6 +1086,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
