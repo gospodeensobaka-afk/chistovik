@@ -18,8 +18,14 @@ const photoTimings = {
     }
 };
 
+const videoTimings = {
+    "audio/3.mp3": {
+        3: "videos/zone3_video.mp4"
+    }
+};
+
 /* === MISSED MEDIA STORAGE === */
-let missedMedia = {}; // { type: "photo"|"video", src: "..." }
+let missedMedia = {}; // { zoneId: [ {type, src}, ... ] }
 
 /* ========================================================
    ========== TIMINGS → FULLSCREEN MEDIA HANDLER ===========
@@ -38,34 +44,34 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
     const shownVideo = {};
 
     audio.ontimeupdate = () => {
-    const current = audio.currentTime;
+        const current = audio.currentTime;
 
-    // === PHOTOS ===
-    if (pTimings) {
-        for (const timeStr in pTimings) {
-            const target = parseFloat(timeStr);
+        // === PHOTOS ===
+        if (pTimings) {
+            for (const timeStr in pTimings) {
+                const target = parseFloat(timeStr);
 
-            // окно 150 мс, чтобы не пропустить тайминг
-            if (!shownPhoto[target] && current >= target && current < target + 0.15) {
-                shownPhoto[target] = true;
-                showFullscreenMedia(pTimings[timeStr], "photo");
+                if (!shownPhoto[target] && current >= target && current < target + 0.15) {
+                    shownPhoto[target] = true;
+                    showFullscreenMedia(pTimings[timeStr], "photo");
+                }
             }
         }
-    }
 
-    // === VIDEOS ===
-    if (vTimings) {
-        for (const timeStr in vTimings) {
-            const target = parseFloat(timeStr);
+        // === VIDEOS ===
+        if (vTimings) {
+            for (const timeStr in vTimings) {
+                const target = parseFloat(timeStr);
 
-            if (!shownVideo[target] && current >= target && current < target + 0.15) {
-                shownVideo[target] = true;
-                showFullscreenMedia(vTimings[timeStr], "video");
+                if (!shownVideo[target] && current >= target && current < target + 0.15) {
+                    shownVideo[target] = true;
+                    showFullscreenMedia(vTimings[timeStr], "video");
+                }
             }
         }
-    }
-};
+    };
 }
+
 /* ========================================================
    ===================== FULLSCREEN MEDIA ==================
    ======================================================== */
@@ -75,16 +81,14 @@ function showFullscreenMedia(src, type) {
     let media = document.getElementById("fsMediaElement");
     let closeBtn = document.getElementById("fsMediaClose");
 
-    // не дублируем медиа в галерее
-   // === НОВАЯ ЛОГИКА: группируем медиа по зонам ===
-if (!missedMedia[window.__currentZoneId]) {
-    missedMedia[window.__currentZoneId] = [];
-}
+    // === ГРУППИРУЕМ МЕДИА ПО ЗОНАМ ===
+    if (!missedMedia[window.__currentZoneId]) {
+        missedMedia[window.__currentZoneId] = [];
+    }
 
-// не дублируем одинаковые файлы в одной зоне
-if (!missedMedia[window.__currentZoneId].some(m => m.src === src)) {
-    missedMedia[window.__currentZoneId].push({ type, src });
-}
+    if (!missedMedia[window.__currentZoneId].some(m => m.src === src)) {
+        missedMedia[window.__currentZoneId].push({ type, src });
+    }
 
     if (!overlay) {
         overlay = document.createElement("div");
@@ -127,7 +131,7 @@ if (!missedMedia[window.__currentZoneId].some(m => m.src === src)) {
         overlay.appendChild(closeBtn);
     }
 
-    // переключаем тип медиа
+    // === ПЕРЕКЛЮЧЕНИЕ ТИПА МЕДИА ===
     if (type === "video") {
         const newVideo = document.createElement("video");
         newVideo.id = "fsMediaElement";
@@ -152,13 +156,11 @@ if (!missedMedia[window.__currentZoneId].some(m => m.src === src)) {
 
     overlay.style.display = "flex";
 
-    // если открыто из галереи — не закрываем по таймеру
     if (window.__openedFromGallery) {
         window.__openedFromGallery = false;
         return;
     }
 
-    // авто‑закрытие только для фото
     if (type === "photo") {
         setTimeout(() => {
             if (overlay && overlay.style.display !== "none") {
@@ -178,72 +180,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!notReadyBtn || !galleryOverlay) return;
 
-   notReadyBtn.onclick = () => {
-    galleryOverlay.innerHTML = "";
+    notReadyBtn.onclick = () => {
+        galleryOverlay.innerHTML = "";
 
-    // получаем id всех зон, где есть медиа
-    const zoneIds = Object.keys(missedMedia)
-        .map(id => Number(id))
-        .sort((a, b) => b - a); // сортируем по убыванию (последние зоны)
+        const zoneIds = Object.keys(missedMedia)
+            .map(id => Number(id))
+            .sort((a, b) => b - a);
 
-    // берём только текущую + 2 предыдущие
-    const lastThree = zoneIds.slice(0, 3);
+        const lastThree = zoneIds.slice(0, 3);
 
-    lastThree.forEach(zoneId => {
-        const items = missedMedia[zoneId];
+        lastThree.forEach(zoneId => {
+            const items = missedMedia[zoneId];
 
-        // заголовок зоны
-        const title = document.createElement("div");
-        title.textContent = `Зона ${zoneId}`;
-        title.style.color = "white";
-        title.style.margin = "10px 0 5px 0";
-        title.style.fontSize = "16px";
-        galleryOverlay.appendChild(title);
+            const title = document.createElement("div");
+            title.textContent = `Зона ${zoneId}`;
+            title.style.color = "white";
+            title.style.margin = "10px 0 5px 0";
+            title.style.fontSize = "16px";
+            galleryOverlay.appendChild(title);
 
-        // медиа внутри зоны
-        items.forEach(item => {
-            const thumb = document.createElement("div");
-            thumb.style.width = "100px";
-            thumb.style.height = "100px";
-            thumb.style.borderRadius = "10px";
-            thumb.style.overflow = "hidden";
-            thumb.style.cursor = "pointer";
-            thumb.style.background = "#000";
-            thumb.style.display = "inline-flex";
-            thumb.style.alignItems = "center";
-            thumb.style.justifyContent = "center";
-            thumb.style.marginRight = "10px";
+            items.forEach(item => {
+                const thumb = document.createElement("div");
+                thumb.style.width = "100px";
+                thumb.style.height = "100px";
+                thumb.style.borderRadius = "10px";
+                thumb.style.overflow = "hidden";
+                thumb.style.cursor = "pointer";
+                thumb.style.background = "#000";
+                thumb.style.display = "inline-flex";
+                thumb.style.alignItems = "center";
+                thumb.style.justifyContent = "center";
+                thumb.style.marginRight = "10px";
 
-            if (item.type === "photo") {
-                const img = document.createElement("img");
-                img.src = item.src;
-                img.style.width = "100%";
-                img.style.height = "100%";
-                img.style.objectFit = "cover";
-                thumb.appendChild(img);
-            } else {
-                const icon = document.createElement("div");
-                icon.style.width = "0";
-                icon.style.height = "0";
-                icon.style.borderLeft = "20px solid white";
-                icon.style.borderTop = "12px solid transparent";
-                icon.style.borderBottom = "12px solid transparent";
-                thumb.appendChild(icon);
-            }
+                if (item.type === "photo") {
+                    const img = document.createElement("img");
+                    img.src = item.src;
+                    img.style.width = "100%";
+                    img.style.height = "100%";
+                    img.style.objectFit = "cover";
+                    thumb.appendChild(img);
+                } else {
+                    const icon = document.createElement("div");
+                    icon.style.width = "0";
+                    icon.style.height = "0";
+                    icon.style.borderLeft = "20px solid white";
+                    icon.style.borderTop = "12px solid transparent";
+                    icon.style.borderBottom = "12px solid transparent";
+                    thumb.appendChild(icon);
+                }
 
-            thumb.onclick = () => {
-                galleryOverlay.classList.add("hidden");
-                window.__openedFromGallery = true;
-                showFullscreenMedia(item.src, item.type);
-            };
+                thumb.onclick = () => {
+                    galleryOverlay.classList.add("hidden");
+                    window.__openedFromGallery = true;
+                    showFullscreenMedia(item.src, item.type);
+                };
 
-            galleryOverlay.appendChild(thumb);
+                galleryOverlay.appendChild(thumb);
+            });
         });
-    });
 
-    galleryOverlay.classList.remove("hidden");
-};
+        galleryOverlay.classList.remove("hidden");
+    };
 });
-
-
-
