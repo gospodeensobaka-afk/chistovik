@@ -772,119 +772,7 @@ setTimeout(() => {
     duration: 1500
 });
 }, 4000);
-/* ========================================================
-   ========== PNG START / ARROW / FINISH (FIXED) ==========
-   ======================================================== */
-
-map.on("load", () => {
-
-    Promise.all([
-        new Promise(res => map.loadImage("icons/start.png",  (_, img) => { map.addImage("start-icon", img); res(); })),
-        new Promise(res => map.loadImage("icons/strelka.png", (_, img) => { map.addImage("arrow-icon", img); res(); })),
-        new Promise(res => map.loadImage("icons/finish.png", (_, img) => { map.addImage("finish-icon", img); res(); }))
-    ]).then(() => {
-
-        // === 1. УГОЛЫ
-        const startCoord = fullRoute[0].coord;
-        const secondCoord = fullRoute[1].coord;
-
-        const startAngle = calculateAngle(
-            [startCoord[1], startCoord[0]],
-            [secondCoord[1], secondCoord[0]]
-        );
-
-        const lastCoord = fullRoute[fullRoute.length - 1].coord;
-        const prevCoord = fullRoute[fullRoute.length - 2].coord;
-
-        const finishAngle = calculateAngle(
-            [prevCoord[1], prevCoord[0]],
-            [lastCoord[1], lastCoord[0]]
-        );
-
-        // === 2. ПРОЕКЦИЯ СТРЕЛКИ
-        const desiredArrowPoint = [55.786833, 49.121359];
-
-        let nearestProj = null;
-        let nearestDist = Infinity;
-
-        for (let i = 0; i < fullRoute.length - 1; i++) {
-            const a = fullRoute[i].coord;
-            const b = fullRoute[i+1].coord;
-
-            const info = pointToSegmentInfo(desiredArrowPoint, a, b);
-
-            if (info.dist < nearestDist) {
-                nearestDist = info.dist;
-                nearestProj = info.projLngLat;
-            }
-        }
-
-        // === 3. СТАРТ
-        map.addLayer({
-            id: "start-marker",
-            type: "symbol",
-            source: {
-                type: "geojson",
-                data: {
-                    type: "Feature",
-                    geometry: { type: "Point", coordinates: startCoord }
-                }
-            },
-            layout: {
-                "icon-image": "start-icon",
-                "icon-size": 0.12,
-                "icon-rotate": startAngle,
-                "icon-rotation-alignment": "viewport",
-                "icon-pitch-alignment": "viewport",
-                "icon-allow-overlap": true
-            }
-        });
-
-        // === 4. СТРЕЛКА
-        map.addLayer({
-            id: "arrow-marker",
-            type: "symbol",
-            source: {
-                type: "geojson",
-                data: {
-                    type: "Feature",
-                    geometry: { type: "Point", coordinates: nearestProj }
-                }
-            },
-            layout: {
-                "icon-image": "arrow-icon",
-                "icon-size": 0.12,
-                "icon-rotate": startAngle,
-                "icon-rotation-alignment": "viewport",
-                "icon-pitch-alignment": "viewport",
-                "icon-allow-overlap": true
-            }
-        });
-
-        // === 5. ФИНИШ
-        map.addLayer({
-            id: "finish-marker",
-            type: "symbol",
-            source: {
-                type: "geojson",
-                data: {
-                    type: "Feature",
-                    geometry: { type: "Point", coordinates: lastCoord }
-                }
-            },
-            layout: {
-                "icon-image": "finish-icon",
-                "icon-size": 0.12,
-                "icon-rotate": finishAngle,
-                "icon-rotation-alignment": "viewport",
-                "icon-pitch-alignment": "viewport",
-                "icon-allow-overlap": true
-            }
-        });
-
-    });
-
-});
+                     
 /* ========================================================
    ===================== ROUTE SOURCES =====================
    ======================================================== */
@@ -1204,6 +1092,17 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
+
+
+
+
+
+
+
+
+
+
 
 
 
