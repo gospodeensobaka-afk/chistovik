@@ -11,8 +11,22 @@ const photoTimings = {
     "audio/2-bulak.m4a": {
         3.21: "images/bulak shas.jpeg",
         25.16: "images/bulakdo1957.jpeg"
+    },
+
+    "audio/41-sama-chasha.mp3": {
+        177.74: "images/bars.jpeg",
+        150.14: "images/dashi.jpeg",
+        171.65: "images/zilantiha.jpeg",
+        143.33: "images/zilant.jpeg",
+        165.75: "images/zilant.jpeg",
+        49.47:  "images/vid.jpeg",
+        159.05: "images/gerb.jpeg",
+        18:     "images/chashavecher.jpeg",
+        235.94: "images/president.jpeg",
+        239.16: "images/ggerb.jpeg"
     }
 };
+
 
 photoTimings["audio/4-Chasha+pravila.m4a"] = {
     182.98: "images/vid.jpeg",      // 3:02.98
@@ -250,6 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
