@@ -808,24 +808,30 @@ for (let i = 0; i < fullRoute.length - 1; i++) {
 
     if (info.dist < nearestDist) {
         nearestDist = info.dist;
-        nearestProj = info.projLngLat; // ← точка на маршруте
+        nearestProj = info.projLngLat; // ← точка на маршруте [lng, lat]
     }
 }
 
-// === 4. ГРУЗИМ PNG В КАРТУ
+// === 4. ГРУЗИМ PNG В КАРТУ (один раз)
 map.loadImage("icons/start.png", (err, img) => {
-    if (!err) map.addImage("start-icon", img);
+    if (!err && !map.hasImage("start-icon")) {
+        map.addImage("start-icon", img);
+    }
 });
 
 map.loadImage("icons/strelka.png", (err, img) => {
-    if (!err) map.addImage("arrow-icon", img);
+    if (!err && !map.hasImage("arrow-icon")) {
+        map.addImage("arrow-icon", img);
+    }
 });
 
 map.loadImage("icons/finish.png", (err, img) => {
-    if (!err) map.addImage("finish-icon", img);
+    if (!err && !map.hasImage("finish-icon")) {
+        map.addImage("finish-icon", img);
+    }
 });
 
-// === 5. СТАРТ (СТАТИЧНЫЙ)
+// === 5. СТАРТ (СТАТИЧНЫЙ, МЕЛКИЙ, НЕ ПРОПАДАЕТ)
 map.addLayer({
     id: "start-marker",
     type: "symbol",
@@ -838,13 +844,16 @@ map.addLayer({
     },
     layout: {
         "icon-image": "start-icon",
-        "icon-size": 0.7,
+        "icon-size": 0.12,                    // уменьшили
         "icon-rotate": startAngle,
-        "icon-rotation-alignment": "viewport"
+        "icon-rotation-alignment": "viewport",
+        "icon-pitch-alignment": "viewport",
+        "icon-anchor": "center",
+        "icon-allow-overlap": true
     }
 });
 
-// === 6. СТРЕЛКА (СТАТИЧНАЯ)
+// === 6. СТРЕЛКА (СТАТИЧНАЯ, МЕЛКАЯ)
 map.addLayer({
     id: "arrow-marker",
     type: "symbol",
@@ -857,13 +866,16 @@ map.addLayer({
     },
     layout: {
         "icon-image": "arrow-icon",
-        "icon-size": 0.7,
+        "icon-size": 0.12,
         "icon-rotate": startAngle,
-        "icon-rotation-alignment": "viewport"
+        "icon-rotation-alignment": "viewport",
+        "icon-pitch-alignment": "viewport",
+        "icon-anchor": "center",
+        "icon-allow-overlap": true
     }
 });
 
-// === 7. ФИНИШ (СТАТИЧНЫЙ)
+// === 7. ФИНИШ (СТАТИЧНЫЙ, МЕЛКИЙ)
 map.addLayer({
     id: "finish-marker",
     type: "symbol",
@@ -876,9 +888,12 @@ map.addLayer({
     },
     layout: {
         "icon-image": "finish-icon",
-        "icon-size": 0.7,
+        "icon-size": 0.12,
         "icon-rotate": finishAngle,
-        "icon-rotation-alignment": "viewport"
+        "icon-rotation-alignment": "viewport",
+        "icon-pitch-alignment": "viewport",
+        "icon-anchor": "center",
+        "icon-allow-overlap": true
     }
 });
 /* ========================================================
@@ -1200,6 +1215,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
