@@ -665,9 +665,11 @@ if (audioPlaying) {
                    moveMarker(simulationPoints[0]);
                
                    map.easeTo({
-                       center: [simulationPoints[0][1], simulationPoints[0][0]],
-                       duration: 500
-                   });
+                      map.easeTo({
+    center: [simulationPoints[0][1], simulationPoints[0][0]],
+    bearing: -141.20322070183164,
+    duration: 500
+});
                
                    setTimeout(simulateNextStep, 1200);
                }/* ========================================================
@@ -1092,6 +1094,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
