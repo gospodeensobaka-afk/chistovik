@@ -670,13 +670,12 @@ if (audioPlaying) {
                   ======================================================== */
                
                async function initMap() {
-                   const initialCenter = [49.082118, 55.826584];
+                   
                
                    map = new maplibregl.Map({
                        container: "map",
                        style: "style.json?v=2",
-                       center: initialCenter,
-                       zoom: 18
+                      
                    });
                
                    const mapContainer = document.getElementById("map");
@@ -747,7 +746,24 @@ for (let i = 0; i < fullRoute.length - 1; i++) {
 
 /* === 4) Симуляция — идём по всем точкам подряд === */
 simulationPoints = allCoords.map(c => [c[1], c[0]]);
+/* === 5) Показываем весь маршрут === */
+const bounds = new maplibregl.LngLatBounds();
+allCoords.forEach(c => bounds.extend([c[0], c[1]]));
 
+map.fitBounds(bounds, {
+    padding: 50,
+    duration: 0
+});
+
+/* === 6) Плавный зум ко второй точке === */
+setTimeout(() => {
+    const start = allCoords[1]; // [lng, lat]
+    map.easeTo({
+        center: [start[0], start[1]],
+        zoom: 17.033856502041463,
+        duration: 1500
+    });
+}, 1200);
                      
 /* ========================================================
    ===================== ROUTE SOURCES =====================
@@ -1068,6 +1084,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
