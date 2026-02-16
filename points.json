@@ -45,7 +45,7 @@
     "lat": 55.814104,
     "lng": 49.106623,
     "radius": 25,
-    "audio": "audio/4-Chasha+pravila.m4a"
+    "audio": "audio/41-sama-chasha.mp3"
   },
   {
     "id": 5,
@@ -399,3 +399,4 @@
     "icon": "icons/finish.png"
   }
 ]
+
