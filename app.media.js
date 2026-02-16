@@ -4,17 +4,17 @@
 
 /* === PHOTO & VIDEO TIMINGS === */
 const photoTimings = {
-"audio/1-2005.m4a": {
-    46: "images/president.jpeg"
-},
+    "audio/1-2005.m4a": {
+        46: "images/president.jpeg"
+    },
+
+    "audio/2-bulak.m4a": {
+        3.21: "images/bulak shas.jpeg",
+        25.16: "images/bulakdo1957.jpeg"
+    },
+
     "audio/5.mp3": {
         3: "images/zone5_photo.jpg"
-    }
-};
-
-const videoTimings = {
-    "audio/3.mp3": {
-        3: "videos/zone3_video.mp4"
     }
 };
 
@@ -38,19 +38,33 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
     const shownVideo = {};
 
     audio.ontimeupdate = () => {
-        const t = Math.floor(audio.currentTime);
+    const current = audio.currentTime;
 
-        if (pTimings && pTimings[t] && !shownPhoto[t]) {
-            shownPhoto[t] = true;
-            showFullscreenMedia(pTimings[t], "photo");
-        }
+    // === PHOTOS ===
+    if (pTimings) {
+        for (const timeStr in pTimings) {
+            const target = parseFloat(timeStr);
 
-        if (vTimings && vTimings[t] && !shownVideo[t]) {
-            shownVideo[t] = true;
-            showFullscreenMedia(vTimings[t], "video");
+            // окно 150 мс, чтобы не пропустить тайминг
+            if (!shownPhoto[target] && current >= target && current < target + 0.15) {
+                shownPhoto[target] = true;
+                showFullscreenMedia(pTimings[timeStr], "photo");
+            }
         }
-    };
-}
+    }
+
+    // === VIDEOS ===
+    if (vTimings) {
+        for (const timeStr in vTimings) {
+            const target = parseFloat(timeStr);
+
+            if (!shownVideo[target] && current >= target && current < target + 0.15) {
+                shownVideo[target] = true;
+                showFullscreenMedia(vTimings[timeStr], "video");
+            }
+        }
+    }
+};
 
 /* ========================================================
    ===================== FULLSCREEN MEDIA ==================
@@ -230,4 +244,5 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
