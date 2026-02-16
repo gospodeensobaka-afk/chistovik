@@ -522,25 +522,30 @@ if (next && !next.preloadTriggered) {
                    updateArrowPositionFromCoords(coords);
                
                    /* ========================================================
-                      =============== GPS ROTATION + MAP ROTATION ============
-                      ======================================================== */
-               
-                   if (!compassActive && prevCoords) {
-                       const angle = calculateAngle(prevCoords, coords);
-                       gpsAngleLast = Math.round(angle);
-                       gpsUpdates++;
-               
-                       // Поворот стрелки
-                       applyArrowTransform(angle);
-               
-                       // Поворот карты — только если пользователь не трогает экран
-                       if (!userTouching) {
-                           map.easeTo({
-                               bearing: angle,
-                               duration: 300
-                           });
-                       }
-                   }
+   =============== GPS ROTATION + MAP ROTATION ============
+   ======================================================== */
+
+if (!compassActive && prevCoords) {
+    const angle = calculateAngle(prevCoords, coords);
+    gpsAngleLast = Math.round(angle);
+    gpsUpdates++;
+
+    // Поворот стрелки — всегда можно
+    applyArrowTransform(angle);
+
+    // 🚫 НЕ КРУТИМ КАРТУ ДО СТАРТА ТУРА
+    if (!tourStarted) {
+        return;
+    }
+
+    // Поворот карты — только если пользователь не трогает экран
+    if (!userTouching) {
+        map.easeTo({
+            bearing: angle,
+            duration: 300
+        });
+    }
+}
                /* ========================================================
                   ========== ЧАСТИЧНАЯ ПЕРЕКРАСКА КАК В СТАРОЙ ВЕРСИИ =====
                   ======================================================== */
@@ -1087,6 +1092,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
