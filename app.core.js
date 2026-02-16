@@ -772,7 +772,92 @@ setTimeout(() => {
     duration: 1500
 });
 }, 4000);
-                     
+/* ========================================================
+   ===================== PNG START / ARROW / FINISH =======
+   ======================================================== */
+
+// Универсальная функция для PNG-иконок
+function addPngMarker(lng, lat, iconUrl, angle) {
+    const el = document.createElement("div");
+    el.style.width = "40px";
+    el.style.height = "40px";
+    el.style.display = "flex";
+    el.style.alignItems = "center";
+    el.style.justifyContent = "center";
+
+    const img = document.createElement("img");
+    img.src = iconUrl;
+    img.style.width = "32px";
+    img.style.height = "32px";
+    img.style.transformOrigin = "center center";
+    img.style.transform = `rotate(${angle}deg)`;
+
+    el.appendChild(img);
+
+    new maplibregl.Marker({ element: el })
+        .setLngLat([lng, lat])
+        .addTo(map);
+}
+
+// === 1. УГОЛ СТАРТА (1 → 2 точка)
+const startCoord = fullRoute[0].coord;      // [lng, lat]
+const secondCoord = fullRoute[1].coord;
+
+const startAngle = calculateAngle(
+    [startCoord[1], startCoord[0]],
+    [secondCoord[1], secondCoord[0]]
+);
+
+// === 2. УГОЛ ФИНИША (предпоследняя → последняя)
+const lastCoord = fullRoute[fullRoute.length - 1].coord;
+const prevCoord = fullRoute[fullRoute.length - 2].coord;
+
+const finishAngle = calculateAngle(
+    [prevCoord[1], prevCoord[0]],
+    [lastCoord[1], lastCoord[0]]
+);
+
+// === 3. СТАВИМ СТАРТ
+addPngMarker(
+    startCoord[0],
+    startCoord[1],
+    "icons/start.png",
+    startAngle
+);
+
+// === 4. СТРЕЛКА: проецируем твою желаемую точку на маршрут
+const desiredArrowPoint = [55.786833, 49.121359]; // lat, lng
+
+let nearestProj = null;
+let nearestDist = Infinity;
+
+for (let i = 0; i < fullRoute.length - 1; i++) {
+    const a = fullRoute[i].coord;     // [lng, lat]
+    const b = fullRoute[i+1].coord;
+
+    const info = pointToSegmentInfo(desiredArrowPoint, a, b);
+
+    if (info.dist < nearestDist) {
+        nearestDist = info.dist;
+        nearestProj = info.projLngLat; // ← точка на маршруте
+    }
+}
+
+// === 5. СТАВИМ СТРЕЛКУ (смотрит в сторону 2-й точки)
+addPngMarker(
+    nearestProj[0],
+    nearestProj[1],
+    "icons/strelka.png",
+    startAngle
+);
+
+// === 6. СТАВИМ ФИНИШ
+addPngMarker(
+    lastCoord[0],
+    lastCoord[1],
+    "icons/finish.png",
+    finishAngle
+);                     
 /* ========================================================
    ===================== ROUTE SOURCES =====================
    ======================================================== */
@@ -1092,3 +1177,4 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
