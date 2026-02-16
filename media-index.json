@@ -1,56 +1,13 @@
-{
-  "audio": [
-    "audio/1-2005.m4a",
-    "audio/2-bulak.m4a",
-    "audio/3-ploschad-tisyacheletia.m4a",
-    "audio/4-Chasha+pravila.m4a",
-    "audio/41-sama-chasha.mp3",
-    "audio/5-NovoSavinovskiy.m4a",
-    "audio/6-riviera-koleso.m4a",
-    "audio/7-edinobor-Millenium.m4a",
-    "audio/8-sport-na-mileniume.m4a",
-    "audio/9-vezhaem-v-center-arskoe.m4a",
-    "audio/10-vishnevskogo-avik.m4a",
-    "audio/11-zdes-bil-les-put-na-sukonku.m4a",
-    "audio/12-znachok-metro.m4a",
-    "audio/13-tramvai-piterskie-doma.m4a",
-    "audio/14-ekiyat.m4a",
-    "audio/15-tugan.m4a",
-    "audio/16-hram-gde-poyavilsya-ekiyat.m4a",
-    "audio/17-staroobryadci.m4a",
-    "audio/18-rotonda.m4a",
-    "audio/19-kostel.m4a",
-    "audio/20-basketholl-fontan-v-vide-kazana.m4a",
-    "audio/21-vot-vam-mesto.m4a",
-    "audio/22-kakaya-sts-po-gabaritam.m4a",
-    "audio/23-teatr-3h-smehov.mp3",
-    "audio/24-stska-glavniy-tezis.mp3",
-    "audio/25-put-na-pl-tukaya-stih.m4a",
-    "audio/26-plochad-tukaya(mozhno-pro-shalyapina-dobavit).m4a",
-    "audio/27-universitetskaya.m4a",
-    "audio/28-kfu.mp3",
-    "audio/29-bivshaya-voskresenskaya.m4a",
-    "audio/30-nostalgiya.m4a",
-    "audio/31.m4a",
-    "audio/32-tatgoip.m4a",
-    "audio/33-ploschad-svobodi.m4a",
-    "audio/34-put-na-bogorodickiy(bolshaya-krasnay).m4a",
-    "audio/35-yellow-zone-ikona.mp3",
-    "audio/36-put-na-petropavlovskiy.m4a",
-    "audio/37-petropavlovskiy.m4a",
-    "audio/38-istoriya-vzyatiya-kazani.mp3",
-    "audio/start.mp3"
-  ],
-
-  "photos": [
+"photos": [
     "images/bars.jpeg",
     "images/bilyard.jpeg",
     "images/bulak shas.jpeg",
     "images/bulakdo1957.jpeg",
-    "images/chasha vecher.jpeg",
+    "images/chashavecher.jpeg",
     "images/cveti tugana.jpeg",
     "images/fontan.jpeg",
     "images/gerb.jpeg",
+    "images/ggerb.jpeg",
     "images/ikonistasjpeg",
     "images/ikonokrad.jpeg",
     "images/ikonu obrela.jpeg",
@@ -87,14 +44,4 @@
     "images/yaroslavskih.jpeg",
     "images/zilant.jpeg",
     "images/zilantiha.jpeg"
-  ],
-
-  "videos": [
-    "videos/2009 panorama.mp4",
-    "videos/3d modelki.mp4",
-    "videos/kamala.mp4",
-    "videos/novosavinovskiy.mp4",
-    "videos/pamyatniki.mp4"
-  ]
-}
-
+]
