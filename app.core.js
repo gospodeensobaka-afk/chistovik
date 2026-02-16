@@ -858,7 +858,7 @@ points.forEach(p => {
             .setLngLat([p.lng, p.lat])
             .addTo(map);
     }
-
+});
   /* ========================================================
    ======================= PNG MARKERS =====================
    ======================================================== */
@@ -1084,6 +1084,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
