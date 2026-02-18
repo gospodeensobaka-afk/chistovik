@@ -350,7 +350,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!notReadyBtn || !galleryOverlay) return;
 
     notReadyBtn.onclick = () => {
-        document.getElementById("galleryTrack").innerHTML = "";
+       // Полностью очищаем overlay
+galleryOverlay.innerHTML = "";
+
+// Создаём новый track
+const galleryTrack = document.createElement("div");
+galleryTrack.id = "galleryTrack";
+galleryTrack.style.display = "inline-flex";
+galleryTrack.style.flexDirection = "row";
+galleryTrack.style.gap = "12px";
+galleryTrack.style.whiteSpace = "nowrap";
+
+// Добавляем track в overlay
+galleryOverlay.appendChild(galleryTrack);
 const galleryTrack = document.createElement("div");
 galleryTrack.id = "galleryTrack";
 galleryTrack.style.display = "inline-flex";
@@ -417,6 +429,7 @@ galleryOverlay.appendChild(galleryTrack);
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
