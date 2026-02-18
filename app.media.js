@@ -404,13 +404,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     showFullscreenMedia(item.src, item.type);
                 };
 
-                galleryOverlay.appendChild(thumb);
+               document.getElementById("galleryTrack").appendChild(thumb);
             });
         });
 
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
