@@ -5,168 +5,170 @@
 /* === PHOTO & VIDEO TIMINGS === */
 const photoTimings = {
     "audio/1-2005.m4a": {
-        46: { open: "images/president.jpeg" }
+        46: "images/president.jpeg"
     },
 
     "audio/2-bulak.m4a": {
-        3.21: { open: "images/bulak shas.jpeg" },
-        25.16: { open: "images/bulakdo1957.jpeg" }
+        3.21: "images/bulak shas.jpeg",
+        25.16: "images/bulakdo1957.jpeg"
     },
 
     "audio/41-sama-chasha.mp3": {
-        177.74: { open: "images/bars.jpeg" },
-        150.14: { open: "images/dashi.jpeg" },
-        171.65: { open: "images/zilantiha.jpeg" },
-        143.33: { open: "images/zilant.jpeg" },
-        165.75: { open: "images/zilant.jpeg" },
-        49.47:  { open: "images/vid.jpeg" },
-        159.05: { open: "images/gerb.jpeg" },
-        18:     { open: "images/chashavecher.jpeg" },
-        235.94: { open: "images/president.jpeg" },
-        239.16: { open: "images/ggerb.jpeg" }
+        177.74: "images/bars.jpeg",
+        150.14: "images/dashi.jpeg",
+        171.65: "images/zilantiha.jpeg",
+        143.33: "images/zilant.jpeg",
+        165.75: "images/zilant.jpeg",
+        49.47:  "images/vid.jpeg",
+        159.05: "images/gerb.jpeg",
+        18:     "images/chashavecher.jpeg",
+        235.94: "images/president.jpeg",
+        239.16: "images/ggerb.jpeg"
     },
 
     /* === NEW PHOTO TIMINGS === */
 
     "audio/3-ploschad-tisyacheletia.m4a": {
-        32.69: { open: "images/parad.jpeg" }
+        32.69: "images/parad.jpeg"
     },
 
     "audio/5-NovoSavinovskiy.m4a": {
-        55.70: { open: "images/uspenskiy.jpeg" },
-        61.05: { open: "images/kizich.jpeg" },
-        102.61:{ open: "images/tatneft.jpeg" }
+        55.70: "images/uspenskiy.jpeg",
+        61.05: "images/kizich.jpeg",
+        102.61: "images/tatneft.jpeg"
     },
 
     "audio/7-edinobor-Millenium.m4a": {
-        26.29: { open: "images/milenium.jpeg" }
+        26.29: "images/milenium.jpeg"
     },
 
     "audio/8-sport-na-mileniume.m4a": {
-        32.89: { open: "images/3d modelki.jpeg" }
+        32.89: "images/3d modelki.jpeg"
     },
 
     "audio/9-vezhaem-v-center-arskoe.m4a": {
-        30.72: { open: "images/skotskie.jpeg" },
-        75.87: { open: "images/yaroslavskih.jpeg" }
+        30.72: "images/skotskie.jpeg",
+        75.87: "images/yaroslavskih.jpeg"
     },
 
     "audio/12-znachok-metro.m4a": {
-        1.25: { open: "images/metro.jpeg" }
+        1.25: "images/metro.jpeg"
     },
 
     "audio/13-tramvai-piterskie-doma.m4a": {
-        4.44: { open: "images/tramvay1.jpeg" },
-        8.15: { open: "images/tramvay2.jpeg" }
+        4.44: "images/tramvay1.jpeg",
+        8.15: "images/tramvay2.jpeg"
     },
 
     "audio/14-ekiyat.m4a": {
-        63.07: { open: "images/ekiyat.jpeg" }
+        63.07: "images/ekiyat.jpeg"
     },
 
     "audio/15-tugan.m4a": {
-        37.18: { open: "images/cveti tugana.jpeg" },
-        42.09: { open: "images/alissum.jpeg" }
+        37.18: "images/cveti tugana.jpeg",
+        42.09: "images/alissum.jpeg"
     },
 
     "audio/16-hram-gde-poyavilsya-ekiyat.m4a": {
-        5.82: { open: "images/ekiyat1930.jpeg" }
+        5.82: "images/ekiyat1930.jpeg"
     },
 
     "audio/17-staroobryadci.m4a": {
-        26.15: { open: "images/staroobr cherni.jpeg" },
-        36.37: { open: "images/staroobr cherni.jpeg" },
-        38.90: { open: "images/votetozdanie.jpeg" },
-        39.00: { open: "images/kazanskaya cerkov.jpeg" }
+        26.15: "images/staroobr cherni.jpeg",
+        36.37: "images/staroobr cherni.jpeg",
+        38.90: "images/votetozdanie.jpeg",
+        39.00: "images/kazanskaya cerkov.jpeg"
     },
 
     "audio/18-rotonda.m4a": {
-        0.56: { open: "images/rotonda.jpeg" }
+        0.56: "images/rotonda.jpeg"
     },
 
     "audio/19-kostel.m4a": {
-        0.52: { open: "images/kostel.jpeg" },
-        14.17:{ open: "images/kostelgorkogo.jpeg" }
+        0.52: "images/kostel.jpeg",
+        14.17: "images/kostelgorkogo.jpeg"
     },
 
     "audio/20-basketholl-fontan-v-vide-kazana.m4a": {
-        4.33: { open: "images/fontan.jpeg" }
+        4.33: "images/fontan.jpeg"
     },
 
     "audio/25-put-na-pl-tukaya-stih.mp3": {
-        45.90: { open: "images/pamyatniki.jpeg" }
+        45.90: "images/pamyatniki.jpeg"
     },
 
     "audio/27-universitetskaya.m4a": {
-        14.00: { open: "images/universitetskaya.jpeg" }
+        14.00: "images/universitetskaya.jpeg"
     },
 
     "audio/28-kfu.mp3": {
-        24.68: { open: "images/lenin.jpeg" },
-        146.25:{ open: "images/tabllenin.jpeg" },
-        148.00:{ open: "images/tabllenin.jpeg" },
-        148.08:{ open: "images/tabl tolstoy.jpeg" }
+        24.68: "images/lenin.jpeg",
+        146.25: "images/tabllenin.jpeg",
+        148.00: "images/tabllenin.jpeg",
+        148.08: "images/tabl tolstoy.jpeg"
     },
 
     "audio/29-bivshaya-voskresenskaya.m4a": {
-        10.65: { open: "images/voskresenskaya.jpeg" }
+        10.65: "images/voskresenskaya.jpeg"
     },
 
     "audio/30-nostalgiya.m4a": {
-        16.09: { open: "images/nostalgiya.jpeg" }
+        16.09: "images/nostalgiya.jpeg"
     },
 
     "audio/31.m4a": {
-        6.27: { open: "images/patriki.jpeg" },
-        10.32:{ open: "images/katok.jpeg" }
+        6.27: "images/patriki.jpeg",
+        10.32: "images/katok.jpeg"
     },
 
     "audio/32-tatgoip.m4a": {
-        12.51: { open: "images/teatr.jpeg" }
+        12.51: "images/teatr.jpeg"
     },
 
     "audio/34-put-na-bogorodickiy(bolshaya-krasnay).m4a": {
-        22.29: { open: "images/kznsobor.jpeg" }
+        22.29: "images/kznsobor.jpeg"
     },
 
     "audio/35-yellow-zone-ikona.mp3": {
-        51.36: { open: "images/ikonu obrela.jpeg" },
-        169.05:{ open: "images/kazanskayaodigitriya.jpeg" },
-        171.01:{ open: "images/troeruchie.jpeg" },
-        171.89:{ open: "images/kazanskayaodigitriya.jpeg" },
-        179.14:{ open: "images/kazanskayaodigitriya.jpeg" },
-        199.65:{ open: "images/oklad.jpeg" },
-        211.28:{ open: "images/ikonokrad.jpeg" },
-        238.30:{ open: "images/vatikanskiy.jpeg" },
-        240.52:{ open: "images/papa rimskiy.jpeg" },
-        270.37:{ open: "images/podlinniy.jpeg" },
-        279.21:{ open: "images/podlinniy.jpeg" },
-        279.21:{ open: "images/kznsobor.jpeg" },
-        296.53:{ open: "images/3hruschevki.jpeg" }
+        51.36: "images/ikonu obrela.jpeg",
+        169.05: "images/kazanskayaodigitriya.jpeg",
+        171.01: "images/troeruchie.jpeg",
+        171.89: "images/kazanskayaodigitriya.jpeg",
+        179.14: "images/kazanskayaodigitriya.jpeg",
+        199.65: "images/oklad.jpeg",
+        211.28: "images/ikonokrad.jpeg",
+        238.30: "images/vatikanskiy.jpeg",
+        240.52: "images/papa rimskiy.jpeg",
+        270.37: "images/podlinniy.jpeg",
+        279.21: "images/podlinniy.jpeg",
+        279.21: "images/kznsobor.jpeg",
+        296.53: "images/3hruschevki.jpeg"
     },
 
     "audio/37-petropavlovskiy.m4a": {
-        36.88: { open: "images/ikonosPetrpvl.jpeg" },
-        59.90: { open: "images/bilyard.jpeg" }
+        36.88: "images/ikonosPetrpvl.jpeg",
+        59.90: "images/bilyard.jpeg"
     },
 
     "audio/38-istoriya-vzyatiya-kazani.mp3": {
-        240.88:{ open: "images/vidvkremle.jpeg" },
-        320.35:{ open: "images/kulbalkon.jpeg" }
+        240.88: "images/vidvkremle.jpeg",
+        320.35: "images/kulbalkon.jpeg"
     }
 };
 
- const videoTimings = {
+ /* === NEW VIDEO TIMINGS === */
+const videoTimings = {
+  
     "audio/5-NovoSavinovskiy.m4a": {
-        32.35: { open: "videos/novosavinovskiy.mp4" }
+        32.35: "videos/novosavinovskiy.mp4"
     },
 
     "audio/8-sport-na-mileniume.m4a": {
-        32.89: { open: "videos/3d modelki.mp4", close: 55.44 }
+        32.89: "videos/3d modelki.mp4"
     },
 
     "audio/25-put-na-pl-tukaya-stih.m4a": {
-        45.90: { open: "videos/pamyatniki.mp4" }
+        45.90: "videos/pamyatniki.mp4"
     }
 };
 
@@ -186,50 +188,47 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
 
     if (!pTimings && !vTimings) return;
 
-    const shown = {};
-    let lastTime = 0;
+   const shownPhoto = {};
+const shownVideo = {};
+let lastTime = 0;
 
-    audio.ontimeupdate = () => {
-        const current = audio.currentTime;
+audio.ontimeupdate = () => {
+    const current = audio.currentTime;
 
-        // === PHOTOS ===
-        if (pTimings) {
-            for (const timeStr in pTimings) {
-                const target = parseFloat(timeStr);
-                const cfg = pTimings[timeStr];
+    // === PHOTOS ===
+    if (pTimings) {
+        for (const timeStr in pTimings) {
+            const target = parseFloat(timeStr);
 
-                if (!shown[target] && lastTime < target && current >= target) {
-                    shown[target] = true;
-                    showFullscreenMedia(cfg.open, "photo", cfg.close);
-                }
+            // ловим момент, когда мы ПРОШЛИ через target
+            if (!shownPhoto[target] && lastTime < target && current >= target) {
+                shownPhoto[target] = true;
+                showFullscreenMedia(pTimings[timeStr], "photo");
             }
         }
+    }
 
-        // === VIDEOS ===
-        if (vTimings) {
-            for (const timeStr in vTimings) {
-                const target = parseFloat(timeStr);
-                const cfg = vTimings[timeStr];
+    // === VIDEOS ===
+    if (vTimings) {
+        for (const timeStr in vTimings) {
+            const target = parseFloat(timeStr);
 
-                if (!shown[target] && lastTime < target && current >= target) {
-                    shown[target] = true;
-                    showFullscreenMedia(cfg.open, "video", cfg.close);
-                }
+            if (!shownVideo[target] && lastTime < target && current >= target) {
+                shownVideo[target] = true;
+                showFullscreenMedia(vTimings[timeStr], "video");
             }
         }
+    }
 
-        lastTime = current;
-    };
+    lastTime = current;
+};
 }
-
 
 /* ========================================================
    ===================== FULLSCREEN MEDIA ==================
    ======================================================== */
 
-let __mediaCloseTimer = null;
-
-function showFullscreenMedia(src, type, closeAt = null) {
+function showFullscreenMedia(src, type) {
     let overlay = document.getElementById("fsMediaOverlay");
     let media = document.getElementById("fsMediaElement");
     let closeBtn = document.getElementById("fsMediaClose");
@@ -243,13 +242,6 @@ function showFullscreenMedia(src, type, closeAt = null) {
         missedMedia[window.__currentZoneId].push({ type, src });
     }
 
-    // === ОТМЕНА СТАРОГО ТАЙМЕРА ЗАКРЫТИЯ ===
-    if (__mediaCloseTimer) {
-        clearTimeout(__mediaCloseTimer);
-        __mediaCloseTimer = null;
-    }
-
-    // === СОЗДАНИЕ ОВЕРЛЕЯ (как у тебя) ===
     if (!overlay) {
         overlay = document.createElement("div");
         overlay.id = "fsMediaOverlay";
@@ -299,10 +291,8 @@ function showFullscreenMedia(src, type, closeAt = null) {
         newVideo.style.maxWidth = "100%";
         newVideo.style.maxHeight = "100%";
         newVideo.controls = true;
-
         overlay.replaceChild(newVideo, media);
         media = newVideo;
-
         media.play().catch(() => {});
     } else {
         if (media.tagName.toLowerCase() !== "img") {
@@ -318,35 +308,20 @@ function showFullscreenMedia(src, type, closeAt = null) {
 
     overlay.style.display = "flex";
 
-    // === ЕСЛИ ОТКРЫТО ИЗ ГАЛЕРЕИ — НЕ ЗАКРЫВАЕМ ===
     if (window.__openedFromGallery) {
         window.__openedFromGallery = false;
         return;
     }
 
-    // === НОВАЯ ЛОГИКА ЗАКРЫТИЯ ПО ТАЙМИНГУ ===
-    if (closeAt !== null) {
-        const audio = window.__currentAudio;
-        if (audio) {
-            const now = audio.currentTime;
-            const delay = Math.max(0, (closeAt - now) * 1000);
-
-            __mediaCloseTimer = setTimeout(() => {
-                overlay.style.display = "none";
-            }, delay);
-        }
-        return;
-    }
-
-    // === СТАРОЕ ПОВЕДЕНИЕ ТОЛЬКО ДЛЯ ФОТО БЕЗ closeAt ===
     if (type === "photo") {
-        __mediaCloseTimer = setTimeout(() => {
+        setTimeout(() => {
             if (overlay && overlay.style.display !== "none") {
                 overlay.style.display = "none";
             }
         }, 3000);
     }
 }
+
 /* ========================================================
    ======================== GALLERY ========================
    ======================================================== */
@@ -419,8 +394,6 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
-
-
 
 
 
