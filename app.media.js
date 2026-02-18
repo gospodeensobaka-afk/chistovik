@@ -350,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!notReadyBtn || !galleryOverlay) return;
 
     notReadyBtn.onclick = () => {
-        galleryOverlay.innerHTML = "";
+        document.getElementById("galleryTrack").innerHTML = "";
 
         const zoneIds = Object.keys(missedMedia)
             .map(id => Number(id))
@@ -411,6 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
