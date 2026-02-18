@@ -42,10 +42,6 @@ const photoTimings = {
         26.29: { open: "images/milenium.jpeg" }
     },
 
-    "audio/8-sport-na-mileniume.m4a": {
-        32.89: { open: "images/3d modelki.jpeg" }
-    },
-
     "audio/9-vezhaem-v-center-arskoe.m4a": {
         30.72: { open: "images/skotskie.jpeg" },
         75.87: { open: "images/yaroslavskih.jpeg" }
@@ -403,6 +399,7 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
