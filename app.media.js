@@ -279,36 +279,42 @@ function showFullscreenMedia(src, type, duration = null) {
     }
 
     // === ПЕРЕКЛЮЧЕНИЕ ТИПА МЕДИА ===
-    if (type === "video") {
-        const newVideo = document.createElement("video");
-        newVideo.id = "fsMediaElement";
-        newVideo.src = src;
-        newVideo.style.maxWidth = "100%";
-        newVideo.style.maxHeight = "100%";
-        newVideo.controls = true;
-        overlay.replaceChild(newVideo, media);
-        media = newVideo;
-        media.play().catch(() => {});
-    } else {
-        if (media.tagName.toLowerCase() !== "img") {
-            const newImg = document.createElement("img");
-            newImg.id = "fsMediaElement";
-            newImg.style.maxWidth = "100%";
-            newImg.style.maxHeight = "100%";
-            overlay.replaceChild(newImg, media);
-            media = newImg;
-        }
-        media.src = src;
+if (type === "video") {
+    const newVideo = document.createElement("video");
+    newVideo.id = "fsMediaElement";
+    newVideo.src = src;
+    newVideo.style.maxWidth = "100%";
+    newVideo.style.maxHeight = "100%";
+
+    // === Универсальный кроссплатформенный фикс ===
+    newVideo.muted = true;        // видео без звука → iOS не ставит аудио на паузу
+    newVideo.playsInline = true;  // не открывать видео в системном плеере
+    newVideo.controls = true;     // можно оставить, Android/Windows не страдают
+
+    overlay.replaceChild(newVideo, media);
+    media = newVideo;
+
+    media.play().catch(() => {});
+} else {
+    if (media.tagName.toLowerCase() !== "img") {
+        const newImg = document.createElement("img");
+        newImg.id = "fsMediaElement";
+        newImg.style.maxWidth = "100%";
+        newImg.style.maxHeight = "100%";
+        overlay.replaceChild(newImg, media);
+        media = newImg;
     }
+    media.src = src;
+}
 
-    overlay.style.display = "flex";
+overlay.style.display = "flex";
 
-    if (window.__openedFromGallery) {
-        window.__openedFromGallery = false;
-        return;
-    }
+if (window.__openedFromGallery) {
+    window.__openedFromGallery = false;
+    return;
+}
 
-   // === НОВАЯ ЛОГИКА ЗАКРЫТИЯ ===
+// === НОВАЯ ЛОГИКА ЗАКРЫТИЯ ===
 if (duration) {
     setTimeout(() => {
         if (overlay && overlay.style.display !== "none") {
@@ -324,7 +330,6 @@ setTimeout(() => {
         overlay.style.display = "none";
     }
 }, 3000);
-    }
 
 
 /* ========================================================
@@ -399,6 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
