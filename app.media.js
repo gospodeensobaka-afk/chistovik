@@ -129,15 +129,14 @@ const photoTimings = {
         51.36: { open: "images/ikonu obrela.jpeg" },
         169.05:{ open: "images/kazanskayaodigitriya.jpeg" },
         171.01:{ open: "images/troeruchie.jpeg" },
-        171.89:{ open: "images/kazanskayaodigitriya.jpeg" },
-        179.14:{ open: "images/kazanskayaodigitriya.jpeg" },
-        199.65:{ open: "images/oklad.jpeg" },
-        211.28:{ open: "images/ikonokrad.jpeg" },
+        174.84:{ open: "images/kazanskayaodigitriya.jpeg", duration: 4700 },
+        199.65:{ open: "images/oklad.jpeg", duration: 10000 },
+        211.28:{ open: "images/ikonokrad.jpeg", duration: 12000 },
         238.30:{ open: "images/vatikanskiy.jpeg" },
-        240.52:{ open: "images/papa rimskiy.jpeg" },
-        270.37:{ open: "images/podlinniy.jpeg" },
-        279.21:{ open: "images/podlinniy.jpeg" },
-        279.21:{ open: "images/kznsobor.jpeg" },
+        240.52:{ open: "images/papa rimskiy.jpeg", duration: 2000 },
+      243.56:{ open: "images/vatikanskiy.jpeg", duration: 24000 },
+        270.37:{ open: "images/podlinniy.jpeg", duration: 9000 },
+        279.21:{ open: "images/kznsobor.jpeg", duration: 10000 },
         296.53:{ open: "images/3hruschevki.jpeg" }
     },
 
@@ -412,6 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
