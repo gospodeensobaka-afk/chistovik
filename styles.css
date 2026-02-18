@@ -206,7 +206,16 @@ html, body {
     border-radius: 16px;
     padding: 12px;
     z-index: 200000;
-    overflow: hidden; /* скрываем лишнее */
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
 }
 
 /* внутренняя лента */
@@ -214,11 +223,16 @@ html, body {
     display: inline-flex;
     flex-direction: row;
     gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
     white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
+}
+
+#galleryTrack > div {
+    scroll-snap-align: start;
+    flex-shrink: 0; /* не даём превью сжиматься */
+}
+
+#galleryTrack::-webkit-scrollbar {
+    display: none;
 }
 
 #galleryTrack::-webkit-scrollbar {
@@ -260,4 +274,5 @@ html, body {
     z-index: 999999;
     display: none;
 }
+
 
