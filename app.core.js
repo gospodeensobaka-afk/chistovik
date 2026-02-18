@@ -82,8 +82,13 @@ function preloadSingle(src) {
             return;
         }
 
-        // VIDEO — НЕ грузим заранее
-        resolve();
+        // VIDEO — грузим заранее
+const v = document.createElement("video");
+v.src = src;
+v.preload = "auto";
+v.oncanplaythrough = resolve;
+v.onerror = resolve;
+return;
     });
 }
 
@@ -224,6 +229,24 @@ function hideMiniStatus() {
                   ======================================================== */
                
             function playZoneAudio(src, id) {
+              function preloadAllMediaForCurrentAudio(audioSrc) {
+    const key = "audio/" + audioSrc.split("/").pop();
+
+    const p = photoTimings[key];
+    const v = videoTimings[key];
+
+    if (p) {
+        for (const t in p) {
+            preloadSingle(p[t].open);
+        }
+    }
+
+    if (v) {
+        for (const t in v) {
+            preloadSingle(v[t].open);
+        }
+    }
+}
               window.__currentZoneId = id;
     if (!audioEnabled) audioEnabled = true;
 
@@ -285,8 +308,10 @@ if (next && !next.preloadTriggered) {
                    }
                
                    updateCircleColors();
-                   if (z.audio) playZoneAudio(z.audio, z.id);
-               }
+                   if (z.audio) {
+    preloadAllMediaForCurrentAudio(z.audio); // ← ДОП-ПРЕДЗАГРУЗКА
+    playZoneAudio(z.audio, z.id);
+}
                    });
                }
                
@@ -483,6 +508,7 @@ if (next && !next.preloadTriggered) {
     if (z.audio) {
       window.__currentZoneId = id;
         if (!audioEnabled) audioEnabled = true;
+      preloadAllMediaForCurrentAudio(z.audio); // ← ДОП-ПРЕДЗАГРУЗКА ДЛЯ СИМУЛЯЦИИ   
 
         // Полный сброс аудио, чтобы браузер считал это новым запуском
         globalAudio.pause();
@@ -670,7 +696,8 @@ if (audioPlaying) {
                    });
                
                    setTimeout(simulateNextStep, 1200);
-               }/* ========================================================
+               }
+/* ========================================================
                   ======================= INIT MAP ========================
                   ======================================================== */
                
@@ -1086,6 +1113,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
