@@ -204,15 +204,30 @@ html, body {
     height: 18%;
     background: rgba(0, 0, 0, 0.55);
     border-radius: 16px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    gap: 12px;
     padding: 12px;
     z-index: 200000;
-    scrollbar-width: none;
+    overflow: hidden; /* скрываем лишнее */
+}
+
+/* внутренняя лента */
+#galleryTrack {
+    display: inline-flex;
+    flex-direction: row;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+
+#galleryTrack::-webkit-scrollbar {
+    display: none;
+}
+
+#galleryTrack > div {
+    scroll-snap-align: start;
+    flex-shrink: 0; /* запрещает сжиматься */
 }
 
 #galleryOverlay::-webkit-scrollbar {
@@ -245,3 +260,4 @@ html, body {
     z-index: 999999;
     display: none;
 }
+
