@@ -285,7 +285,11 @@ if (type === "video") {
    if (window.__videoCache && window.__videoCache[src]) {
     newVideo.src = window.__videoCache[src];
 } else {
+   if (window.__videoCache && window.__videoCache[src]) {
+    newVideo.src = window.__videoCache[src];
+} else {
     newVideo.src = src;
+}
 }
     newVideo.style.maxWidth = "100%";
     newVideo.style.maxHeight = "100%";
@@ -408,6 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
