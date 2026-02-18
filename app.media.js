@@ -24,21 +24,151 @@ const photoTimings = {
         18:     "images/chashavecher.jpeg",
         235.94: "images/president.jpeg",
         239.16: "images/ggerb.jpeg"
+    },
+
+    /* === NEW PHOTO TIMINGS === */
+
+    "audio/3-ploschad-tisyacheletia.m4a": {
+        32.69: "images/parad.jpeg"
+    },
+
+    "audio/5-NovoSavinovskiy.m4a": {
+        55.70: "images/uspenskiy.jpeg",
+        61.05: "images/kizich.jpeg",
+        102.61: "images/tatneft.jpeg"
+    },
+
+    "audio/7-edinobor-Millenium.m4a": {
+        26.29: "images/milenium.jpeg"
+    },
+
+    "audio/8-sport-na-mileniume.m4a": {
+        32.89: "images/3d modelki.jpeg"
+    },
+
+    "audio/9-vezhaem-v-center-arskoe.m4a": {
+        30.72: "images/skotskie.jpeg",
+        75.87: "images/yaroslavskih.jpeg"
+    },
+
+    "audio/12-znachok-metro.m4a": {
+        1.25: "images/metro.jpeg"
+    },
+
+    "audio/13-tramvai-piterskie-doma.m4a": {
+        4.44: "images/tramvay1.jpeg",
+        8.15: "images/tramvay2.jpeg"
+    },
+
+    "audio/14-ekiyat.m4a": {
+        63.07: "images/ekiyat.jpeg"
+    },
+
+    "audio/15-tugan.m4a": {
+        37.18: "images/cveti tugana.jpeg",
+        42.09: "images/alissum.jpeg"
+    },
+
+    "audio/16-hram-gde-poyavilsya-ekiyat.m4a": {
+        5.82: "images/ekiyat1930.jpeg"
+    },
+
+    "audio/17-staroobryadci.m4a": {
+        26.15: "images/staroobr cherni.jpeg",
+        36.37: "images/staroobr cherni.jpeg",
+        38.90: "images/votetozdanie.jpeg",
+        39.00: "images/kazanskaya cerkov.jpeg"
+    },
+
+    "audio/18-rotonda.m4a": {
+        0.56: "images/rotonda.jpeg"
+    },
+
+    "audio/19-kostel.m4a": {
+        0.52: "images/kostel.jpeg",
+        14.17: "images/kostelgorkogo.jpeg"
+    },
+
+    "audio/20-basketholl-fontan-v-vide-kazana.m4a": {
+        4.33: "images/fontan.jpeg"
+    },
+
+    "audio/25-put-na-pl-tukaya-stih.m4a": {
+        45.90: "images/pamyatniki.jpeg"
+    },
+
+    "audio/27-universitetskaya.m4a": {
+        14.00: "images/universitetskaya.jpeg"
+    },
+
+    "audio/28-kfu.mp3": {
+        24.68: "images/lenin.jpeg",
+        146.25: "images/tabllenin.jpeg",
+        148.00: "images/tabllenin.jpeg",
+        148.08: "images/tabl tolstoy.jpeg"
+    },
+
+    "audio/29-bivshaya-voskresenskaya.m4a": {
+        10.65: "images/voskresenskaya.jpeg"
+    },
+
+    "audio/30-nostalgiya.m4a": {
+        16.09: "images/nostalgiya.jpeg"
+    },
+
+    "audio/31.m4a": {
+        6.27: "images/patriki.jpeg",
+        10.32: "images/katok.jpeg"
+    },
+
+    "audio/32-tatgoip.m4a": {
+        12.51: "images/teatr.jpeg"
+    },
+
+    "audio/34-put-na-bogorodickiy(bolshaya-krasnay).m4a": {
+        22.29: "images/kznsobor.jpeg"
+    },
+
+    "audio/35-yellow-zone-ikona.mp3": {
+        51.36: "images/ikonu obrela.jpeg",
+        169.05: "images/kazanskayaodigitriya.jpeg",
+        171.01: "images/troeruchie.jpeg",
+        171.89: "images/kazanskayaodigitriya.jpeg",
+        179.14: "images/kazanskayaodigitriya.jpeg",
+        199.65: "images/oklad.jpeg",
+        211.28: "images/ikonokrad.jpeg",
+        238.30: "images/vatikanskiy.jpeg",
+        240.52: "images/papa rimskiy.jpeg",
+        270.37: "images/podlinniy.jpeg",
+        279.21: "images/podlinniy.jpeg",
+        279.21: "images/kznsobor.jpeg",
+        296.53: "images/3hruschevki.jpeg"
+    },
+
+    "audio/37-petropavlovskiy.m4a": {
+        36.88: "images/ikonosPetrpvl.jpeg",
+        59.90: "images/bilyard.jpeg"
+    },
+
+    "audio/38-istoriya-vzyatiya-kazani.mp3": {
+        240.88: "images/vidvkremle.jpeg",
+        320.35: "images/kulbalkon.jpeg"
     }
 };
 
-
-photoTimings["audio/4-Chasha+pravila.m4a"] = {
-    182.98: "images/vid.jpeg",      // 3:02.98
-    137.34: "images/sumbeka.jpeg",  // 2:17.34
-    66.90:  "images/fontan.jpeg",   // 1:06.90
-    59.06:  "images/dashi.jpeg",    // 0:59.06
-    54.59:  "images/chasha.jpeg"    // 0:54.59
-};
-
+ /* === NEW VIDEO TIMINGS === */
 const videoTimings = {
-    "audio/3.mp3": {
-        3: "videos/zone3_video.mp4"
+  
+    "audio/5-NovoSavinovskiy.m4a": {
+        32.35: "videos/novosavinovskiy.mp4"
+    },
+
+    "audio/8-sport-na-mileniume.m4a": {
+        32.89: "videos/3d modelki.mp4"
+    },
+
+    "audio/25-put-na-pl-tukaya-stih.m4a": {
+        45.90: "videos/pamyatniki.mp4"
     }
 };
 
@@ -264,6 +394,7 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
