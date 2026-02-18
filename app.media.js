@@ -330,7 +330,7 @@ setTimeout(() => {
         overlay.style.display = "none";
     }
 }, 3000);
-
+}
 
 /* ========================================================
    ======================== GALLERY ========================
@@ -404,6 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
