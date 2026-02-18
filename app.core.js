@@ -58,6 +58,17 @@ async function runPreloadQueue() {
 
     preloadInProgress = false;
 }
+async function hardPreloadVideo(src) {
+    try {
+        const blob = await fetch(src).then(r => r.blob());
+        const url = URL.createObjectURL(blob);
+
+        window.__videoCache = window.__videoCache || {};
+        window.__videoCache[src] = url;
+    } catch (e) {
+        console.warn("Video preload failed:", src, e);
+    }
+}
 
 function preloadSingle(src) {
     return new Promise(resolve => {
@@ -82,16 +93,11 @@ function preloadSingle(src) {
             return;
         }
 
-        // VIDEO — грузим заранее
-const v = document.createElement("video");
-v.src = src;
-v.preload = "auto";
-v.oncanplaythrough = resolve;
-v.onerror = resolve;
-return;
+        // VIDEO — грузим через fetch()
+        hardPreloadVideo(src).then(resolve).catch(resolve);
+        return;
     });
 }
-
 /* === MINI STATUS BAR (можно скрыть позже) === */
 function showMiniStatus(text) {
     const el = document.getElementById("miniPreloadStatus");
@@ -1114,6 +1120,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
