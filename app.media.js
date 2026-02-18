@@ -351,7 +351,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     notReadyBtn.onclick = () => {
         document.getElementById("galleryTrack").innerHTML = "";
-
+const galleryTrack = document.createElement("div");
+galleryTrack.id = "galleryTrack";
+galleryTrack.style.display = "inline-flex";
+galleryTrack.style.flexDirection = "row";
+galleryTrack.style.gap = "12px";
+galleryTrack.style.whiteSpace = "nowrap";
+galleryOverlay.appendChild(galleryTrack);
         const zoneIds = Object.keys(missedMedia)
             .map(id => Number(id))
             .sort((a, b) => b - a);
@@ -404,13 +410,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     showFullscreenMedia(item.src, item.type);
                 };
 
-               document.getElementById("galleryTrack").appendChild(thumb);
+               galleryTrack.appendChild(thumb);
             });
         });
 
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
