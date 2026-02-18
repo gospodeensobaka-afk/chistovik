@@ -224,12 +224,11 @@ function hideMiniStatus() {
                    if (!el) return;
                    el.textContent = `Пройдено: ${visitedAudioZones} из ${totalAudioZones}`;
                }
-               /* ========================================================
-                  ===================== AUDIO ZONES =======================
-                  ======================================================== */
-               
-            function playZoneAudio(src, id) {
-              function preloadAllMediaForCurrentAudio(audioSrc) {
+              /* ========================================================
+   ===================== AUDIO ZONES =======================
+   ======================================================== */
+
+function preloadAllMediaForCurrentAudio(audioSrc) {
     const key = "audio/" + audioSrc.split("/").pop();
 
     const p = photoTimings[key];
@@ -247,7 +246,9 @@ function hideMiniStatus() {
         }
     }
 }
-              window.__currentZoneId = id;
+
+function playZoneAudio(src, id) {
+    window.__currentZoneId = id;
     if (!audioEnabled) audioEnabled = true;
 
     globalAudio.src = src;
@@ -261,60 +262,60 @@ function hideMiniStatus() {
     audioPlaying = true;
     globalAudio.onended = () => audioPlaying = false;
 }
-             
-               function updateCircleColors() {
-                   const source = map.getSource("audio-circles");
-                   if (!source) return;
-                   source.setData({
-                       type: "FeatureCollection",
-                       features: zones
-                           .filter(z => z.type === "audio")
-                           .map(z => ({
-                               type: "Feature",
-                               properties: { id: z.id, visited: z.visited },
-                               geometry: { type: "Point", coordinates: [z.lng, z.lat] }
-                           }))
-                   });
-               }
-               
-               function checkZones(coords) {
-                   zones.forEach(z => {
-                       if (z.type !== "audio") return;
-               
-                       const dist = distance(coords, [z.lat, z.lng]);
-               
-                       // СТАРАЯ НАДЁЖНАЯ ЛОГИКА: один раз при входе
-                       if (!z.visited && dist <= z.radius) {
-                   z.visited = true;
-               /* === SMART PRELOAD NEXT ZONE === */
-const audioZonesList = zones.filter(a => a.type === "audio");
-const idx = audioZonesList.findIndex(a => a.id === z.id);
-const next = audioZonesList[idx + 1];
 
-if (next && !next.preloadTriggered) {
-    next.preloadTriggered = true;
-
-    let files = [];
-    if (next.audio) files.push(next.audio);
-
-    const key = next.audio;
-    
-
-   queuePreload(files, next.id);
+function updateCircleColors() {
+    const source = map.getSource("audio-circles");
+    if (!source) return;
+    source.setData({
+        type: "FeatureCollection",
+        features: zones
+            .filter(z => z.type === "audio")
+            .map(z => ({
+                type: "Feature",
+                properties: { id: z.id, visited: z.visited },
+                geometry: { type: "Point", coordinates: [z.lng, z.lat] }
+            }))
+    });
 }
-                   if (z.type === "audio") {
-                       visitedAudioZones++;
-                       updateProgress();
-                   }
-               
-                   updateCircleColors();
-                   if (z.audio) {
-    preloadAllMediaForCurrentAudio(z.audio); // ← ДОП-ПРЕДЗАГРУЗКА
-    playZoneAudio(z.audio, z.id);
+
+function checkZones(coords) {
+    zones.forEach(z => {
+        if (z.type !== "audio") return;
+
+        const dist = distance(coords, [z.lat, z.lng]);
+
+        // СТАРАЯ НАДЁЖНАЯ ЛОГИКА: один раз при входе
+        if (!z.visited && dist <= z.radius) {
+            z.visited = true;
+
+            /* === SMART PRELOAD NEXT ZONE === */
+            const audioZonesList = zones.filter(a => a.type === "audio");
+            const idx = audioZonesList.findIndex(a => a.id === z.id);
+            const next = audioZonesList[idx + 1];
+
+            if (next && !next.preloadTriggered) {
+                next.preloadTriggered = true;
+
+                let files = [];
+                if (next.audio) files.push(next.audio);
+
+                queuePreload(files, next.id);
+            }
+
+            if (z.type === "audio") {
+                visitedAudioZones++;
+                updateProgress();
+            }
+
+            updateCircleColors();
+
+            if (z.audio) {
+                preloadAllMediaForCurrentAudio(z.audio); // ← ДОП-ПРЕДЗАГРУЗКА
+                playZoneAudio(z.audio, z.id);
+            }
+        }
+    });
 }
-                   });
-               }
-               
                /* ========================================================
                   ===================== SUPER DEBUG =======================
                   ======================================================== */
@@ -1113,6 +1114,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
