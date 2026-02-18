@@ -235,20 +235,23 @@ function hideMiniStatus() {
    ======================================================== */
 
 function preloadAllMediaForCurrentAudio(audioSrc) {
-    const key = "audio/" + audioSrc.split("/").pop();
+    const clean = audioSrc.split("?")[0].split("#")[0];
+    const key = clean.startsWith("audio/") ? clean : "audio/" + clean.split("/").pop();
 
     const p = photoTimings[key];
     const v = videoTimings[key];
 
+    // Фото
     if (p) {
         for (const t in p) {
-            preloadSingle(p[t].open);
+            queuePreload([p[t].open]);
         }
     }
 
+    // Видео по таймингам
     if (v) {
         for (const t in v) {
-            preloadSingle(v[t].open);
+            queuePreload([v[t].open]);
         }
     }
 }
@@ -1120,6 +1123,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
