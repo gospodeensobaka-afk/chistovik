@@ -93,7 +93,7 @@ const photoTimings = {
         4.33: "images/fontan.jpeg"
     },
 
-    "audio/25-put-na-pl-tukaya-stih.m4a": {
+    "audio/25-put-na-pl-tukaya-stih.mp3": {
         45.90: "images/pamyatniki.jpeg"
     },
 
@@ -394,6 +394,7 @@ document.addEventListener("DOMContentLoaded", () => {
         galleryOverlay.classList.remove("hidden");
     };
 });
+
 
 
 
