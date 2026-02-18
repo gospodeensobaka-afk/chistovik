@@ -350,85 +350,80 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!notReadyBtn || !galleryOverlay) return;
 
     notReadyBtn.onclick = () => {
-       // Полностью очищаем overlay
-galleryOverlay.innerHTML = "";
+    // Полностью очищаем overlay
+    galleryOverlay.innerHTML = "";
 
-// Создаём новый track
-const galleryTrack = document.createElement("div");
-galleryTrack.id = "galleryTrack";
-galleryTrack.style.display = "inline-flex";
-galleryTrack.style.flexDirection = "row";
-galleryTrack.style.gap = "12px";
-galleryTrack.style.whiteSpace = "nowrap";
+    // Создаём новый track
+    const galleryTrack = document.createElement("div");
+    galleryTrack.id = "galleryTrack";
+    galleryTrack.style.display = "inline-flex";
+    galleryTrack.style.flexDirection = "row";
+    galleryTrack.style.gap = "12px";
+    galleryTrack.style.whiteSpace = "nowrap";
 
-// Добавляем track в overlay
-galleryOverlay.appendChild(galleryTrack);
-const galleryTrack = document.createElement("div");
-galleryTrack.id = "galleryTrack";
-galleryTrack.style.display = "inline-flex";
-galleryTrack.style.flexDirection = "row";
-galleryTrack.style.gap = "12px";
-galleryTrack.style.whiteSpace = "nowrap";
-galleryOverlay.appendChild(galleryTrack);
-        const zoneIds = Object.keys(missedMedia)
-            .map(id => Number(id))
-            .sort((a, b) => b - a);
+    // Добавляем track в overlay
+    galleryOverlay.appendChild(galleryTrack);
 
-        const lastThree = zoneIds.slice(0, 3);
+    const zoneIds = Object.keys(missedMedia)
+        .map(id => Number(id))
+        .sort((a, b) => b - a);
 
-        lastThree.forEach(zoneId => {
-            const items = missedMedia[zoneId];
+    const lastThree = zoneIds.slice(0, 3);
 
-            const title = document.createElement("div");
-            title.textContent = `Зона ${zoneId}`;
-            title.style.color = "white";
-            title.style.margin = "10px 0 5px 0";
-            title.style.fontSize = "16px";
-            galleryOverlay.appendChild(title);
+    lastThree.forEach(zoneId => {
+        const items = missedMedia[zoneId];
 
-            items.forEach(item => {
-                const thumb = document.createElement("div");
-                thumb.style.width = "100px";
-                thumb.style.height = "100px";
-                thumb.style.borderRadius = "10px";
-                thumb.style.overflow = "hidden";
-                thumb.style.cursor = "pointer";
-                thumb.style.background = "#000";
-                thumb.style.display = "inline-flex";
-                thumb.style.alignItems = "center";
-                thumb.style.justifyContent = "center";
-                thumb.style.marginRight = "10px";
+        const title = document.createElement("div");
+        title.textContent = `Зона ${zoneId}`;
+        title.style.color = "white";
+        title.style.margin = "10px 0 5px 0";
+        title.style.fontSize = "16px";
+        galleryOverlay.appendChild(title);
 
-                if (item.type === "photo") {
-                    const img = document.createElement("img");
-                    img.src = item.src;
-                    img.style.width = "100%";
-                    img.style.height = "100%";
-                    img.style.objectFit = "cover";
-                    thumb.appendChild(img);
-                } else {
-                    const icon = document.createElement("div");
-                    icon.style.width = "0";
-                    icon.style.height = "0";
-                    icon.style.borderLeft = "20px solid white";
-                    icon.style.borderTop = "12px solid transparent";
-                    icon.style.borderBottom = "12px solid transparent";
-                    thumb.appendChild(icon);
-                }
+        items.forEach(item => {
+            const thumb = document.createElement("div");
+            thumb.style.width = "100px";
+            thumb.style.height = "100px";
+            thumb.style.borderRadius = "10px";
+            thumb.style.overflow = "hidden";
+            thumb.style.cursor = "pointer";
+            thumb.style.background = "#000";
+            thumb.style.display = "inline-flex";
+            thumb.style.alignItems = "center";
+            thumb.style.justifyContent = "center";
+            thumb.style.marginRight = "10px";
 
-                thumb.onclick = () => {
-                    galleryOverlay.classList.add("hidden");
-                    window.__openedFromGallery = true;
-                    showFullscreenMedia(item.src, item.type);
-                };
+            if (item.type === "photo") {
+                const img = document.createElement("img");
+                img.src = item.src;
+                img.style.width = "100%";
+                img.style.height = "100%";
+                img.style.objectFit = "cover";
+                thumb.appendChild(img);
+            } else {
+                const icon = document.createElement("div");
+                icon.style.width = "0";
+                icon.style.height = "0";
+                icon.style.borderLeft = "20px solid white";
+                icon.style.borderTop = "12px solid transparent";
+                icon.style.borderBottom = "12px solid transparent";
+                thumb.appendChild(icon);
+            }
 
-               galleryTrack.appendChild(thumb);
-            });
+            thumb.onclick = () => {
+                galleryOverlay.classList.add("hidden");
+                window.__openedFromGallery = true;
+                showFullscreenMedia(item.src, item.type);
+            };
+
+            galleryTrack.appendChild(thumb);
         });
+    });
 
-        galleryOverlay.classList.remove("hidden");
-    };
+    galleryOverlay.classList.remove("hidden");
+};
 });
+
 
 
 
