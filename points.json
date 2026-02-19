@@ -292,8 +292,9 @@
     "type": "audio",
     "lat": 55.799351,
     "lng": 49.113248,
-    "radius": 25,
+    "radius": 29,
     "audio": "audio/35-yellow-zone-ikona.mp3"
+    "customColor": "yellow"
   },
   {
     "id": 36,
@@ -399,4 +400,5 @@
     "icon": "icons/finish.png"
   }
 ]
+
 
