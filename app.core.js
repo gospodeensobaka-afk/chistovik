@@ -874,10 +874,10 @@ points.forEach(p => {
     if (p.type === "audio") {
         circleFeatures.push({
             type: "Feature",
-           properties: { 
-    id: p.id, 
+           properties: {
+    id: p.id,
     visited: false,
-    customColor: p.customColor || null
+    ...(p.customColor ? { customColor: p.customColor } : {})
 },
             geometry: { type: "Point", coordinates: [p.lng, p.lat] }
         });
@@ -1145,6 +1145,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
