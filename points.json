@@ -293,7 +293,7 @@
     "lat": 55.799351,
     "lng": 49.113248,
     "radius": 29,
-    "audio": "audio/35-yellow-zone-ikona.mp3"
+    "audio": "audio/35-yellow-zone-ikona.mp3",
     "customColor": "yellow"
   },
   {
@@ -400,5 +400,6 @@
     "icon": "icons/finish.png"
   }
 ]
+
 
 
