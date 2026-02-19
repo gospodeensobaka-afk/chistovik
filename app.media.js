@@ -306,45 +306,26 @@ if (type === "video") {
 
     media.play().catch(() => {});
 } else {
-    // === НЕ СОЗДАЁМ НОВЫЙ IMG ===
-    // Используем существующий <img>, чтобы не было чёрного экрана
-
-    // === ПРЕДЗАГРУЗКА В СКРЫТЫЙ IMG ===
-    const pre = new Image();
-    pre.src = src;
-
-    // Если Chrome уже знает размеры — подменяем мгновенно
-    if (pre.complete && pre.naturalWidth > 0) {
-        // Сбрасываем transform перед подменой
-        media.style.transition = "none";
-        media.style.transform = "translateX(0)";
-        media.getBoundingClientRect();
-
-        media.src = src;
-
-        // Возвращаем плавность
-        requestAnimationFrame(() => {
-            media.style.transition = "transform 0.25s ease";
-        });
-
-        return;
+    if (media.tagName.toLowerCase() !== "img") {
+        const newImg = document.createElement("img");
+        newImg.id = "fsMediaElement";
+        newImg.style.maxWidth = "100%";
+        newImg.style.maxHeight = "100%";
+        overlay.replaceChild(newImg, media);
+        media = newImg;
     }
 
-    // Если Chrome тупит — ждём загрузки в pre, но НЕ скрываем текущее фото
-    pre.onload = () => {
-        media.style.transition = "none";
-        media.style.transform = "translateX(0)";
-        media.getBoundingClientRect();
+    // Скрываем фото до загрузки
+    media.style.opacity = "0";
+    media.style.transform = "translateX(0)";
 
-        media.src = src;
-
-        requestAnimationFrame(() => {
-            media.style.transition = "transform 0.25s ease";
-        });
+    media.onload = () => {
+        // Фото загрузилось → показываем плавно
+        media.style.transition = "opacity 0.15s ease";
+        media.style.opacity = "1";
     };
 
-    // ВАЖНО: НЕ скрываем media, НЕ ставим opacity=0
-    // Старое фото остаётся на экране до подмены
+    media.src = src;
 }
 
    
@@ -525,29 +506,4 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
