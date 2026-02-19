@@ -331,7 +331,12 @@ if (duration) {
     return;
 }
 
-// === Fallback 3000 мс ===
+// === МЕДИАЗОНЫ: НИКОГДА не закрываем автоматически ===
+if (window.__mediaMenuMode) {
+    return;
+}
+
+// === Fallback 3000 мс (для аудиотаймингов) ===
 setTimeout(() => {
     if (overlay && overlay.style.display !== "none") {
         overlay.style.display = "none";
@@ -423,6 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
