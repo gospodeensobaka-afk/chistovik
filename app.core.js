@@ -874,7 +874,11 @@ points.forEach(p => {
     if (p.type === "audio") {
         circleFeatures.push({
             type: "Feature",
-            properties: { id: p.id, visited: false },
+           properties: { 
+    id: p.id, 
+    visited: false,
+    customColor: p.customColor || null
+},
             geometry: { type: "Point", coordinates: [p.lng, p.lat] }
         });
     }
@@ -951,18 +955,36 @@ map.addLayer({
     paint: {
         "circle-radius": 0,
         "circle-color": [
-            "case",
-            ["boolean", ["get", "visited"], false],
-            "rgba(0,255,0,0.25)",
-            "rgba(255,0,0,0.15)"
-        ],
-        "circle-stroke-color": [
-            "case",
-            ["boolean", ["get", "visited"], false],
-            "rgba(0,255,0,0.6)",
-            "rgba(255,0,0,0.4)"
-        ],
-        "circle-stroke-width": 2
+    "case",
+
+    // 1) Если у зоны есть customColor → используем его
+    ["has", "customColor"],
+    ["get", "customColor"],
+
+    // 2) Если зона посещена → зелёный
+    ["boolean", ["get", "visited"], false],
+    "rgba(0,255,0,0.25)",
+
+    // 3) Иначе → красный
+    "rgba(255,0,0,0.15)"
+],
+
+"circle-stroke-color": [
+    "case",
+
+    // stroke тоже учитывает customColor (делаем чуть плотнее)
+    ["has", "customColor"],
+    ["get", "customColor"],
+
+    // visited → зелёный
+    ["boolean", ["get", "visited"], false],
+    "rgba(0,255,0,0.6)",
+
+    // обычный красный
+    "rgba(255,0,0,0.4)"
+],
+
+"circle-stroke-width": 2
     }
 });
 
@@ -1123,6 +1145,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
