@@ -314,8 +314,18 @@ if (type === "video") {
         overlay.replaceChild(newImg, media);
         media = newImg;
     }
+
+    // Скрываем фото до загрузки
+    media.style.opacity = "0";
+    media.style.transform = "translateX(0)";
+
+    media.onload = () => {
+        // Фото загрузилось → показываем плавно
+        media.style.transition = "opacity 0.15s ease";
+        media.style.opacity = "1";
+    };
+
     media.src = src;
-   media.getBoundingClientRect(); // принудительный reflow, фикс пустого кадра
 }
 
    
@@ -496,6 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
