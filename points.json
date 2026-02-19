@@ -402,8 +402,24 @@
     "lat": 55.796388,
     "lng": 49.108829,
     "icon": "icons/finish.png"
-  }
+  },
+  {
+    "id": 300,
+    "type": "mediaMenu",
+    "lat": 55.780513,
+    "lng": 49.116361,
+    "title": "Музейная точка",
+    "description": "3D‑модели, панорамы и редкие виды.",
+    "photos": [
+        "images/vid.jpeg",
+        "images/vatikanskiy.jpeg",
+        "images/uspenskiy.jpeg"
+    ],
+    "video": "videos/3d modelki.mp4",
+    "icon": "icons/muzey.png"
+}
 ]
+
 
 
 
