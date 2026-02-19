@@ -1230,6 +1230,7 @@ if (galleryOverlay) {
    ======================================================== */
 
 function openMediaMenu(p) {
+  window.__mediaMenuMode = true;
     let overlay = document.getElementById("mediaMenuUniversal");
     if (!overlay) createMediaMenuUniversal();
 
@@ -1301,6 +1302,7 @@ function openMediaMenu(p) {
 }
 
 function closeMediaMenuUniversal() {
+  window.__mediaMenuMode = false;
     const overlay = document.getElementById("mediaMenuUniversal");
     const sheet = document.getElementById("mediaMenuUniversalSheet");
 
@@ -1408,6 +1410,7 @@ function createMediaMenuUniversal() {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
