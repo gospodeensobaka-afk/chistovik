@@ -273,31 +273,83 @@ function playZoneAudio(src, id) {
 }
 
 function updateCircleColors() {
-    const source = map.getSource("audio-circles");
-    if (!source) return;
-    source.setData({
-        type: "FeatureCollection",
-        features: zones
-            .filter(z => z.type === "audio")
-            .map(z => ({
-                type: "Feature",
-                properties: { id: z.id, visited: z.visited },
-                geometry: { type: "Point", coordinates: [z.lng, z.lat] }
-            }))
-    });
+    const circleSource = map.getSource("audio-circles");
+    const polygonSource = map.getSource("audio-polygons");
+    if (!circleSource && !polygonSource) return;
+
+    const audioZones = zones.filter(z => z.type === "audio");
+
+    if (circleSource) {
+        circleSource.setData({
+            type: "FeatureCollection",
+            features: audioZones
+                .filter(z => !z.shape || z.shape !== "polygon")
+                .map(z => ({
+                    type: "Feature",
+                    properties: {
+                        id: z.id,
+                        visited: z.visited,
+                        ...(z.customColor ? { customColor: z.customColor } : {})
+                    },
+                    geometry: { type: "Point", coordinates: [z.lng, z.lat] }
+                }))
+        });
+    }
+
+    if (polygonSource) {
+        polygonSource.setData({
+            type: "FeatureCollection",
+            features: audioZones
+                .filter(z => z.shape === "polygon" && Array.isArray(z.polygon))
+                .map(z => ({
+                    type: "Feature",
+                    properties: {
+                        id: z.id,
+                        visited: z.visited,
+                        ...(z.customColor ? { customColor: z.customColor } : {})
+                    },
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [z.polygon]
+                    }
+                }))
+        });
+    }
 }
 
+function pointInPolygon(point, polygon) {
+    const x = point[1]; // lat
+    const y = point[0]; // lng
+
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i][0], yi = polygon[i][1];
+        const xj = polygon[j][0], yj = polygon[j][1];
+
+        const intersect =
+            ((yi > y) !== (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi + 0.0000001) + xi);
+
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
 function checkZones(coords) {
     zones.forEach(z => {
         if (z.type !== "audio") return;
 
-        const dist = distance(coords, [z.lat, z.lng]);
+        let inside = false;
 
-        // СТАРАЯ НАДЁЖНАЯ ЛОГИКА: один раз при входе
-        if (!z.visited && dist <= z.radius) {
+        if (z.shape === "polygon" && Array.isArray(z.polygon)) {
+            inside = pointInPolygon([coords[0], coords[1]], z.polygon);
+        } else {
+            const dist = distance(coords, [z.lat, z.lng]);
+            inside = dist <= z.radius;
+        }
+
+        if (!z.visited && inside) {
             z.visited = true;
 
-            /* === SMART PRELOAD NEXT ZONE === */
             const audioZonesList = zones.filter(a => a.type === "audio");
             const idx = audioZonesList.findIndex(a => a.id === z.id);
             const next = audioZonesList[idx + 1];
@@ -311,15 +363,13 @@ function checkZones(coords) {
                 queuePreload(files, next.id);
             }
 
-            if (z.type === "audio") {
-                visitedAudioZones++;
-                updateProgress();
-            }
+            visitedAudioZones++;
+            updateProgress();
 
             updateCircleColors();
 
             if (z.audio) {
-                preloadAllMediaForCurrentAudio(z.audio); // ← ДОП-ПРЕДЗАГРУЗКА
+                preloadAllMediaForCurrentAudio(z.audio);
                 playZoneAudio(z.audio, z.id);
             }
         }
@@ -852,36 +902,59 @@ map.addLayer({
    ======================================================== */
 
 const circleFeatures = [];
+const polygonFeatures = [];
 
 /* === 1. СОБИРАЕМ ZONES И МАРКЕРЫ === */
 points.forEach(p => {
     zones.push({
-        id: p.id,
-        name: p.name,
-        lat: p.lat,
-        lng: p.lng,
-        radius: p.radius || 20,
-        visited: false,
-        entered: false,
-        type: p.type,
-        audio: p.audio || null,
-        image: p.image || null,
-        icon: p.icon || null   // ← ★ ФИКС: теперь icon попадает в zones
-    });
-
+    id: p.id,
+    name: p.name,
+    lat: p.lat,
+    lng: p.lng,
+    radius: p.radius || 20,
+    visited: false,
+    entered: false,
+    type: p.type,
+    audio: p.audio || null,
+    image: p.image || null,
+    icon: p.icon || null,
+    shape: p.shape || null,
+    polygon: p.polygon || null,
+    customColor: p.customColor || null
+});
+  
     if (p.type === "audio") totalAudioZones++;
 
-    if (p.type === "audio") {
-        circleFeatures.push({
+   if (p.type === "audio") {
+
+    // === ПОЛИГОНАЛЬНАЯ АУДИОЗОНА ===
+    if (p.shape === "polygon" && Array.isArray(p.polygon)) {
+        polygonFeatures.push({
             type: "Feature",
-           properties: {
-    id: p.id,
-    visited: false,
-    ...(p.customColor ? { customColor: p.customColor } : {})
-},
-            geometry: { type: "Point", coordinates: [p.lng, p.lat] }
+            properties: {
+                id: p.id,
+                visited: false,
+                ...(p.customColor ? { customColor: p.customColor } : {})
+            },
+            geometry: {
+                type: "Polygon",
+                coordinates: [ p.polygon ]   // массив точек
+            }
         });
+        return; // не создаём круг
     }
+
+    // === КРУГЛАЯ АУДИОЗОНА ===
+    circleFeatures.push({
+        type: "Feature",
+        properties: {
+            id: p.id,
+            visited: false,
+            ...(p.customColor ? { customColor: p.customColor } : {})
+        },
+        geometry: { type: "Point", coordinates: [p.lng, p.lat] }
+    });
+}
 
     /* === MEDIA ZONES === */
     if (p.type === "media") {
@@ -939,13 +1012,38 @@ zones
       .setLngLat([p.lng, p.lat])
       .addTo(map);
   });
+
+
 /* ========================================================
    ==================== AUDIO CIRCLES ======================
    ======================================================== */
 
+map.addSource("audio-polygons", {
+    type: "geojson",
+    data: { type: "FeatureCollection", features: polygonFeatures }
+});
+
 map.addSource("audio-circles", {
     type: "geojson",
     data: { type: "FeatureCollection", features: circleFeatures }
+});
+
+map.addLayer({
+    id: "audio-polygons-layer",
+    type: "fill",
+    source: "audio-polygons",
+    paint: {
+        "fill-color": [
+            "case",
+            ["has", "customColor"],
+            ["get", "customColor"],
+            ["boolean", ["get", "visited"], false],
+            "rgba(0,255,0,0.25)",
+            "rgba(255,0,0,0.15)"
+        ],
+        "fill-opacity": 1,
+        "fill-outline-color": "rgba(0,0,0,0.3)"
+    }
 });
 
 map.addLayer({
@@ -955,41 +1053,31 @@ map.addLayer({
     paint: {
         "circle-radius": 0,
         "circle-color": [
-    "case",
-
-    // 1) Если у зоны есть customColor → используем его
-    ["has", "customColor"],
-    ["get", "customColor"],
-
-    // 2) Если зона посещена → зелёный
-    ["boolean", ["get", "visited"], false],
-    "rgba(0,255,0,0.25)",
-
-    // 3) Иначе → красный
-    "rgba(255,0,0,0.15)"
-],
-
-"circle-stroke-color": [
-    "case",
-
-    // stroke тоже учитывает customColor (делаем чуть плотнее)
-    ["has", "customColor"],
-    ["get", "customColor"],
-
-    // visited → зелёный
-    ["boolean", ["get", "visited"], false],
-    "rgba(0,255,0,0.6)",
-
-    // обычный красный
-    "rgba(255,0,0,0.4)"
-],
-
-"circle-stroke-width": 2
+            "case",
+            ["has", "customColor"],
+            ["get", "customColor"],
+            ["boolean", ["get", "visited"], false],
+            "rgba(0,255,0,0.25)",
+            "rgba(255,0,0,0.15)"
+        ],
+        "circle-stroke-color": [
+            "case",
+            ["has", "customColor"],
+            ["get", "customColor"],
+            ["boolean", ["get", "visited"], false],
+            "rgba(0,255,0,0.6)",
+            "rgba(255,0,0,0.4)"
+        ],
+        "circle-stroke-width": 2
     }
 });
 
 /* === КЛИК ПО АУДИОЗОНЕ → СИМУЛЯЦИЯ === */
 map.on("click", "audio-circles-layer", (e) => {
+    const id = e.features[0].properties.id;
+    simulateAudioZone(id);
+});
+map.on("click", "audio-polygons-layer", (e) => {
     const id = e.features[0].properties.id;
     simulateAudioZone(id);
 });
@@ -1145,6 +1233,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
