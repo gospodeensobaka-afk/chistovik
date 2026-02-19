@@ -317,41 +317,60 @@ if (type === "video") {
     media.src = src;
 }
 
-   // === СВАЙПЫ ДЛЯ ФОТО ===
+   
+// === СВАЙПЫ ДЛЯ ФОТО С АНИМАЦИЕЙ ===
 if (type === "photo") {
     let startX = null;
+    let isDragging = false;
 
     overlay.ontouchstart = (e) => {
         startX = e.touches[0].clientX;
+        isDragging = true;
+        media.style.transition = "none";
+    };
+
+    overlay.ontouchmove = (e) => {
+        if (!isDragging) return;
+        const dx = e.touches[0].clientX - startX;
+        media.style.transform = `translateX(${dx}px)`;
     };
 
     overlay.ontouchend = (e) => {
-        if (startX === null) return;
+        if (!isDragging) return;
+        isDragging = false;
+
         const endX = e.changedTouches[0].clientX;
         const dx = endX - startX;
 
+        media.style.transition = "transform 0.25s ease";
+
         if (!window.__fsGallery || window.__fsGallery.length < 2) {
-            startX = null;
+            media.style.transform = "translateX(0)";
             return;
         }
 
-        if (dx < -50) {
-            // свайп влево → следующее фото
-            if (window.__fsIndex < window.__fsGallery.length - 1) {
+        // свайп влево → следующее фото
+        if (dx < -50 && window.__fsIndex < window.__fsGallery.length - 1) {
+            media.style.transform = "translateX(-100%)";
+            setTimeout(() => {
                 window.__fsIndex++;
                 showFullscreenMedia(window.__fsGallery[window.__fsIndex], "photo");
-            }
+            }, 200);
+            return;
         }
 
-        if (dx > 50) {
-            // свайп вправо → предыдущее фото
-            if (window.__fsIndex > 0) {
+        // свайп вправо → предыдущее фото
+        if (dx > 50 && window.__fsIndex > 0) {
+            media.style.transform = "translateX(100%)";
+            setTimeout(() => {
                 window.__fsIndex--;
                 showFullscreenMedia(window.__fsGallery[window.__fsIndex], "photo");
-            }
+            }, 200);
+            return;
         }
 
-        startX = null;
+        // если свайп слабый — возвращаем назад
+        media.style.transform = "translateX(0)";
     };
 }
 overlay.style.display = "flex";
@@ -476,6 +495,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
