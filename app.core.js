@@ -956,23 +956,39 @@ points.forEach(p => {
     });
 }
 
-    /* === MEDIA ZONES === */
-    if (p.type === "media") {
-        const el = document.createElement("img");
-        el.src = p.icon;
-        el.style.width = "40px";
-        el.style.height = "40px";
-        el.style.cursor = "pointer";
 
-        el.onclick = () => {
-            if (p.photo) showFullscreenMedia(p.photo, "photo");
-            if (p.video) showFullscreenMedia(p.video, "video");
-        };
+/* === MEDIA ZONES === */
+if (p.type === "media") {
+    const el = document.createElement("img");
+    el.src = p.icon;
+    el.style.width = "40px";
+    el.style.height = "40px";
+    el.style.cursor = "pointer";
 
-        new maplibregl.Marker({ element: el })
-            .setLngLat([p.lng, p.lat])
-            .addTo(map);
-    }
+    el.onclick = () => {
+        if (p.photo) showFullscreenMedia(p.photo, "photo");
+        if (p.video) showFullscreenMedia(p.video, "video");
+    };
+
+    new maplibregl.Marker({ element: el })
+        .setLngLat([p.lng, p.lat])
+        .addTo(map);
+}
+
+/* === UNIVERSAL MEDIA MENU ZONES === */
+if (p.type === "mediaMenu") {
+    const el = document.createElement("img");
+    el.src = p.icon;
+    el.style.width = "40px";
+    el.style.height = "40px";
+    el.style.cursor = "pointer";
+
+    el.onclick = () => openMediaMenu(p);
+
+    new maplibregl.Marker({ element: el })
+        .setLngLat([p.lng, p.lat])
+        .addTo(map);
+}
 });
 
 /* ========================================================
@@ -1209,6 +1225,147 @@ if (galleryOverlay) {
         }
     };
 }
+                 /* ========================================================
+   ========== UNIVERSAL MEDIA MENU (ALL ZONES) ============
+   ======================================================== */
+
+function openMediaMenu(p) {
+    let overlay = document.getElementById("mediaMenuUniversal");
+    if (!overlay) createMediaMenuUniversal();
+
+    overlay = document.getElementById("mediaMenuUniversal");
+    const sheet = document.getElementById("mediaMenuUniversalSheet");
+
+    // Заголовок + описание
+    document.getElementById("mmTitle").textContent = p.title || "";
+    document.getElementById("mmDesc").textContent = p.description || "";
+
+    const photoBtn = document.getElementById("mmPhotoBtn");
+    const videoBtn = document.getElementById("mmVideoBtn");
+    const preview = document.getElementById("mmPreview");
+
+    // === Фото ===
+    if (p.photos && p.photos.length > 0) {
+        photoBtn.style.display = "block";
+        preview.innerHTML = "";
+        preview.style.display = "none";
+
+        photoBtn.onclick = () => {
+            preview.innerHTML = "";
+            preview.style.display = "flex";
+
+            p.photos.forEach(src => {
+                const box = document.createElement("div");
+                box.style.width = "80px";
+                box.style.height = "80px";
+                box.style.borderRadius = "10px";
+                box.style.overflow = "hidden";
+                box.style.cursor = "pointer";
+                box.style.background = "#000";
+                box.style.border = "1px solid rgba(255,255,255,0.1)";
+
+                const img = document.createElement("img");
+                img.src = src;
+                img.style.width = "100%";
+                img.style.height = "100%";
+                img.style.objectFit = "cover";
+
+                box.appendChild(img);
+                box.onclick = () => {
+                    closeMediaMenuUniversal();
+                    showFullscreenMedia(src, "photo");
+                };
+
+                preview.appendChild(box);
+            });
+        };
+    } else {
+        photoBtn.style.display = "none";
+    }
+
+    // === Видео ===
+    if (p.video) {
+        videoBtn.style.display = "block";
+        videoBtn.onclick = () => {
+            closeMediaMenuUniversal();
+            showFullscreenMedia(p.video, "video");
+        };
+    } else {
+        videoBtn.style.display = "none";
+    }
+
+    overlay.style.display = "flex";
+    requestAnimationFrame(() => {
+        sheet.style.transform = "translateY(0)";
+    });
+}
+
+function closeMediaMenuUniversal() {
+    const overlay = document.getElementById("mediaMenuUniversal");
+    const sheet = document.getElementById("mediaMenuUniversalSheet");
+
+    sheet.style.transform = "translateY(100%)";
+    setTimeout(() => overlay.style.display = "none", 250);
+}
+
+function createMediaMenuUniversal() {
+    const overlay = document.createElement("div");
+    overlay.id = "mediaMenuUniversal";
+    overlay.style.position = "fixed";
+    overlay.style.left = "0";
+    overlay.style.top = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0,0,0,0.4)";
+    overlay.style.display = "none";
+    overlay.style.zIndex = "200000";
+    overlay.style.alignItems = "flex-end";
+    overlay.style.justifyContent = "center";
+
+    const sheet = document.createElement("div");
+    sheet.id = "mediaMenuUniversalSheet";
+    sheet.style.width = "100%";
+    sheet.style.background = "#1c1c1e";
+    sheet.style.boxShadow = "0 -4px 20px rgba(0,0,0,0.4)";
+    sheet.style.borderTopLeftRadius = "16px";
+    sheet.style.borderTopRightRadius = "16px";
+    sheet.style.padding = "20px";
+    sheet.style.boxSizing = "border-box";
+    sheet.style.transform = "translateY(100%)";
+    sheet.style.transition = "transform 0.25s ease-out";
+
+    sheet.innerHTML = `
+        <div id="mmTitle" style="font-size:18px; margin-bottom:8px;"></div>
+        <div id="mmDesc" style="font-size:14px; opacity:0.8; margin-bottom:16px;"></div>
+
+        <button id="mmPhotoBtn"
+            style="width:100%; padding:14px; font-size:16px; margin-bottom:10px;
+                   border-radius:10px; border:none;
+                   background:linear-gradient(180deg,#30d158 0%,#1fa347 100%);
+                   color:#fff; font-weight:500;">
+            Фото
+        </button>
+
+        <button id="mmVideoBtn"
+            style="width:100%; padding:14px; font-size:16px; margin-bottom:10px;
+                   border-radius:10px; border:none;
+                   background:linear-gradient(180deg,#0a84ff 0%,#0066cc 100%);
+                   color:#fff; font-weight:500;">
+            Видео
+        </button>
+
+        <div id="mmPreview"
+             style="display:none; margin-top:16px; gap:10px; justify-content:center;">
+        </div>
+    `;
+
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+
+    overlay.onclick = e => {
+        if (e.target === overlay) closeMediaMenuUniversal();
+    };
+}
                /* ========================================================
                   ===================== START TOUR BTN ====================
                   ======================================================== */
@@ -1251,6 +1408,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
