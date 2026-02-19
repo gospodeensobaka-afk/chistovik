@@ -306,26 +306,29 @@ if (type === "video") {
 
     media.play().catch(() => {});
 } else {
-    if (media.tagName.toLowerCase() !== "img") {
-        const newImg = document.createElement("img");
-        newImg.id = "fsMediaElement";
-        newImg.style.maxWidth = "100%";
-        newImg.style.maxHeight = "100%";
-        overlay.replaceChild(newImg, media);
-        media = newImg;
+    // === НЕ СОЗДАЁМ НОВЫЙ IMG ===
+    // Используем существующий <img>, чтобы не было чёрного экрана
+
+    // === ПРЕДЗАГРУЗКА В СКРЫТЫЙ IMG ===
+    const pre = new Image();
+    pre.src = src;
+
+    // Если Chrome уже знает размеры — подменяем мгновенно
+    if (pre.complete && pre.naturalWidth > 0) {
+        media.src = src;
+        media.style.opacity = "1";
+        return;
     }
 
-    // Скрываем фото до загрузки
-    media.style.opacity = "0";
-    media.style.transform = "translateX(0)";
-
-    media.onload = () => {
-        // Фото загрузилось → показываем плавно
-        media.style.transition = "opacity 0.15s ease";
+    // Если Chrome тупит — ждём загрузки в pre, но НЕ скрываем текущее фото
+    pre.onload = () => {
+        media.src = src;
         media.style.opacity = "1";
     };
 
-    media.src = src;
+    // ВАЖНО: НЕ скрываем media, НЕ ставим opacity=0
+    // Старое фото остаётся на экране до подмены
+
 }
 
    
@@ -506,6 +509,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
