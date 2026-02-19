@@ -1272,7 +1272,9 @@ function openMediaMenu(p) {
                 img.style.objectFit = "cover";
 
                 box.appendChild(img);
-                box.onclick = () => {
+               box.onclick = () => {
+    window.__fsGallery = p.photos.slice();        // массив всех фото
+    window.__fsIndex = p.photos.indexOf(src);     // индекс текущего фото
     showFullscreenMedia(src, "photo");
 };
 
@@ -1408,6 +1410,7 @@ function createMediaMenuUniversal() {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
