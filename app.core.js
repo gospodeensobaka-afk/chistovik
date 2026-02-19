@@ -1033,14 +1033,20 @@ map.addLayer({
     type: "fill",
     source: "audio-polygons",
     paint: {
-        "fill-color": [
-            "case",
-            ["has", "customColor"],
-            ["get", "customColor"],
-            ["boolean", ["get", "visited"], false],
-            "rgba(0,255,0,0.25)",
-            "rgba(255,0,0,0.15)"
-        ],
+       "fill-color": [
+    "case",
+
+    // 1) visited → зелёный
+    ["boolean", ["get", "visited"], false],
+    "rgba(0,255,0,0.25)",
+
+    // 2) customColor → жёлтый (только у id35)
+    ["has", "customColor"],
+    ["get", "customColor"],
+
+    // 3) default → красный
+    "rgba(255,0,0,0.15)"
+],
         "fill-opacity": 1,
         "fill-outline-color": "rgba(0,0,0,0.3)"
     }
@@ -1053,21 +1059,33 @@ map.addLayer({
     paint: {
         "circle-radius": 0,
         "circle-color": [
-            "case",
-            ["has", "customColor"],
-            ["get", "customColor"],
-            ["boolean", ["get", "visited"], false],
-            "rgba(0,255,0,0.25)",
-            "rgba(255,0,0,0.15)"
-        ],
+    "case",
+
+    // 1) visited → зелёный
+    ["boolean", ["get", "visited"], false],
+    "rgba(0,255,0,0.25)",
+
+    // 2) customColor → жёлтый (только у id35)
+    ["has", "customColor"],
+    ["get", "customColor"],
+
+    // 3) default → красный
+    "rgba(255,0,0,0.15)"
+],
         "circle-stroke-color": [
-            "case",
-            ["has", "customColor"],
-            ["get", "customColor"],
-            ["boolean", ["get", "visited"], false],
-            "rgba(0,255,0,0.6)",
-            "rgba(255,0,0,0.4)"
-        ],
+    "case",
+
+    // visited → зелёный
+    ["boolean", ["get", "visited"], false],
+    "rgba(0,255,0,0.6)",
+
+    // customColor → жёлтый
+    ["has", "customColor"],
+    ["get", "customColor"],
+
+    // default → красный
+    "rgba(255,0,0,0.4)"
+],
         "circle-stroke-width": 2
     }
 });
@@ -1233,6 +1251,7 @@ if (galleryOverlay) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
