@@ -314,6 +314,43 @@ if (type === "video") {
     media.src = src;
 }
 
+   // === СВАЙПЫ ДЛЯ ФОТО ===
+if (type === "photo") {
+    let startX = null;
+
+    overlay.ontouchstart = (e) => {
+        startX = e.touches[0].clientX;
+    };
+
+    overlay.ontouchend = (e) => {
+        if (startX === null) return;
+        const endX = e.changedTouches[0].clientX;
+        const dx = endX - startX;
+
+        if (!window.__fsGallery || window.__fsGallery.length < 2) {
+            startX = null;
+            return;
+        }
+
+        if (dx < -50) {
+            // свайп влево → следующее фото
+            if (window.__fsIndex < window.__fsGallery.length - 1) {
+                window.__fsIndex++;
+                showFullscreenMedia(window.__fsGallery[window.__fsIndex], "photo");
+            }
+        }
+
+        if (dx > 50) {
+            // свайп вправо → предыдущее фото
+            if (window.__fsIndex > 0) {
+                window.__fsIndex--;
+                showFullscreenMedia(window.__fsGallery[window.__fsIndex], "photo");
+            }
+        }
+
+        startX = null;
+    };
+}
 overlay.style.display = "flex";
 
 if (window.__openedFromGallery) {
@@ -415,11 +452,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 thumb.appendChild(icon);
             }
 
-            thumb.onclick = () => {
-                galleryOverlay.classList.add("hidden");
-                window.__openedFromGallery = true;
-                showFullscreenMedia(item.src, item.type);
-            };
+           thumb.onclick = () => {
+    galleryOverlay.classList.add("hidden");
+    window.__openedFromGallery = true;
+
+    const photos = missedMedia[zoneId]
+        .filter(m => m.type === "photo")
+        .map(m => m.src);
+
+    window.__fsGallery = photos;
+    window.__fsIndex = photos.indexOf(item.src);
+
+    showFullscreenMedia(item.src, item.type);
+};
 
             galleryTrack.appendChild(thumb);
         });
@@ -428,6 +473,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
