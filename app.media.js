@@ -315,20 +315,36 @@ if (type === "video") {
 
     // Если Chrome уже знает размеры — подменяем мгновенно
     if (pre.complete && pre.naturalWidth > 0) {
+        // Сбрасываем transform перед подменой
+        media.style.transition = "none";
+        media.style.transform = "translateX(0)";
+        media.getBoundingClientRect();
+
         media.src = src;
-        media.style.opacity = "1";
+
+        // Возвращаем плавность
+        requestAnimationFrame(() => {
+            media.style.transition = "transform 0.25s ease";
+        });
+
         return;
     }
 
     // Если Chrome тупит — ждём загрузки в pre, но НЕ скрываем текущее фото
     pre.onload = () => {
+        media.style.transition = "none";
+        media.style.transform = "translateX(0)";
+        media.getBoundingClientRect();
+
         media.src = src;
-        media.style.opacity = "1";
+
+        requestAnimationFrame(() => {
+            media.style.transition = "transform 0.25s ease";
+        });
     };
 
     // ВАЖНО: НЕ скрываем media, НЕ ставим opacity=0
     // Старое фото остаётся на экране до подмены
-
 }
 
    
@@ -509,6 +525,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
