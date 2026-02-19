@@ -49,7 +49,6 @@
         [49.107385, 55.813746],
         [49.105871, 55.813030]
     ],
-    "customColor": "rgba(255,255,0,0.25)",
     "audio": "audio/41-sama-chasha.mp3"
 },
   {
@@ -405,6 +404,7 @@
     "icon": "icons/finish.png"
   }
 ]
+
 
 
 
