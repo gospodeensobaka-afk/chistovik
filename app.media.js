@@ -228,6 +228,8 @@ function showFullscreenMedia(src, type, duration = null) {
     let closeBtn = document.getElementById("fsMediaClose");
 
     // === ГРУППИРУЕМ МЕДИА ПО ЗОНАМ ===
+  // === ГРУППИРУЕМ МЕДИА ПО ЗОНАМ (ТОЛЬКО ДЛЯ АУДИОЗОН) ===
+if (window.__currentZoneId !== undefined && window.__currentZoneId !== null) {
     if (!missedMedia[window.__currentZoneId]) {
         missedMedia[window.__currentZoneId] = [];
     }
@@ -235,6 +237,7 @@ function showFullscreenMedia(src, type, duration = null) {
     if (!missedMedia[window.__currentZoneId].some(m => m.src === src)) {
         missedMedia[window.__currentZoneId].push({ type, src });
     }
+}
 
     if (!overlay) {
         overlay = document.createElement("div");
@@ -473,6 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
