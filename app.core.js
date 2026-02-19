@@ -1273,9 +1273,8 @@ function openMediaMenu(p) {
 
                 box.appendChild(img);
                 box.onclick = () => {
-                    closeMediaMenuUniversal();
-                    showFullscreenMedia(src, "photo");
-                };
+    showFullscreenMedia(src, "photo");
+};
 
                 preview.appendChild(box);
             });
@@ -1288,9 +1287,8 @@ function openMediaMenu(p) {
     if (p.video) {
         videoBtn.style.display = "block";
         videoBtn.onclick = () => {
-            closeMediaMenuUniversal();
-            showFullscreenMedia(p.video, "video");
-        };
+    showFullscreenMedia(p.video, "video");
+};
     } else {
         videoBtn.style.display = "none";
     }
@@ -1410,6 +1408,7 @@ function createMediaMenuUniversal() {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
