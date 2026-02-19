@@ -315,6 +315,7 @@ if (type === "video") {
         media = newImg;
     }
     media.src = src;
+   media.getBoundingClientRect(); // принудительный reflow, фикс пустого кадра
 }
 
    
@@ -495,6 +496,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
