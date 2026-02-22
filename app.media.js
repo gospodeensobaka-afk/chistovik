@@ -160,6 +160,10 @@ const videoTimings = {
         32.89: { open: "videos/3d modelki.mp4", duration: 22410 } // 22.41 сек
     },
    
+   "audio/23-teatr-3h-smehov.mp3": {
+    2.33: { open: "videos/kamala.mp4", duration: 10000 }
+},
+   
 "audio/24-stska-glavniy-tezis.mp3": {
     73.93: { open: "videos/2009 panorama.mp4", duration: 40000 }
 },
@@ -510,4 +514,5 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
