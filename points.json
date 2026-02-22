@@ -424,21 +424,27 @@
   "video": "videos/nevesta.mp4"
 },
   {
-    "id": 300,
-    "type": "mediaMenu",
-    "lat": 55.780513,
-    "lng": 49.116361,
-    "title": "Музейная точка",
-    "description": "3D‑модели, панорамы и редкие виды.",
-    "photos": [
-        "images/vid.jpeg",
-        "images/vatikanskiy.jpeg",
-        "images/uspenskiy.jpeg"
-    ],
-    "video": "videos/3d modelki.mp4",
-    "icon": "icons/muzey.png"
+  "id": 303,
+  "type": "mediaMenu",
+  "lat": 55.780776,
+  "lng": 49.116821,
+  "icon": "icons/ichiga.png",
+  "title": "Древняя техника — татарская мозаика",
+  "description": "Сшивание кожи как пазл. Аксессуары 700–20000₽, обувь 5400–80000₽.",
+  "video": "videos/ichigi.mp4"
+},
+  {
+  "id": 300,
+  "type": "mediaMenu",
+  "lat": 55.780513,
+  "lng": 49.116361,
+  "icon": "icons/muzey.png",
+  "title": "Музей татарского быта",
+  "description": "Экскурсия 750р",
+  "video": "videos/mulina.mp4"
 }
 ]
+
 
 
 
