@@ -414,6 +414,16 @@
   "video": "videos/showroom.mp4"
 },
   {
+  "id": 302,
+  "type": "mediaMenu",
+  "lat": 55.780555,
+  "lng": 49.115742,
+  "icon": "icons/muzey.png",
+  "title": "Музей татарской невесты",
+  "description": "Экскурсия 800р",
+  "video": "videos/nevesta.mp4"
+},
+  {
     "id": 300,
     "type": "mediaMenu",
     "lat": 55.780513,
@@ -429,6 +439,7 @@
     "icon": "icons/muzey.png"
 }
 ]
+
 
 
 
