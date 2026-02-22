@@ -283,6 +283,28 @@ if (window.__currentZoneId !== undefined && window.__currentZoneId !== null) {
     // === ПЕРЕКЛЮЧЕНИЕ ТИПА МЕДИА ===
 if (type === "video") {
     const newVideo = document.createElement("video");
+   // === WARM-UP DECODE (фикс тёмного старта WebView) ===
+{
+    const warm = document.createElement("video");
+    warm.src = src;
+    warm.muted = true;
+    warm.playsInline = true;
+    warm.style.position = "absolute";
+    warm.style.opacity = "0";
+    warm.style.pointerEvents = "none";
+    warm.style.width = "1px";
+    warm.style.height = "1px";
+    document.body.appendChild(warm);
+
+    warm.play().then(() => {
+        setTimeout(() => {
+            warm.pause();
+            warm.remove();
+        }, 180); // 150–200 мс — идеальный прогрев декодера
+    }).catch(() => {
+        warm.remove();
+    });
+}
     newVideo.id = "fsMediaElement";
    if (window.__videoCache && window.__videoCache[src]) {
     newVideo.src = window.__videoCache[src];
@@ -508,6 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
