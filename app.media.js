@@ -283,28 +283,6 @@ if (window.__currentZoneId !== undefined && window.__currentZoneId !== null) {
     // === ПЕРЕКЛЮЧЕНИЕ ТИПА МЕДИА ===
 if (type === "video") {
     const newVideo = document.createElement("video");
-   // === WARM-UP DECODE (фикс тёмного старта WebView) ===
-{
-    const warm = document.createElement("video");
-    warm.src = src;
-    warm.muted = true;
-    warm.playsInline = true;
-    warm.style.position = "absolute";
-    warm.style.opacity = "0";
-    warm.style.pointerEvents = "none";
-    warm.style.width = "1px";
-    warm.style.height = "1px";
-    document.body.appendChild(warm);
-
-    warm.play().then(() => {
-        setTimeout(() => {
-            warm.pause();
-            warm.remove();
-        }, 180); // 150–200 мс — идеальный прогрев декодера
-    }).catch(() => {
-        warm.remove();
-    });
-}
     newVideo.id = "fsMediaElement";
    if (window.__videoCache && window.__videoCache[src]) {
     newVideo.src = window.__videoCache[src];
@@ -323,54 +301,10 @@ if (type === "video") {
     newVideo.playsInline = true;  // не открывать видео в системном плеере
     newVideo.controls = true;     // можно оставить, Android/Windows не страдают
 
-   
+    overlay.replaceChild(newVideo, media);
+    media = newVideo;
 
-    if (type === "video") {
-    const newVideo = document.createElement("video");
-
-    // === WARM-UP DECODE (фикс тёмного старта WebView) ===
-    {
-        const warm = document.createElement("video");
-        warm.src = src;
-        warm.muted = true;
-        warm.playsInline = true;
-        warm.style.position = "absolute";
-        warm.style.opacity = "0";
-        warm.style.pointerEvents = "none";
-        warm.style.width = "1px";
-        warm.style.height = "1px";
-        document.body.appendChild(warm);
-
-        warm.play().then(() => {
-            setTimeout(() => {
-                warm.pause();
-                warm.remove();
-            }, 180);
-        }).catch(() => warm.remove());
-    }
-
-    newVideo.id = "fsMediaElement";
-
-    if (window.__videoCache && window.__videoCache[src]) {
-        newVideo.src = window.__videoCache[src];
-    } else {
-        newVideo.src = src;
-    }
-
-    newVideo.style.maxWidth = "100%";
-    newVideo.style.maxHeight = "100%";
-
-    newVideo.muted = true;
-    newVideo.playsInline = true;
-    newVideo.controls = true;
-
-    // === ГЛАВНЫЙ ФИКС ТЁМНОГО СТАРТА (отложенная вставка видео) ===
-    setTimeout(() => {
-        overlay.replaceChild(newVideo, media);
-        media = newVideo;
-        media.play().catch(() => {});
-    }, 220); // 200–250 мс — идеальное окно для WebView
-
+    media.play().catch(() => {});
 } else {
     if (media.tagName.toLowerCase() !== "img") {
         const newImg = document.createElement("img");
@@ -386,12 +320,15 @@ if (type === "video") {
     media.style.transform = "translateX(0)";
 
     media.onload = () => {
+        // Фото загрузилось → показываем плавно
         media.style.transition = "opacity 0.15s ease";
         media.style.opacity = "1";
     };
 
     media.src = src;
 }
+
+   
 // === СВАЙПЫ ДЛЯ ФОТО С АНИМАЦИЕЙ ===
 if (type === "photo") {
     let startX = null;
@@ -569,8 +506,3 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
-
-
-
-
-
