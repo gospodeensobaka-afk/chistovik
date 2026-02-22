@@ -149,7 +149,7 @@ const photoTimings = {
 
 const videoTimings = {
     "audio/5-NovoSavinovskiy.m4a": {
-        32.35: { open: "videos/novosavinovskiy.mp4" }
+        32.35: { open: "videos/novosavinovskiy.mp4", duration: 19000 }
     },
 
     "audio/8-sport-na-mileniume.m4a": {
@@ -510,6 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
