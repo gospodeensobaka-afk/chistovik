@@ -404,6 +404,16 @@
     "icon": "icons/finish.png"
   },
   {
+  "id": 301,
+  "type": "mediaMenu",
+  "lat": 55.779728,
+  "lng": 49.117021,
+  "icon": "icons/showroom.png",
+  "title": "Шоурум национальной одежды",
+  "description": "700–10500₽. Платки, платья, шопперы, тюбетейки и прочее.",
+  "video": "videos/showroom.mp4"
+},
+  {
     "id": 300,
     "type": "mediaMenu",
     "lat": 55.780513,
@@ -419,6 +429,7 @@
     "icon": "icons/muzey.png"
 }
 ]
+
 
 
 
