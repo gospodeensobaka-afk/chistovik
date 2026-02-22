@@ -301,10 +301,7 @@ if (type === "video") {
     newVideo.playsInline = true;  // не открывать видео в системном плеере
     newVideo.controls = true;     // можно оставить, Android/Windows не страдают
 
-   // === ФИКС ТЁМНОГО СТАРТА ВИДЕО (WebView) ===
-newVideo.style.backgroundColor = "black";      // убирает серый фон WebView
-newVideo.style.filter = "brightness(1.01)";    // заставляет WebView пересчитать текстуру
-newVideo.getBoundingClientRect();              // принудительный reflow
+   
 
     overlay.replaceChild(newVideo, media);
     media = newVideo;
@@ -511,5 +508,6 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
