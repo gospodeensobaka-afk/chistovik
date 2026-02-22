@@ -411,7 +411,10 @@
   "icon": "icons/showroom.png",
   "title": "Шоурум национальной одежды",
   "description": "700–10500₽. Платки, платья, шопперы, тюбетейки и прочее.",
-  "video": "videos/showroom.mp4"
+  "video": "videos/showroom.mp4",
+  "photos": [
+    "images/sshowroom.jpeg"
+  ]
 },
   {
   "id": 302,
@@ -420,8 +423,12 @@
   "lng": 49.115742,
   "icon": "icons/muzey.png",
   "title": "Музей татарской невесты",
-  "description": "Экскурсия 800р",
-  "video": "videos/nevesta.mp4"
+  "description": "Дегустация: чак‑чак, чай. Чак‑чак 140–550₽.",
+  "video": "videos/nevesta.mp4",
+  "photos": [
+    "images/nevessty.jpeg",
+    "images/nevesty.jpeg"
+  ]
 },
   {
   "id": 303,
@@ -434,6 +441,85 @@
   "video": "videos/ichigi.mp4"
 },
   {
+  "id": 304,
+  "type": "mediaMenu",
+  "lat": 55.780832,
+  "lng": 49.116141,
+  "icon": "icons/chakchak.png",
+  "title": "Дегустация чак‑чака, чая, колбасы",
+  "description": "Чак‑чак 50–500₽, колбаса 400–800₽.",
+  "photos": [
+    "images/farid.jpeg",
+    "images/fariid.jpeg"
+  ]
+},
+  {
+  "id": 305,
+  "type": "mediaMenu",
+  "lat": 55.780658,
+  "lng": 49.116142,
+  "icon": "icons/chakchak.png",
+  "title": "Дегустация чак‑чака, колбасы, баурсака",
+  "description": "Колбаса 350–1500₽, домашний чак‑чак 400₽.",
+  "photos": [
+    "images/alidan.jpeg",
+    "images/alidann.jpeg"
+  ]
+},
+  {
+  "id": 306,
+  "type": "mediaMenu",
+  "lat": 55.780669,
+  "lng": 49.116953,
+  "icon": "icons/chakchak.png",
+  "title": "Дегустация: чак‑чак, хворост, талкыш‑кәләвә",
+  "description": "Чак‑чак 250–470₽.",
+  "photos": [
+    "images/delikates.jpeg",
+    "images/delikatess.jpeg"
+  ]
+},
+  {
+  "id": 307,
+  "type": "mediaMenu",
+  "lat": 55.779904,
+  "lng": 49.116303,
+  "icon": "icons/chakchak.png",
+  "title": "Дегустация: чак‑чак, колбаса, талкыш‑кәләвә",
+  "description": "Чак‑чак 220–2500₽, талкыш 400₽, колбаса 1200₽.",
+  "photos": [
+    "images/aart.jpeg",
+    "images/aartt.jpeg"
+  ]
+},
+  {
+  "id": 308,
+  "type": "mediaMenu",
+  "lat": 55.777783,
+  "lng": 49.115784,
+  "icon": "icons/kofe.png",
+  "title": "Татарский раф",
+  "description": "Кофе с душицей, с мёдом — 440₽.",
+  "photos": [
+    "images/coffe.jpeg"
+  ]
+},
+  {
+  "id": 309,
+  "type": "mediaMenu",
+  "lat": 55.779961,
+  "lng": 49.113961,
+  "icon": "icons/eda.png",
+  "title": "Перемячи с 1989 года",
+  "description": "80₽ за пирожок.",
+  "photos": [
+    "images/peeremyach.jpeg",
+    "images/peremyach.jpeg",
+    "images/peremyachi.jpeg",
+    "images/perremyach.jpeg"
+  ]
+},
+  {
   "id": 300,
   "type": "mediaMenu",
   "lat": 55.780513,
@@ -444,6 +530,7 @@
   "video": "videos/mulina.mp4"
 }
 ]
+
 
 
 
