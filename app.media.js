@@ -168,8 +168,8 @@ const videoTimings = {
     73.93: { open: "videos/2009 panorama.mp4", duration: 40000 }
 },
    
-    "audio/25-put-na-pl-tukaya-stih.m4a": {
-        45.90: { open: "videos/pamyatniki.mp4" }
+   "audio/25-put-na-pl-tukaya-stih.mp3": {
+    45.90: { open: "videos/pamyatniki.mp4", duration: 10000 }
     }
 };
 
@@ -514,5 +514,6 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
