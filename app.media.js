@@ -159,7 +159,11 @@ const videoTimings = {
     "audio/8-sport-na-mileniume.m4a": {
         32.89: { open: "videos/3d modelki.mp4", duration: 22410 } // 22.41 сек
     },
-
+   
+"audio/24-stska-glavniy-tezis.mp3": {
+    73.93: { open: "videos/2009 panorama.mp4", duration: 40000 }
+},
+   
     "audio/25-put-na-pl-tukaya-stih.m4a": {
         45.90: { open: "videos/pamyatniki.mp4" }
     }
@@ -506,3 +510,4 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
