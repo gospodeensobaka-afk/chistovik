@@ -217,7 +217,7 @@
     "lat": 55.781648,
     "lng": 49.114934,
     "radius": 25,
-    "audio": "25-put-na-pl-tukaya-stih.mp3"
+    "audio": "audio/25-put-na-pl-tukaya-stih.mp3"
   },
   {
     "id": 26,
@@ -419,6 +419,7 @@
     "icon": "icons/muzey.png"
 }
 ]
+
 
 
 
