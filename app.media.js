@@ -89,10 +89,6 @@ const photoTimings = {
         4.33: { open: "images/fontan.jpeg" }
     },
 
-    "audio/25-put-na-pl-tukaya-stih.mp3": {
-        45.90: { open: "images/pamyatniki.jpeg" }
-    },
-
     "audio/27-universitetskaya.m4a": {
         14.00: { open: "images/universitetskaya.jpeg" }
     },
@@ -514,6 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
