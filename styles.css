@@ -108,19 +108,24 @@ html, body {
     top: 53px;
     left: 13px;
     padding: 10px 14px;
-    background: white;
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
     border-radius: 6px;
     cursor: pointer;
     border: none;
     font-size: 14px;
     z-index: 1000;
+    backdrop-filter: blur(4px);
+
+    /* мягкое белое свечение текста */
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
 }
 
 /* === PROGRESS BAR (новый) === */
 #tourProgress {
     position: absolute;
     top: 56.4px;
-    left: calc(1px + 70px + 44px);
+    left: calc(1px + 70px + 50px);
     background: rgba(0, 0, 0, 0.55);
     color: white;
     padding: 6px 12px;
@@ -236,3 +241,4 @@ html, body {
     z-index: 999999;
     display: none;
 }
+
