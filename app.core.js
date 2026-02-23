@@ -1225,35 +1225,35 @@ if (galleryOverlay) {
         }
     };
 }
-                 /* ========================================================
+/* ========================================================
    ========== UNIVERSAL MEDIA MENU (ALL ZONES) ============
    ======================================================== */
 
 function openMediaMenu(p) {
-  window.__mediaMenuMode = true;
+    window.__mediaMenuMode = true;
+
     let overlay = document.getElementById("mediaMenuUniversal");
     if (!overlay) createMediaMenuUniversal();
 
     overlay = document.getElementById("mediaMenuUniversal");
     const sheet = document.getElementById("mediaMenuUniversalSheet");
 
-    // Заголовок + описание
-    // Мини-иконка + заголовок
-const titleEl = document.getElementById("mmTitle");
-titleEl.innerHTML = `
-    <div style="display:flex; align-items:center; gap:8px;">
-        <img src="${p.icon}" style="width:22px; height:22px; object-fit:contain;">
-        <span>${p.title || ""}</span>
-    </div>
-`;
-titleEl.style.color = "#ffffff";
-titleEl.style.textShadow = "0 0 4px rgba(255,255,255,0.25)";
+    // === Заголовок с мини-иконкой ===
+    const titleEl = document.getElementById("mmTitle");
+    titleEl.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px;">
+            <img src="${p.icon}" style="width:22px; height:22px; object-fit:contain;">
+            <span>${p.title || ""}</span>
+        </div>
+    `;
+    titleEl.style.color = "#ffffff";
+    titleEl.style.textShadow = "0 0 4px rgba(255,255,255,0.25)";
 
-// Описание
-const descEl = document.getElementById("mmDesc");
-descEl.textContent = p.description || "";
-descEl.style.color = "#ffffff";
-descEl.style.textShadow = "0 0 3px rgba(255,255,255,0.2)";
+    // === Описание ===
+    const descEl = document.getElementById("mmDesc");
+    descEl.textContent = p.description || "";
+    descEl.style.color = "#ffffff";
+    descEl.style.textShadow = "0 0 3px rgba(255,255,255,0.2)";
 
     const photoBtn = document.getElementById("mmPhotoBtn");
     const videoBtn = document.getElementById("mmVideoBtn");
@@ -1278,6 +1278,10 @@ descEl.style.textShadow = "0 0 3px rgba(255,255,255,0.2)";
                 box.style.cursor = "pointer";
                 box.style.background = "#000";
                 box.style.border = "1px solid rgba(255,255,255,0.1)";
+                box.style.transition = "transform 0.15s ease";
+
+                box.onmouseover = () => box.style.transform = "scale(1.05)";
+                box.onmouseout = () => box.style.transform = "scale(1)";
 
                 const img = document.createElement("img");
                 img.src = src;
@@ -1286,11 +1290,11 @@ descEl.style.textShadow = "0 0 3px rgba(255,255,255,0.2)";
                 img.style.objectFit = "cover";
 
                 box.appendChild(img);
-               box.onclick = () => {
-    window.__fsGallery = p.photos.slice();        // массив всех фото
-    window.__fsIndex = p.photos.indexOf(src);     // индекс текущего фото
-    showFullscreenMedia(src, "photo");
-};
+                box.onclick = () => {
+                    window.__fsGallery = p.photos.slice();
+                    window.__fsIndex = p.photos.indexOf(src);
+                    showFullscreenMedia(src, "photo");
+                };
 
                 preview.appendChild(box);
             });
@@ -1302,9 +1306,7 @@ descEl.style.textShadow = "0 0 3px rgba(255,255,255,0.2)";
     // === Видео ===
     if (p.video) {
         videoBtn.style.display = "block";
-        videoBtn.onclick = () => {
-    showFullscreenMedia(p.video, "video");
-};
+        videoBtn.onclick = () => showFullscreenMedia(p.video, "video");
     } else {
         videoBtn.style.display = "none";
     }
@@ -1313,14 +1315,22 @@ descEl.style.textShadow = "0 0 3px rgba(255,255,255,0.2)";
     requestAnimationFrame(() => {
         sheet.style.transform = "translateY(0)";
     });
- 
 
-addButtonEffects(document.getElementById("mmPhotoBtn"));
-addButtonEffects(document.getElementById("mmVideoBtn"));
+    // === Анимация кнопок ===
+    function addButtonEffects(btn) {
+        if (!btn) return;
+        btn.style.transition = "transform 0.12s ease";
+        btn.onmousedown = () => btn.style.transform = "scale(0.96)";
+        btn.onmouseup = () => btn.style.transform = "scale(1)";
+        btn.onmouseleave = () => btn.style.transform = "scale(1)";
+    }
+
+    addButtonEffects(photoBtn);
+    addButtonEffects(videoBtn);
 }
 
 function closeMediaMenuUniversal() {
-  window.__mediaMenuMode = false;
+    window.__mediaMenuMode = false;
     const overlay = document.getElementById("mediaMenuUniversal");
     const sheet = document.getElementById("mediaMenuUniversalSheet");
 
@@ -1357,6 +1367,7 @@ function createMediaMenuUniversal() {
     sheet.innerHTML = `
         <div id="mmTitle" style="font-size:18px; margin-bottom:8px;"></div>
         <div id="mmDesc" style="font-size:14px; opacity:0.8; margin-bottom:16px;"></div>
+
         <div style="height:1px; background:rgba(255,255,255,0.08); margin:12px 0;"></div>
 
         <button id="mmPhotoBtn"
@@ -1379,16 +1390,7 @@ function createMediaMenuUniversal() {
              style="display:none; margin-top:16px; gap:10px; justify-content:center;">
         </div>
     `;
-function addButtonEffects(btn) {
-    btn.style.transition = "transform 0.12s ease";
-    btn.onmousedown = () => btn.style.transform = "scale(0.96)";
-    btn.onmouseup = () => btn.style.transform = "scale(1)";
-    btn.onmouseleave = () => btn.style.transform = "scale(1)";
-}
 
-addButtonEffects(document.getElementById("mmPhotoBtn"));
-addButtonEffects(document.getElementById("mmVideoBtn"));
-  
     overlay.appendChild(sheet);
     document.body.appendChild(overlay);
 
@@ -1438,6 +1440,7 @@ addButtonEffects(document.getElementById("mmVideoBtn"));
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
