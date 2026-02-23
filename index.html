@@ -11,69 +11,60 @@
     <link href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js"></script>
 
-   <script src="app.core.js" defer></script>
-<script src="app.media.js" defer></script>
-<script src="app.experimental.js" defer></script>
+    <script src="app.core.js" defer></script>
+    <script src="app.media.js" defer></script>
+    <script src="app.experimental.js" defer></script>
 </head>
 
 <body>
-   <div id="audioWrapper">
-    <audio id="globalAudio" controls preload="auto"></audio>
-</div>
 
-<button id="startTourBtn" class="ui-editable"
-        style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:999999;">
-    Начать экскурсию
-</button>
-
-<div id="tourProgress" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.55);
-    color:white; padding:6px 12px; border-radius:8px; font-size:14px; z-index:999999; backdrop-filter:blur(4px);">
-    Пройдено: 0 из 0
-</div>
-
-<div id="map"></div>
-
-<div id="photoOverlay" class="photo-overlay hidden">
-    <div class="photo-inner">
-        <img id="photoImage" src="">
-        <button id="closePhotoBtn" class="close-photo-btn">✕</button>
+    <!-- AUDIO WRAPPER -->
+    <div id="audioWrapper">
+        <audio id="globalAudio" controls preload="auto"></audio>
     </div>
-</div>
 
-<div id="galleryOverlay" class="hidden">
-</div>
+    <!-- START TOUR BUTTON -->
+    <button id="startTourBtn"
+        style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:999999;">
+        Начать экскурсию
+    </button>
 
-<button id="simulate" class="control-btn ui-editable">Симуляция</button>
-<button id="enableCompass" class="control-btn ui-editable">Включить компас</button>
-<button id="notReadyBtn" class="control-btn ui-editable">Не успеваю</button>
-<button id="uiEditorToggle" class="control-btn ui-editable">UI</button>
-<div id="miniPreloadStatus" style="
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    z-index: 999999;
-    display: none;
-">Загрузка…</div>  
+    <!-- NOT READY BUTTON (перенесена на место компаса) -->
+    <button id="notReadyBtn"
+        style="position:absolute; top:53px; left:13px; padding:10px 14px; background:white;
+               border-radius:6px; border:none; font-size:14px; cursor:pointer; z-index:1000;">
+        Не успеваю
+    </button>
+
+    <!-- PROGRESS BAR (справа от "Не успеваю") -->
+    <div id="tourProgress"
+        style="position:absolute; top:53px; left: calc(13px + 120px + 44px);
+               background:rgba(0,0,0,0.55); color:white; padding:6px 12px;
+               border-radius:8px; font-size:14px; z-index:999999; backdrop-filter:blur(4px);">
+        Пройдено: 0 из 0
+    </div>
+
+    <!-- MAP -->
+    <div id="map"></div>
+
+    <!-- PHOTO OVERLAY -->
+    <div id="photoOverlay" class="photo-overlay hidden">
+        <div class="photo-inner">
+            <img id="photoImage" src="">
+            <button id="closePhotoBtn" class="close-photo-btn">✕</button>
+        </div>
+    </div>
+
+    <!-- GALLERY OVERLAY -->
+    <div id="galleryOverlay" class="hidden"></div>
+
+    <!-- MINI PRELOAD STATUS -->
+    <div id="miniPreloadStatus"
+        style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6);
+               color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px;
+               z-index: 999999; display: none;">
+        Загрузка…
+    </div>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
