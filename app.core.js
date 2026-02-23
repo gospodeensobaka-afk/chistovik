@@ -1247,23 +1247,25 @@ function openMediaMenu(p) {
         </div>
     `;
     titleEl.style.color = "#ffffff";
-    titleEl.style.textShadow = "0 0 4px rgba(255,255,255,0.25)";
+    titleEl.style.textShadow = "0 0 6px rgba(255,255,255,0.45)";
 
     // === Описание ===
     const descEl = document.getElementById("mmDesc");
     descEl.textContent = p.description || "";
     descEl.style.color = "#ffffff";
-    descEl.style.textShadow = "0 0 3px rgba(255,255,255,0.2)";
+    descEl.style.textShadow = "0 0 4px rgba(255,255,255,0.35)";
 
     const photoBtn = document.getElementById("mmPhotoBtn");
     const videoBtn = document.getElementById("mmVideoBtn");
     const preview = document.getElementById("mmPreview");
 
+    // === Полная очистка превью при открытии новой зоны ===
+    preview.innerHTML = "";
+    preview.style.display = "none";
+
     // === Фото ===
     if (p.photos && p.photos.length > 0) {
         photoBtn.style.display = "block";
-        preview.innerHTML = "";
-        preview.style.display = "none";
 
         photoBtn.onclick = () => {
             preview.innerHTML = "";
@@ -1316,13 +1318,24 @@ function openMediaMenu(p) {
         sheet.style.transform = "translateY(0)";
     });
 
-    // === Анимация кнопок ===
+    // === Анимация кнопок (desktop + mobile) ===
     function addButtonEffects(btn) {
         if (!btn) return;
+
         btn.style.transition = "transform 0.12s ease";
-        btn.onmousedown = () => btn.style.transform = "scale(0.96)";
-        btn.onmouseup = () => btn.style.transform = "scale(1)";
-        btn.onmouseleave = () => btn.style.transform = "scale(1)";
+
+        const press = () => btn.style.transform = "scale(0.96)";
+        const release = () => btn.style.transform = "scale(1)";
+
+        // Desktop
+        btn.onmousedown = press;
+        btn.onmouseup = release;
+        btn.onmouseleave = release;
+
+        // Mobile
+        btn.ontouchstart = press;
+        btn.ontouchend = release;
+        btn.ontouchcancel = release;
     }
 
     addButtonEffects(photoBtn);
@@ -1366,7 +1379,7 @@ function createMediaMenuUniversal() {
 
     sheet.innerHTML = `
         <div id="mmTitle" style="font-size:18px; margin-bottom:8px;"></div>
-        <div id="mmDesc" style="font-size:14px; opacity:0.8; margin-bottom:16px;"></div>
+        <div id="mmDesc" style="font-size:14px; margin-bottom:16px;"></div>
 
         <div style="height:1px; background:rgba(255,255,255,0.08); margin:12px 0;"></div>
 
@@ -1440,6 +1453,7 @@ function createMediaMenuUniversal() {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
