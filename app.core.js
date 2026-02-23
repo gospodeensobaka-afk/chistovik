@@ -1247,13 +1247,15 @@ function openMediaMenu(p) {
         </div>
     `;
     titleEl.style.color = "#ffffff";
-    titleEl.style.textShadow = "0 0 6px rgba(255,255,255,0.45)";
+    titleEl.style.textShadow =
+        "0 0 26px rgba(255,255,255,1), 0 0 14px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.8)";
 
     // === Описание ===
     const descEl = document.getElementById("mmDesc");
     descEl.textContent = p.description || "";
     descEl.style.color = "#ffffff";
-    descEl.style.textShadow = "0 0 4px rgba(255,255,255,0.35)";
+    descEl.style.textShadow =
+        "0 0 20px rgba(255,255,255,0.95), 0 0 12px rgba(255,255,255,0.85), 0 0 6px rgba(255,255,255,0.75)";
 
     const photoBtn = document.getElementById("mmPhotoBtn");
     const videoBtn = document.getElementById("mmVideoBtn");
@@ -1341,76 +1343,6 @@ function openMediaMenu(p) {
     addButtonEffects(photoBtn);
     addButtonEffects(videoBtn);
 }
-
-function closeMediaMenuUniversal() {
-    window.__mediaMenuMode = false;
-    const overlay = document.getElementById("mediaMenuUniversal");
-    const sheet = document.getElementById("mediaMenuUniversalSheet");
-
-    sheet.style.transform = "translateY(100%)";
-    setTimeout(() => overlay.style.display = "none", 250);
-}
-
-function createMediaMenuUniversal() {
-    const overlay = document.createElement("div");
-    overlay.id = "mediaMenuUniversal";
-    overlay.style.position = "fixed";
-    overlay.style.left = "0";
-    overlay.style.top = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.background = "rgba(0,0,0,0.4)";
-    overlay.style.display = "none";
-    overlay.style.zIndex = "200000";
-    overlay.style.alignItems = "flex-end";
-    overlay.style.justifyContent = "center";
-
-    const sheet = document.createElement("div");
-    sheet.id = "mediaMenuUniversalSheet";
-    sheet.style.width = "100%";
-    sheet.style.background = "#1c1c1e";
-    sheet.style.boxShadow = "0 -4px 20px rgba(0,0,0,0.4)";
-    sheet.style.borderTopLeftRadius = "16px";
-    sheet.style.borderTopRightRadius = "16px";
-    sheet.style.padding = "20px";
-    sheet.style.boxSizing = "border-box";
-    sheet.style.transform = "translateY(100%)";
-    sheet.style.transition = "transform 0.25s ease-out";
-
-    sheet.innerHTML = `
-        <div id="mmTitle" style="font-size:18px; margin-bottom:8px;"></div>
-        <div id="mmDesc" style="font-size:14px; margin-bottom:16px;"></div>
-
-        <div style="height:1px; background:rgba(255,255,255,0.08); margin:12px 0;"></div>
-
-        <button id="mmPhotoBtn"
-            style="width:100%; padding:14px; font-size:16px; margin-bottom:10px;
-                   border-radius:10px; border:none;
-                   background:linear-gradient(180deg,#30d158 0%,#1fa347 100%);
-                   color:#fff; font-weight:500;">
-            Фото
-        </button>
-
-        <button id="mmVideoBtn"
-            style="width:100%; padding:14px; font-size:16px; margin-bottom:10px;
-                   border-radius:10px; border:none;
-                   background:linear-gradient(180deg,#0a84ff 0%,#0066cc 100%);
-                   color:#fff; font-weight:500;">
-            Видео
-        </button>
-
-        <div id="mmPreview"
-             style="display:none; margin-top:16px; gap:10px; justify-content:center;">
-        </div>
-    `;
-
-    overlay.appendChild(sheet);
-    document.body.appendChild(overlay);
-
-    overlay.onclick = e => {
-        if (e.target === overlay) closeMediaMenuUniversal();
-    };
-}
                /* ========================================================
                   ===================== START TOUR BTN ====================
                   ======================================================== */
@@ -1453,6 +1385,7 @@ function createMediaMenuUniversal() {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
