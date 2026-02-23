@@ -13,18 +13,6 @@ html, body {
     z-index: 1;
 }
 
-/* === SIMULATE BUTTON === */
-#simulate {
-    position: absolute;
-    top: 95px;
-    left: 16px;
-    padding: 10px 14px;
-    background: white;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 1000;
-}
-
 /* === PHOTO BUTTON === */
 .photo-btn {
   position: absolute;
@@ -114,11 +102,11 @@ html, body {
     text-align: center;
 }
 
-/* === NOT READY BUTTON === */
+/* === NOT READY BUTTON (перенесена на место компаса) === */
 #notReadyBtn {
     position: absolute;
-    top: 140px;
-    left: 16px;
+    top: 53px;
+    left: 13px;
     padding: 10px 14px;
     background: white;
     border-radius: 6px;
@@ -126,6 +114,20 @@ html, body {
     border: none;
     font-size: 14px;
     z-index: 1000;
+}
+
+/* === PROGRESS BAR (новый) === */
+#tourProgress {
+    position: absolute;
+    top: 56.4px;
+    left: calc(1px + 70px + 44px);
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    z-index: 999999;
+    backdrop-filter: blur(4px);
 }
 
 /* === AUDIO WRAPPER === */
@@ -147,21 +149,7 @@ html, body {
     object-fit: contain;
 }
 
-/* === COMPASS BUTTON === */
-#enableCompass {
-    position: absolute;
-    top: 53px;
-    left: 13px;
-    padding: 10px 14px;
-    background: white;
-    border-radius: 6px;
-    cursor: pointer;
-    border: none;
-    font-size: 14px;
-    z-index: 1000;
-}
-
-/* === GENERIC CONTROL BUTTON === */
+/* === GENERIC CONTROL BUTTON (оставляем для фото/галереи) === */
 .control-btn {
     position: absolute;
     padding: 10px 14px;
@@ -173,7 +161,7 @@ html, body {
     z-index: 1000;
 }
 
-/* === UI EDITOR === */
+/* === UI EDITOR (оставляем, если нужен) === */
 .ui-editable {
     position: absolute !important;
     cursor: move !important;
@@ -218,7 +206,6 @@ html, body {
     scroll-snap-type: x mandatory;
 }
 
-/* внутренняя лента */
 #galleryTrack {
     display: inline-flex;
     flex-direction: row;
@@ -228,40 +215,15 @@ html, body {
 
 #galleryTrack > div {
     scroll-snap-align: start;
-    flex-shrink: 0; /* не даём превью сжиматься */
+    flex-shrink: 0;
 }
 
-#galleryTrack::-webkit-scrollbar {
-    display: none;
-}
-
-#galleryTrack::-webkit-scrollbar {
-    display: none;
-}
-
-#galleryTrack > div {
-    scroll-snap-align: start;
-    flex-shrink: 0; /* запрещает сжиматься */
-}
-
+#galleryTrack::-webkit-scrollbar,
 #galleryOverlay::-webkit-scrollbar {
     display: none;
 }
 
-#uiEditorToggle {
-    position: absolute;
-    top: 184px;
-    left: 17px;
-    padding: 10px 14px;
-    background: white;
-    border-radius: 6px;
-    cursor: pointer;
-    border: none;
-    font-size: 14px;
-    z-index: 1000;
-}
-
-/* === MINI PRELOAD STATUS (новая маленькая плашка) === */
+/* === MINI PRELOAD STATUS === */
 #miniPreloadStatus {
     position: fixed;
     bottom: 10px;
@@ -274,6 +236,3 @@ html, body {
     z-index: 999999;
     display: none;
 }
-
-
-
