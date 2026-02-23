@@ -1313,14 +1313,7 @@ descEl.style.textShadow = "0 0 3px rgba(255,255,255,0.2)";
     requestAnimationFrame(() => {
         sheet.style.transform = "translateY(0)";
     });
-  // Анимация кнопок — теперь кнопки точно существуют
-function addButtonEffects(btn) {
-    if (!btn) return;
-    btn.style.transition = "transform 0.12s ease";
-    btn.onmousedown = () => btn.style.transform = "scale(0.96)";
-    btn.onmouseup = () => btn.style.transform = "scale(1)";
-    btn.onmouseleave = () => btn.style.transform = "scale(1)";
-}
+ 
 
 addButtonEffects(document.getElementById("mmPhotoBtn"));
 addButtonEffects(document.getElementById("mmVideoBtn"));
@@ -1445,6 +1438,7 @@ addButtonEffects(document.getElementById("mmVideoBtn"));
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
