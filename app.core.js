@@ -1415,27 +1415,44 @@ function createMediaMenuUniversal() {
                   ===================== START TOUR BTN ====================
                   ======================================================== */
                
-               /* START TOUR BTN */
-               const startBtn = document.getElementById("startTourBtn");
-               if (startBtn) {
-                   startBtn.onclick = () => {
-                       tourStarted = true;
-                       gpsActive = true;
-               
-                       const intro = new Audio("audio/start.mp3");
-                       intro.play().catch(() => console.log("Не удалось проиграть start.mp3"));
-               
-                       startBtn.style.display = "none";
-                   };
-               }
-               const simBtn = document.getElementById("simulate");
-               if (simBtn) simBtn.onclick = startSimulation;
-               
-          
-               
-               const compassBtn = document.getElementById("enableCompass");
-               if (compassBtn) compassBtn.onclick = startCompass;
-               
+             /* START TOUR BTN — обновлённый, с компасом */
+const startBtn = document.getElementById("startTourBtn");
+if (startBtn) {
+    startBtn.onclick = async () => {
+        tourStarted = true;
+        gpsActive = true;
+
+        const intro = new Audio("audio/start.mp3");
+        intro.play().catch(() => console.log("Не удалось проиграть start.mp3"));
+
+        startBtn.style.display = "none";
+
+        /* === ВКЛЮЧАЕМ КОМПАС ПРИ СТАРТЕ === */
+        try {
+            compassActive = true;
+
+            // iOS
+            if (typeof DeviceOrientationEvent !== "undefined" &&
+                typeof DeviceOrientationEvent.requestPermission === "function") {
+
+                const state = await DeviceOrientationEvent.requestPermission();
+
+                if (state === "granted") {
+                    window.addEventListener("deviceorientation", handleIOSCompass);
+                } else {
+                    console.warn("Пользователь не дал разрешение на компас");
+                }
+
+            } else {
+                // Android / Desktop
+                window.addEventListener("deviceorientationabsolute", handleIOSCompass);
+            }
+
+        } catch (err) {
+            console.warn("Ошибка при запросе компаса:", err);
+        }
+    };
+}
 
                    /* ========================================================
                       ===================== INIT DEBUG PANEL =================
