@@ -1238,8 +1238,22 @@ function openMediaMenu(p) {
     const sheet = document.getElementById("mediaMenuUniversalSheet");
 
     // Заголовок + описание
-    document.getElementById("mmTitle").textContent = p.title || "";
-    document.getElementById("mmDesc").textContent = p.description || "";
+    // Мини-иконка + заголовок
+const titleEl = document.getElementById("mmTitle");
+titleEl.innerHTML = `
+    <div style="display:flex; align-items:center; gap:8px;">
+        <img src="${p.icon}" style="width:22px; height:22px; object-fit:contain;">
+        <span>${p.title || ""}</span>
+    </div>
+`;
+titleEl.style.color = "#ffffff";
+titleEl.style.textShadow = "0 0 4px rgba(255,255,255,0.25)";
+
+// Описание
+const descEl = document.getElementById("mmDesc");
+descEl.textContent = p.description || "";
+descEl.style.color = "#ffffff";
+descEl.style.textShadow = "0 0 3px rgba(255,255,255,0.2)";
 
     const photoBtn = document.getElementById("mmPhotoBtn");
     const videoBtn = document.getElementById("mmVideoBtn");
@@ -1339,6 +1353,7 @@ function createMediaMenuUniversal() {
     sheet.innerHTML = `
         <div id="mmTitle" style="font-size:18px; margin-bottom:8px;"></div>
         <div id="mmDesc" style="font-size:14px; opacity:0.8; margin-bottom:16px;"></div>
+        <div style="height:1px; background:rgba(255,255,255,0.08); margin:12px 0;"></div>
 
         <button id="mmPhotoBtn"
             style="width:100%; padding:14px; font-size:16px; margin-bottom:10px;
@@ -1360,7 +1375,16 @@ function createMediaMenuUniversal() {
              style="display:none; margin-top:16px; gap:10px; justify-content:center;">
         </div>
     `;
+function addButtonEffects(btn) {
+    btn.style.transition = "transform 0.12s ease";
+    btn.onmousedown = () => btn.style.transform = "scale(0.96)";
+    btn.onmouseup = () => btn.style.transform = "scale(1)";
+    btn.onmouseleave = () => btn.style.transform = "scale(1)";
+}
 
+addButtonEffects(document.getElementById("mmPhotoBtn"));
+addButtonEffects(document.getElementById("mmVideoBtn"));
+  
     overlay.appendChild(sheet);
     document.body.appendChild(overlay);
 
@@ -1410,6 +1434,7 @@ function createMediaMenuUniversal() {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
