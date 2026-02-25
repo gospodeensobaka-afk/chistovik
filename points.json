@@ -549,7 +549,6 @@
   "photos": [
     "images/alidan22.jpeg",
     "images/allidan22.jpeg",
-    "images/alidan.jpeg",
     "images/alidan2.jpeg",
     "images/alidann.jpeg",
     "images/aliddan2.jpeg"
@@ -570,7 +569,7 @@
   "type": "mediaMenu",
   "lat": 55.77856800528312,
   "lng": 49.11599377524496,
-  "icon": "icons/apan.png",
+  "icon": "icons/apanaevi.png",
   "title": "Дом Апанаевых",
   "description": "Сейчас внутри 7-я городская поликлиника",
   "video": "videos/apanaevi.mp4"
@@ -602,7 +601,7 @@
   "lng": 49.11813871567148,
   "icon": "icons/chakchak.png",
   "title": "Дегустация",
-  "description": "Чак‑чак (100–500₽) и чай (170–500₽)",
+  "description": "Чак‑чак и чай .Вилка цен на чак-чак 100–500₽, на чай 170–500₽",
   "photos": [
     "images/new1.jpeg",
     "images/new2.jpeg"
@@ -646,7 +645,7 @@
   "lng": 49.115843260612905,
   "icon": "icons/kuznec.png",
   "title": "Лавка кузнеца",
-  "description": "Татарские ножи «Куябрики» (2000–3500₽). СДЭК — можно, ручная кладь — нельзя.",
+  "description": "Татарские ножи «Куябрики» (2000–3500₽). Ручной кладью не довезти, а чемоданом получится + отправляют СДЭКом.",
   "photos": [
     "images/kuznec1.jpeg",
     "images/kuznec2.jpeg",
@@ -656,6 +655,7 @@
   ]
 }
 ]
+
 
 
 
