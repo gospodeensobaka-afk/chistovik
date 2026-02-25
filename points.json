@@ -438,7 +438,12 @@
   "icon": "icons/ichiga.png",
   "title": "Древняя техника — татарская мозаика",
   "description": "Сшивание кожи как пазл. Аксессуары 700–20000₽, обувь 5400–80000₽.",
-  "video": "videos/ichigi.mp4"
+  "video": "videos/ichigi.mp4",
+    "photos": [
+   "images/ichiga1.jpeg",
+  "images/ichiga2.jpeg",
+  "images/ichiga3.jpeg"
+  ]
 },
   {
   "id": 304,
@@ -460,10 +465,12 @@
   "lng": 49.116142,
   "icon": "icons/chakchak.png",
   "title": "Дегустация чак‑чака, колбасы, баурсака",
-  "description": "Колбаса 350–1500₽, домашний чак‑чак 400₽.",
+  "description": "Колбаса 350–1500₽, домашний чак‑чак 400₽, баурсак 180₽",
   "photos": [
     "images/alidan.jpeg",
-    "images/alidann.jpeg"
+    "images/alidann.jpeg",
+     "images/alidan2.jpeg",
+     "images/aliddan2.jpeg"
   ]
 },
   {
@@ -474,6 +481,7 @@
   "icon": "icons/chakchak.png",
   "title": "Дегустация: чак‑чак, хворост, талкыш‑кәләвә",
   "description": "Чак‑чак 250–470₽.",
+    "video": "videos/delikotests.mp4",
   "photos": [
     "images/delikates.jpeg",
     "images/delikatess.jpeg"
@@ -486,7 +494,7 @@
   "lng": 49.116303,
   "icon": "icons/chakchak.png",
   "title": "Дегустация: чак‑чак, колбаса, талкыш‑кәләвә",
-  "description": "Чак‑чак 220–2500₽, талкыш 400₽, колбаса 1200₽.",
+  "description": "Чак‑чак 220–2500₽, талкыш 400₽, колбаса 1200₽",
   "photos": [
     "images/aart.jpeg",
     "images/aartt.jpeg"
@@ -499,9 +507,11 @@
   "lng": 49.115784,
   "icon": "icons/kofe.png",
   "title": "Татарский раф",
-  "description": "Кофе с душицей, с мёдом — 440₽.",
+  "description": "Кофе с душицей, с мёдом — 440₽",
   "photos": [
-    "images/coffe.jpeg"
+    "images/coffe.jpeg",
+    "images/cofe2.jpeg",
+    "images/coffe2.jpeg"
   ]
 },
   {
@@ -511,7 +521,7 @@
   "lng": 49.113961,
   "icon": "icons/eda.png",
   "title": "Перемячи с 1989 года",
-  "description": "80₽ за пирожок.",
+  "description": "80₽ за пирожок, про компот отзываются - Как в детстве",
   "photos": [
     "images/peeremyach.jpeg",
     "images/peremyach.jpeg",
@@ -519,7 +529,7 @@
   ]
 },
   {
-  "id": 300,
+  "id": 310,
   "type": "mediaMenu",
   "lat": 55.780513,
   "lng": 49.116361,
@@ -527,8 +537,126 @@
   "title": "Музей татарского быта",
   "description": "Экскурсия 750р",
   "video": "videos/mulina.mp4"
+},
+  {
+  "id": 311,
+  "type": "mediaMenu",
+  "lat": 55.78071854105818,
+  "lng": 49.116095572185685,
+  "icon": "icons/chakchak.png",
+  "title": "Копия лавки напротив, только чуть меньше",
+  "description": "Всё то же самое + бесплатный чай",
+  "photos": [
+    "images/alidan22.jpeg",
+    "images/allidan22.jpeg",
+    "images/alidan.jpeg",
+    "images/alidan2.jpeg",
+    "images/alidann.jpeg",
+    "images/aliddan2.jpeg"
+  ]
+},
+{
+  "id": 312,
+  "type": "mediaMenu",
+  "lat": 55.77750777670093,
+  "lng": 49.115408736105394,
+  "icon": "icons/shamil.png",
+  "title": "Дом Шамиля",
+  "description": "Литературный музей Тукая",
+  "video": "videos/shamil.mp4"
+},
+{
+  "id": 313,
+  "type": "mediaMenu",
+  "lat": 55.77856800528312,
+  "lng": 49.11599377524496,
+  "icon": "icons/apan.png",
+  "title": "Дом Апанаевых",
+  "description": "Сейчас внутри 7-я городская поликлиника",
+  "video": "videos/apanaevi.mp4"
+},
+{
+  "id": 314,
+  "type": "mediaMenu",
+  "lat": 55.77832541162246,
+  "lng": 49.11628313377358,
+  "icon": "icons/berkut.png",
+  "title": "Дом Беркутова",
+  "description": "Самый старый жилой дом Казани",
+  "video": "videos/berkutov.mp4"
+},
+{
+  "id": 315,
+  "type": "mediaMenu",
+  "lat": 55.778621564062746,
+  "lng": 49.11733014396731,
+  "icon": "icons/kaush.png",
+  "title": "Дом Каушчи",
+  "description": "Сейчас гостиница.",
+  "video": "videos/kaushchi.mp4"
+},
+{
+  "id": 316,
+  "type": "mediaMenu",
+  "lat": 55.77930426111641,
+  "lng": 49.11813871567148,
+  "icon": "icons/chakchak.png",
+  "title": "Дегустация",
+  "description": "Чак‑чак (100–500₽) и чай (170–500₽)",
+  "photos": [
+    "images/new1.jpeg",
+    "images/new2.jpeg"
+  ]
+},
+{
+  "id": 317,
+  "type": "mediaMenu",
+  "lat": 55.77925605576107,
+  "lng": 49.11820568460362,
+  "icon": "icons/silver.png",
+  "title": "Серебро",
+  "description": "Украшения с татарскими орнаментами. 1600–16500₽",
+  "photos": [
+    "images/silver1.jpeg",
+    "images/silver2.jpeg",
+    "images/silver3.jpeg",
+    "images/silver4.jpeg"
+  ]
+},
+{
+  "id": 318,
+  "type": "mediaMenu",
+  "lat": 55.78095650404879,
+  "lng": 49.11580048231838,
+  "icon": "icons/chaynaya.png",
+  "title": "Чайная лавка",
+  "description": "150+ видов чая. От 450₽ (100г) до 800₽ (100г)",
+  "video": "videos/tea.mp4",
+  "photos": [
+    "images/tea1.jpeg",
+    "images/tea2.jpeg",
+    "images/tea3.jpeg",
+    "images/tea4.jpeg"
+  ]
+},
+{
+  "id": 319,
+  "type": "mediaMenu",
+  "lat": 55.780883757720886,
+  "lng": 49.115843260612905,
+  "icon": "icons/kuznec.png",
+  "title": "Лавка кузнеца",
+  "description": "Татарские ножи «Куябрики» (2000–3500₽). СДЭК — можно, ручная кладь — нельзя.",
+  "photos": [
+    "images/kuznec1.jpeg",
+    "images/kuznec2.jpeg",
+    "images/kuznec3.jpeg",
+    "images/kuznec4.jpeg",
+    "images/kuznec5.jpeg"
+  ]
 }
 ]
+
 
 
 
