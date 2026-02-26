@@ -12,25 +12,27 @@ const photoTimings = {
         3.21: { open: "images/bulak shas.jpeg" },
         25.16: { open: "images/bulakdo1957.jpeg" }
     },
-
+   
+   "audio/3-ploschad-tisyacheletia.m4a": {
+        32.69: { open: "images/parad.jpeg" }
+    },
+   
+ "audio/4-Chasha+pravila.m4a": {
+        182.96: { open: "images/vid.jpeg" }
+    },
+   
     "audio/41-sama-chasha.mp3": {
         177.74: { open: "images/bars.jpeg" },
         150.14: { open: "images/dashi.jpeg" },
         171.65: { open: "images/zilantiha.jpeg" },
         143.33: { open: "images/zilant.jpeg" },
         165.75: { open: "images/zilant.jpeg" },
-        49.47:  { open: "images/vid.jpeg" },
         159.05: { open: "images/gerb.jpeg" },
         18:     { open: "images/chashavecher.jpeg" },
         235.94: { open: "images/president.jpeg" },
         239.16: { open: "images/ggerb.jpeg" }
     },
 
-    /* === NEW PHOTO TIMINGS === */
-
-    "audio/3-ploschad-tisyacheletia.m4a": {
-        32.69: { open: "images/parad.jpeg" }
-    },
 
     "audio/5-NovoSavinovskiy.m4a": {
         55.70: { open: "images/uspenskiy.jpeg" },
@@ -148,7 +150,12 @@ const photoTimings = {
 };
 
 const videoTimings = {
-    "audio/5-NovoSavinovskiy.m4a": {
+   
+   "audio/41-sama-chasha.mp3": {
+      54.95: { open: "videos/chashavid.mp4", duration: 6000 }
+    },
+   
+   "audio/5-NovoSavinovskiy.m4a": {
         32.35: { open: "videos/novosavinovskiy.mp4", duration: 19000 }
     },
 
@@ -510,6 +517,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
