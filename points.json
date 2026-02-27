@@ -2,16 +2,16 @@
   {
     "id": 0,
     "type": "audio",
-    "lat": 55.786306,
-    "lng": 49.120693,
-    "radius": 25,
+    "lat": 55.78592035400666,
+    "lng": 49.12014091380297,
+    "radius": 1,
     "audio": "audio/start.mp3"
   },
   {
     "id": 1,
     "type": "audio",
-    "lat": 55.786308,
-    "lng": 49.120687,
+    "lat": 55.78592035400666,
+    "lng": 49.12014091380297,
     "radius": 25,
     "audio": "audio/1-2005.m4a"
   },
@@ -34,8 +34,8 @@
   {
     "id": 4,
     "type": "audio",
-    "lat": 55.801080,
-    "lng": 49.102341,
+    "lat": 55.803913629513204,
+    "lng": 49.10185257290021,
     "radius": 25,
     "audio": "audio/4-Chasha+pravila.m4a"
   },
@@ -54,8 +54,8 @@
   {
     "id": 5,
     "type": "audio",
-    "lat": 55.814590,
-    "lng": 49.106903,
+    "lat": 55.81530676572072,
+    "lng": 49.108030586873724,
     "radius": 25,
     "audio": "audio/5-NovoSavinovskiy.m4a"
   },
@@ -70,24 +70,24 @@
   {
     "id": 7,
     "type": "audio",
-    "lat": 55.812283,
-    "lng": 49.133739,
+    "lat": 55.81329563991852,
+    "lng": 49.13362592262547,
     "radius": 25,
     "audio": "audio/7-edinobor-Millenium.m4a"
   },
   {
     "id": 8,
     "type": "audio",
-    "lat": 55.807732,
-    "lng": 49.138888,
+    "lat": 55.80882961265041,
+    "lng": 49.1362760569113,
     "radius": 25,
     "audio": "audio/8-sport-na-mileniume.m4a"
   },
   {
     "id": 9,
     "type": "audio",
-    "lat": 55.802577195978415,
-    "lng":  49.15047003318443,
+    "lat": 55.803981086975256,
+    "lng":  49.14937843124139,
     "radius": 25,
     "audio": "audio/9-vezhaem-v-center-arskoe.m4a"
   },
@@ -102,8 +102,8 @@
   {
     "id": 11,
     "type": "audio",
-    "lat": 55.785781,
-    "lng": 49.150655,
+    "lat": 55.788027309953094,
+    "lng": 49.151553230459456,
     "radius": 25,
     "audio": "audio/11-zdes-bil-les-put-na-sukonku.m4a"
   },
@@ -190,8 +190,8 @@
   {
     "id": 22,
     "type": "audio",
-    "lat": 55.784589,
-    "lng": 49.119430,
+    "lat": 55.78464121081501,
+    "lng": 49.11832745425227,
     "radius": 25,
     "audio": "audio/22-kakaya-sts-po-gabaritam.m4a"
   },
@@ -214,17 +214,17 @@
   {
     "id": 25,
     "type": "audio",
-    "lat": 55.781648,
-    "lng": 49.114934,
-    "radius": 25,
+    "lat": 55.78172130603363,
+    "lng": 49.11496893446471,
+    "radius": 15,
     "audio": "audio/25-put-na-pl-tukaya-stih.mp3"
   },
   {
     "id": 26,
     "type": "audio",
-    "lat": 55.786788,
-    "lng": 49.121801,
-    "radius": 25,
+    "lat": 55.78670451346264,
+    "lng": 49.12174117603632,
+    "radius": 15,
     "audio": "audio/26-plochad-tukaya(mozhno-pro-shalyapina-dobavit).m4a"
   },
   {
@@ -262,16 +262,16 @@
   {
     "id": 31,
     "type": "audio",
-    "lat": 55.793902,
-    "lng": 49.121523,
+    "lat": 55.794091024192284,
+    "lng":  49.1214960250019,
     "radius": 25,
     "audio": "audio/31.m4a"
   },
   {
     "id": 32,
     "type": "audio",
-    "lat": 55.794832,
-    "lng": 49.123841,
+    "lat": 55.79492314353982,
+    "lng": 49.123823922084,
     "radius": 25,
     "audio": "audio/32-tatgoip.m4a"
   },
@@ -286,8 +286,8 @@
   {
     "id": 34,
     "type": "audio",
-    "lat": 55.797558,
-    "lng": 49.123602,
+    "lat": 55.79760361673337,
+    "lng": 49.12225866548411,
     "radius": 25,
     "audio": "audio/34-put-na-bogorodickiy(bolshaya-krasnay).m4a"
   },
@@ -296,9 +296,9 @@
     "type": "audio",
     "lat": 55.799351,
     "lng": 49.113248,
-    "radius": 29,
+    "radius": 35,
     "audio": "audio/35-yellow-zone-ikona.mp3",
-    "customColor": "rgba(255,255,0,0.25)"
+    "customColor": "rgba(255,255,0,0.6)"
   },
   {
     "id": 36,
@@ -332,13 +332,7 @@
     "lng": 49.106449,
     "icon": "icons/i1.png"
   },
-  {
-    "id": 102,
-    "type": "square",
-    "lat": 55.797139,
-    "lng": 49.103025,
-    "icon": "icons/i1.png"
-  },
+  
   {
     "id": 103,
     "type": "square",
@@ -655,6 +649,7 @@
   ]
 }
 ]
+
 
 
 
