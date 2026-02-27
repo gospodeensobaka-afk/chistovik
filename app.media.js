@@ -118,6 +118,11 @@ const photoTimings = {
         12.51: { open: "images/teatr.jpeg" }
     },
 
+    "audio/33-ploschad-svobodi.m4a": {
+        11.65: { open: "images/ratusha.jpeg" },
+       33.72: { open: "images/bkz.jpeg" }
+    },
+
     "audio/34-put-na-bogorodickiy(bolshaya-krasnay).m4a": {
         22.29: { open: "images/kznsobor.jpeg" }
     },
@@ -521,6 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
