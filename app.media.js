@@ -169,9 +169,12 @@ const videoTimings = {
 "audio/24-stska-glavniy-tezis.mp3": {
     73.93: { open: "videos/2009 panorama.mp4", duration: 40000 }
 },
-   
+  
    "audio/25-put-na-pl-tukaya-stih.mp3": {
     45.90: { open: "videos/pamyatniki.mp4", duration: 10000 }
+    },
+ "audio/37-petropavlovskiy.m4a": {
+    32.77: { open: "videos/ petrpanorama.mp4", duration: 7000 }
     }
 };
 
@@ -516,6 +519,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
