@@ -138,7 +138,7 @@ const photoTimings = {
     },
 
     "audio/37-petropavlovskiy.m4a": {
-        39.41: { open: "images/ikonosPetrpvl.jpeg" },
+        39.41: { open: "images/ikonosPetrpvl.jpeg", duration: 4250 },
         62.47: { open: "images/bilyard.jpeg" }
     },
 
@@ -520,6 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
