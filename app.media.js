@@ -50,7 +50,7 @@ const photoTimings = {
     },
 
     "audio/12-znachok-metro.m4a": {
-        1.25: { open: "images/metro.jpeg" }
+        1.25: { open: "images/metro.png" }
     },
 
     "audio/13-tramvai-piterskie-doma.m4a": {
@@ -516,6 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
