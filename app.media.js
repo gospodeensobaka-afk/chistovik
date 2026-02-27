@@ -72,10 +72,9 @@ const photoTimings = {
     },
 
     "audio/17-staroobryadci.m4a": {
-        26.15: { open: "images/staroobr cherni.jpeg" },
-        36.37: { open: "images/staroobr cherni.jpeg" },
+        26.15: { open: "images/sraroobr-cherni.jpeg" },
         38.90: { open: "images/votetozdanie.jpeg" },
-        39.00: { open: "images/kazanskaya cerkov.jpeg" }
+        39.00: { open: "images/kazanskaya-cerkov.jpeg" }
     },
 
     "audio/18-rotonda.m4a": {
@@ -517,6 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
