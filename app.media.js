@@ -145,7 +145,7 @@ const photoTimings = {
 
     "audio/38-istoriya-vzyatiya-kazani.mp3": {
         240.88:{ open: "images/vidvkremle.jpeg" },
-        320.35:{ open: "images/kulbalkon.jpeg" }
+        258.86:{ open: "images/kulbalkon.jpeg" }
     }
 };
 
@@ -517,6 +517,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
