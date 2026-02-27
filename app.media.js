@@ -175,7 +175,7 @@ const videoTimings = {
     },
    
  "audio/37-petropavlovskiy.m4a": {
-    32.77: { open: "videos/petrpanorama.mp4", duration: 7000 }
+    31.77: { open: "videos/petrpanorama.mp4", duration: 7000 }
     }
 };
 
@@ -520,6 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
