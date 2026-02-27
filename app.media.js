@@ -138,8 +138,8 @@ const photoTimings = {
     },
 
     "audio/37-petropavlovskiy.m4a": {
-        36.88: { open: "images/ikonosPetrpvl.jpeg" },
-        59.90: { open: "images/bilyard.jpeg" }
+        39.41: { open: "images/ikonosPetrpvl.jpeg" },
+        62.47: { open: "images/bilyard.jpeg" }
     },
 
     "audio/38-istoriya-vzyatiya-kazani.mp3": {
@@ -173,8 +173,9 @@ const videoTimings = {
    "audio/25-put-na-pl-tukaya-stih.mp3": {
     45.90: { open: "videos/pamyatniki.mp4", duration: 10000 }
     },
+   
  "audio/37-petropavlovskiy.m4a": {
-    32.77: { open: "videos/ petrpanorama.mp4", duration: 7000 }
+    32.77: { open: "videos/petrpanorama.mp4", duration: 7000 }
     }
 };
 
@@ -519,6 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
