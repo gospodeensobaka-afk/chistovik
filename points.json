@@ -647,8 +647,19 @@
     "images/kuznec4.jpeg",
     "images/kuznec5.jpeg"
   ]
+},
+  {
+  "id": 500,
+  "type": "audio",
+  "lat": 55.78434029221012,
+  "lng": 49.118123189573424,
+  "radius": 20,
+  "audio": null,
+  "customColor": "rgba(128,0,255,0.35)",
+  "preloadTarget": 24
 }
 ]
+
 
 
 
