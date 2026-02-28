@@ -349,32 +349,7 @@ function checkZones(coords) {
 
         if (!z.visited && inside) {
             z.visited = true;
-// === CUSTOM PRELOAD TRIGGER (preloadTarget) ===
-if (z.preloadTarget) {
-    const target = zones.find(a => a.id === z.preloadTarget);
-    if (target) {
-        const files = [];
 
-        // аудио
-        if (target.audio) files.push(target.audio);
-
-        const key = "audio/" + target.audio.split("/").pop();
-
-        // фото
-        const p = photoTimings[key];
-        if (p) {
-            for (const t in p) files.push(p[t].open);
-        }
-
-        // видео
-        const v = videoTimings[key];
-        if (v) {
-            for (const t in v) files.push(v[t].open);
-        }
-
-        queuePreload(files, target.id);
-    }
-}
             const audioZonesList = zones.filter(a => a.type === "audio");
             const idx = audioZonesList.findIndex(a => a.id === z.id);
             const next = audioZonesList[idx + 1];
@@ -1495,42 +1470,3 @@ if (startBtn) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
