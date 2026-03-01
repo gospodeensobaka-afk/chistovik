@@ -481,12 +481,13 @@ function checkZones(coords) {
                    lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
                
                    applyArrowTransform(lastCorrectedAngle);
-               if (!userTouching) {
-                   map.easeTo({
-                       bearing: smoothAngle,
-                       duration: 300
-                   });
-               }
+               if (followMode && lastCoords) {
+    map.easeTo({
+        center: [lastCoords[1], lastCoords[0]],
+        bearing: smoothAngle,
+        duration: 300
+    });
+}
                    debugUpdate("compass", lastCorrectedAngle);
                }
                
@@ -1559,5 +1560,6 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
