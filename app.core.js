@@ -1464,30 +1464,78 @@ if (startBtn) {
             queuePreload(files, id);
         });
 
-        /* === ВКЛЮЧАЕМ КОМПАС ПРИ СТАРТЕ === */
-        try {
-            compassActive = true;
+       /* === ВКЛЮЧАЕМ КОМПАС ПРИ СТАРТЕ (ТОЛЬКО IOS + ANDROID) === */
+try {
+    compassActive = true;
 
-            // iOS
-            if (typeof DeviceOrientationEvent !== "undefined" &&
-                typeof DeviceOrientationEvent.requestPermission === "function") {
+    const ua = navigator.userAgent.toLowerCase();
+    const isIOS = typeof DeviceOrientationEvent !== "undefined" &&
+                  typeof DeviceOrientationEvent.requestPermission === "function";
+    const isAndroid = ua.includes("android");
 
-                const state = await DeviceOrientationEvent.requestPermission();
+    /* ============================
+       iOS — твоя логика
+       ============================ */
+    if (isIOS) {
+        console.log("iOS: requesting compass permission");
 
-                if (state === "granted") {
-                    window.addEventListener("deviceorientation", handleIOSCompass);
-                } else {
-                    console.warn("Пользователь не дал разрешение на компас");
-                }
+        const state = await DeviceOrientationEvent.requestPermission();
 
-            } else {
-                // Android / Desktop
-                window.addEventListener("deviceorientationabsolute", handleIOSCompass);
+        if (state === "granted") {
+            window.addEventListener("deviceorientation", handleIOSCompass);
+        } else {
+            console.warn("iOS: permission denied");
+        }
+
+        return;
+    }
+
+    /* ============================
+       ANDROID — новая логика
+       ============================ */
+    if (isAndroid) {
+        console.log("Android: enabling compass");
+
+        window.addEventListener("deviceorientation", e => {
+            if (!compassActive) return;
+
+            if (e.alpha == null) {
+                debugUpdate("compass", NaN, "NO_ALPHA");
+                return;
             }
 
-        } catch (err) {
-            console.warn("Ошибка при запросе компаса:", err);
-        }
+            // Android heading = 360 - alpha
+            const raw = normalizeAngle(360 - e.alpha);
+
+            smoothAngle = normalizeAngle(0.8 * smoothAngle + 0.2 * raw);
+            compassUpdates++;
+
+            lastMapBearing = (typeof map.getBearing === "function") ? map.getBearing() : 0;
+            lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
+
+            applyArrowTransform(lastCorrectedAngle);
+
+            if (!userTouching) {
+                map.easeTo({
+                    bearing: smoothAngle,
+                    duration: 300
+                });
+            }
+
+            debugUpdate("compass", lastCorrectedAngle);
+        });
+
+        return;
+    }
+
+    /* ============================
+       DESKTOP — ничего не делаем
+       ============================ */
+    console.log("Desktop detected — compass disabled");
+
+} catch (err) {
+    console.warn("Ошибка при запросе компаса:", err);
+}
     };
 }
                    /* ========================================================
@@ -1506,3 +1554,4 @@ if (startBtn) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
