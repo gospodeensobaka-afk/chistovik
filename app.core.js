@@ -162,6 +162,8 @@ let followTimeout = null;
                
                const ROUTE_HITBOX_METERS = 6;
 
+console.log("GALLERY_PATCH_LOADED");
+
 /* === GALLERY STATE (последние 3 зоны) === */
 let galleryZonesHistory = [];   // [{ id, name, photos: [...] }, ...]
 let galleryFlatPhotos = [];     // плоский массив всех фоток для свайпа
@@ -1613,6 +1615,7 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
