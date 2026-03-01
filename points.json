@@ -1,5 +1,15 @@
 [
   {
+  "id": 500,
+  "type": "audio",
+  "lat": 55.78434029221012,
+  "lng": 49.118123189573424,
+  "radius": 2,
+  "audio": null,
+  "customColor": "rgba(0,0,0,0)",
+  "preloadTarget": 24
+},
+  {
     "id": 0,
     "type": "audio",
     "lat": 55.78592035400666,
@@ -649,6 +659,7 @@
   ]
 }
 ]
+
 
 
 
