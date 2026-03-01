@@ -598,10 +598,38 @@ function checkZones(coords) {
              
 
                /* ========================================================
-                  ===================== MOVE MARKER =======================
-                  ======================================================== */
-               
-               function moveMarker(coords) {
+   ===================== SMOOTH GPS ========================
+   ======================================================== */
+
+let smoothMoving = false;
+
+async function smoothMoveTo(target, steps = 12, delay = 50) {
+    if (!lastCoords) {
+        moveMarker(target);
+        return;
+    }
+
+    if (smoothMoving) return;
+    smoothMoving = true;
+
+    const a = lastCoords;
+    const b = target;
+
+    for (let t = 0; t <= 1; t += 1 / steps) {
+        const lat = a[0] + (b[0] - a[0]) * t;
+        const lng = a[1] + (b[1] - a[1]) * t;
+
+        moveMarker([lat, lng]);
+        await new Promise(r => setTimeout(r, delay));
+    }
+
+    smoothMoving = false;
+}
+
+/* ========================================================
+   ===================== MOVE MARKER =======================
+   ======================================================== */
+function moveMarker(coords) {
                    // TOUR NOT STARTED → IGNORE ALL MOVEMENT
                    if (!tourStarted) return;
                
@@ -1202,7 +1230,7 @@ map.on("load", updateAudioCircleRadius);
                            navigator.geolocation.watchPosition(
                                pos => {
                                    if (!gpsActive) return;
-                                   moveMarker([pos.coords.latitude, pos.coords.longitude]);
+                                   smoothMoveTo([pos.coords.latitude, pos.coords.longitude]);
                                },
                                err => console.log("GPS error:", err),
                                { enableHighAccuracy: true }
@@ -1560,6 +1588,7 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
