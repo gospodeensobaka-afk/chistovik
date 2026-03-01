@@ -145,6 +145,8 @@ function hideMiniStatus() {
                let userInteracting = false;
                let smoothAngle = 0;
                let compassUpdates = 0;
+let followMode = true;
+let followTimeout = null;
                
                let gpsAngleLast = null;
                let gpsUpdates = 0;
@@ -607,7 +609,7 @@ function checkZones(coords) {
                
                    updateArrowPositionFromCoords(coords);
                
-                   /* ========================================================
+/* ========================================================
    =============== GPS ROTATION + MAP ROTATION ============
    ======================================================== */
 
@@ -616,17 +618,13 @@ if (!compassActive && prevCoords) {
     gpsAngleLast = Math.round(angle);
     gpsUpdates++;
 
-    // Поворот стрелки — всегда можно
+    // Поворот стрелки
     applyArrowTransform(angle);
 
-    // 🚫 НЕ КРУТИМ КАРТУ ДО СТАРТА ТУРА
-    if (!tourStarted) {
-        return;
-    }
-
-    // Поворот карты — только если пользователь не трогает экран
-    if (!userTouching) {
+    // FOLLOW MODE — карта следует за стрелкой
+    if (followMode) {
         map.easeTo({
+            center: [coords[1], coords[0]],
             bearing: angle,
             duration: 300
         });
@@ -785,16 +783,22 @@ if (audioPlaying) {
 globalAudio.autoplay = true;
                      globalAudio.load();
                       map.getCanvas().addEventListener("pointerdown", () => {
-                   userTouching = true;
-               });
+    userTouching = true;
+    followMode = false;
+    if (followTimeout) clearTimeout(followTimeout);
+});
                
-               map.getCanvas().addEventListener("pointerup", () => {
-                   userTouching = false;
-               });
+             map.getCanvas().addEventListener("pointerup", () => {
+    userTouching = false;
+    if (followTimeout) clearTimeout(followTimeout);
+    followTimeout = setTimeout(() => followMode = true, 3000);
+});
                
-               map.getCanvas().addEventListener("pointercancel", () => {
-                   userTouching = false;
-               });
+              map.getCanvas().addEventListener("pointercancel", () => {
+    userTouching = false;
+    if (followTimeout) clearTimeout(followTimeout);
+    followTimeout = setTimeout(() => followMode = true, 3000);
+});
                       map.on("movestart", () => userInteracting = true);
                map.on("moveend", () => userInteracting = false);
                // FIX_REMOVE_HACK_LINE — полностью удалить старые слои маршрута
@@ -1490,44 +1494,45 @@ try {
         return;
     }
 
-    /* ============================
-       ANDROID — новая логика
-       ============================ */
-    if (isAndroid) {
-        console.log("Android: enabling compass");
+   /* ============================
+   ANDROID — новая логика
+   ============================ */
+if (isAndroid) {
+    console.log("Android: enabling compass");
 
-        window.addEventListener("deviceorientation", e => {
-            if (!compassActive) return;
+    window.addEventListener("deviceorientation", e => {
+        if (!compassActive) return;
 
-            if (e.alpha == null) {
-                debugUpdate("compass", NaN, "NO_ALPHA");
-                return;
-            }
+        if (e.alpha == null) {
+            debugUpdate("compass", NaN, "NO_ALPHA");
+            return;
+        }
 
-            // Android heading = 360 - alpha
-            const raw = normalizeAngle(360 - e.alpha);
+        // Android heading = 360 - alpha
+        const raw = normalizeAngle(360 - e.alpha);
 
-            smoothAngle = normalizeAngle(0.8 * smoothAngle + 0.2 * raw);
-            compassUpdates++;
+        smoothAngle = normalizeAngle(0.8 * smoothAngle + 0.2 * raw);
+        compassUpdates++;
 
-            lastMapBearing = (typeof map.getBearing === "function") ? map.getBearing() : 0;
-            lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
+        lastMapBearing = (typeof map.getBearing === "function") ? map.getBearing() : 0;
+        lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
 
-            applyArrowTransform(lastCorrectedAngle);
+        applyArrowTransform(lastCorrectedAngle);
 
-            if (!userTouching) {
-                map.easeTo({
-                    bearing: smoothAngle,
-                    duration: 300
-                });
-            }
+        // === FOLLOW MODE (как в навигаторе) ===
+        if (followMode && lastCoords) {
+            map.easeTo({
+                center: [lastCoords[1], lastCoords[0]],
+                bearing: smoothAngle,
+                duration: 300
+            });
+        }
 
-            debugUpdate("compass", lastCorrectedAngle);
-        });
+        debugUpdate("compass", lastCorrectedAngle);
+    });
 
-        return;
-    }
-
+    return;
+}
     /* ============================
        DESKTOP — ничего не делаем
        ============================ */
@@ -1554,4 +1559,5 @@ try {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
