@@ -387,24 +387,26 @@ if (type === "photo") {
         }
 
         // свайп влево → следующее фото
-        if (dx < -50 && window.__fsIndex < window.__fsGallery.length - 1) {
-            media.style.transform = "translateX(-100%)";
-            setTimeout(() => {
-                window.__fsIndex++;
-                showFullscreenMedia(window.__fsGallery[window.__fsIndex], "photo");
-            }, 200);
-            return;
-        }
+if (dx < -50 && window.__fsIndex < window.__fsGallery.length - 1) {
+    media.style.transform = "translateX(-100%)";
+    setTimeout(() => {
+        window.__openedFromGallery = true;   // ← ДОБАВИТЬ
+        window.__fsIndex++;
+        showFullscreenMedia(window.__fsGallery[window.__fsIndex], "photo");
+    }, 200);
+    return;
+}
 
         // свайп вправо → предыдущее фото
-        if (dx > 50 && window.__fsIndex > 0) {
-            media.style.transform = "translateX(100%)";
-            setTimeout(() => {
-                window.__fsIndex--;
-                showFullscreenMedia(window.__fsGallery[window.__fsIndex], "photo");
-            }, 200);
-            return;
-        }
+if (dx > 50 && window.__fsIndex > 0) {
+    media.style.transform = "translateX(100%)";
+    setTimeout(() => {
+        window.__openedFromGallery = true;   // ← ДОБАВИТЬ
+        window.__fsIndex--;
+        showFullscreenMedia(window.__fsGallery[window.__fsIndex], "photo");
+    }, 200);
+    return;
+}
 
         // если свайп слабый — возвращаем назад
         media.style.transform = "translateX(0)";
@@ -533,6 +535,7 @@ lastThree.forEach(zoneId => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
