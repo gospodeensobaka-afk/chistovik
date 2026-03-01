@@ -161,6 +161,10 @@ let followTimeout = null;
                let lastZoneDebug = "";
                
                const ROUTE_HITBOX_METERS = 6;
+
+/* === GALLERY STATE (последние 3 зоны) === */
+let galleryZonesHistory = [];   // [{ id, name, photos: [...] }, ...]
+let galleryFlatPhotos = [];     // плоский массив всех фоток для свайпа
                
                /* ========================================================
                   ===================== UTILITIES ========================
@@ -351,6 +355,27 @@ function checkZones(coords) {
 
         if (!z.visited && inside) {
             z.visited = true;
+
+          // === обновляем список последних 3 зон ===
+window.__galleryZones = window.__galleryZones.filter(id => id !== z.id);
+window.__galleryZones.unshift(z.id);
+window.__galleryZones = window.__galleryZones.slice(0, 3);
+
+// === пересобираем общую галерею ===
+window.__galleryPhotos = [];
+
+window.__galleryZones.forEach(zoneId => {
+    const zone = zones.find(x => x.id === zoneId);
+    if (!zone || !zone.photos) return;
+
+    zone.photos.forEach(src => {
+        window.__galleryPhotos.push({
+            src,
+            zoneId: zone.id,
+            zoneName: zone.name
+        });
+    });
+});
 
             const audioZonesList = zones.filter(a => a.type === "audio");
             const idx = audioZonesList.findIndex(a => a.id === z.id);
@@ -1325,11 +1350,11 @@ function openMediaMenu(p) {
                 img.style.objectFit = "cover";
 
                 box.appendChild(img);
-                box.onclick = () => {
-                    window.__fsGallery = p.photos.slice();
-                    window.__fsIndex = p.photos.indexOf(src);
-                    showFullscreenMedia(src, "photo");
-                };
+               box.onclick = () => {
+    window.__fsGallery = window.__galleryPhotos.map(x => x.src);
+    window.__fsIndex = window.__fsGallery.indexOf(src);
+    showFullscreenMedia(src, "photo");
+};
 
                 preview.appendChild(box);
             });
@@ -1588,6 +1613,7 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
