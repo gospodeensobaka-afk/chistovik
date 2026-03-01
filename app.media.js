@@ -477,12 +477,7 @@ lastThree.forEach(zoneId => {
     lastThree.forEach(zoneId => {
         const items = missedMedia[zoneId];
 
-        const title = document.createElement("div");
-        title.textContent = `Зона ${zoneId}`;
-        title.style.color = "white";
-        title.style.margin = "10px 0 5px 0";
-        title.style.fontSize = "16px";
-        galleryOverlay.appendChild(title);
+       
 
         items.forEach(item => {
             const thumb = document.createElement("div");
@@ -532,6 +527,7 @@ lastThree.forEach(zoneId => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
