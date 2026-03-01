@@ -251,15 +251,19 @@ function showFullscreenMedia(src, type, duration = null) {
 
     // === ГРУППИРУЕМ МЕДИА ПО ЗОНАМ ===
   // === ГРУППИРУЕМ МЕДИА ПО ЗОНАМ (ТОЛЬКО ДЛЯ АУДИОЗОН) ===
-if (window.__currentZoneId !== undefined && window.__currentZoneId !== null) {
-    if (!missedMedia[window.__currentZoneId]) {
-        missedMedia[window.__currentZoneId] = [];
-    }
+// НЕ добавляем фото в missedMedia, если оно открыто вручную из галереи
+if (!window.__openedFromGallery) {
+    if (window.__currentZoneId !== undefined && window.__currentZoneId !== null) {
+        if (!missedMedia[window.__currentZoneId]) {
+            missedMedia[window.__currentZoneId] = [];
+        }
 
-    if (!missedMedia[window.__currentZoneId].some(m => m.src === src)) {
-        missedMedia[window.__currentZoneId].push({ type, src });
+        if (!missedMedia[window.__currentZoneId].some(m => m.src === src)) {
+            missedMedia[window.__currentZoneId].push({ type, src });
+        }
     }
 }
+
 
     if (!overlay) {
         overlay = document.createElement("div");
@@ -408,12 +412,14 @@ if (type === "photo") {
 }
 overlay.style.display = "flex";
 
+/* === ЕСЛИ ОТКРЫТО ИЗ ГАЛЕРЕИ — НЕ ЗАКРЫВАЕМ АВТО === */
 if (window.__openedFromGallery) {
+    // Сбрасываем флаг сразу после открытия
     window.__openedFromGallery = false;
     return;
 }
 
-// === НОВАЯ ЛОГИКА ЗАКРЫТИЯ ===
+/* === АВТОЗАКРЫТИЕ ПО DURATION (ТОЛЬКО ДЛЯ АУДИОТАЙМИНГОВ) === */
 if (duration) {
     setTimeout(() => {
         if (overlay && overlay.style.display !== "none") {
@@ -423,12 +429,12 @@ if (duration) {
     return;
 }
 
-// === МЕДИАЗОНЫ: НИКОГДА не закрываем автоматически ===
+/* === МЕДИАЗОНЫ: НИКОГДА НЕ ЗАКРЫВАЕМ АВТО === */
 if (window.__mediaMenuMode) {
     return;
 }
 
-// === Fallback 3000 мс (для аудиотаймингов) ===
+/* === FALLBACK 3000 МС (ТОЛЬКО ДЛЯ АУДИОТАЙМИНГОВ) === */
 setTimeout(() => {
     if (overlay && overlay.style.display !== "none") {
         overlay.style.display = "none";
@@ -527,6 +533,7 @@ lastThree.forEach(zoneId => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
