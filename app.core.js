@@ -350,40 +350,6 @@ function checkZones(coords) {
         if (!z.visited && inside) {
             z.visited = true;
 
-// === КАСТОМНЫЙ ТРИГГЕР ПРЕДЗАГРУЗКИ ===
-if (z.preloadTarget) {
-    const targets = Array.isArray(z.preloadTarget)
-        ? z.preloadTarget
-        : [z.preloadTarget];
-
-    targets.forEach(tid => {
-        const target = zones.find(a => a.id === tid);
-        if (!target) return;
-
-        let files = [];
-
-        // аудио
-        if (target.audio) files.push(target.audio);
-
-        // ключ для таймингов
-        const key = "audio/" + target.audio.split("/").pop();
-
-        // фото
-        const p = photoTimings[key];
-        if (p) {
-            for (const t in p) files.push(p[t].open);
-        }
-
-        // видео
-        const v = videoTimings[key];
-        if (v) {
-            for (const t in v) files.push(v[t].open);
-        }
-
-        queuePreload(files, target.id);
-    });
-}
-          
             const audioZonesList = zones.filter(a => a.type === "audio");
             const idx = audioZonesList.findIndex(a => a.id === z.id);
             const next = audioZonesList[idx + 1];
@@ -1449,7 +1415,7 @@ function createMediaMenuUniversal() {
                   ===================== START TOUR BTN ====================
                   ======================================================== */
                
-             /* START TOUR BTN — обновлённый, с компасом */
+/* START TOUR BTN — обновлённый, с компасом */
 const startBtn = document.getElementById("startTourBtn");
 if (startBtn) {
     startBtn.onclick = async () => {
@@ -1460,6 +1426,43 @@ if (startBtn) {
         intro.play().catch(() => console.log("Не удалось проиграть start.mp3"));
 
         startBtn.style.display = "none";
+
+        /* ========================================================
+           ПРЕДЗАГРУЗКА ВСЕГО МЕДИА ДЛЯ ТЯЖЁЛЫХ ЗОН (5, 8, 24, 25)
+           ======================================================== */
+        const heavyZones = [5, 8, 24, 25];
+
+        heavyZones.forEach(id => {
+            const z = zones.find(z => z.id === id);
+            if (!z || !z.audio) return;
+
+            let files = [];
+
+            // АУДИО
+            files.push(z.audio);
+
+            // КЛЮЧ ДЛЯ ТАЙМИНГОВ
+            const key = "audio/" + z.audio.split("/").pop();
+
+            // ФОТО
+            const p = photoTimings[key];
+            if (p) {
+                for (const t in p) {
+                    files.push(p[t].open);
+                }
+            }
+
+            // ВИДЕО
+            const v = videoTimings[key];
+            if (v) {
+                for (const t in v) {
+                    files.push(v[t].open);
+                }
+            }
+
+            // ОТПРАВЛЯЕМ В ОЧЕРЕДЬ ПРЕДЗАГРУЗКИ
+            queuePreload(files, id);
+        });
 
         /* === ВКЛЮЧАЕМ КОМПАС ПРИ СТАРТЕ === */
         try {
@@ -1487,7 +1490,6 @@ if (startBtn) {
         }
     };
 }
-
                    /* ========================================================
                       ===================== INIT DEBUG PANEL =================
                       ======================================================== */
@@ -1504,4 +1506,3 @@ if (startBtn) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
-
