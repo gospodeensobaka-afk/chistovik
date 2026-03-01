@@ -187,6 +187,8 @@ const videoTimings = {
 
 /* === MISSED MEDIA STORAGE === */
 let missedMedia = {}; // { zoneId: [ {type, src}, ... ] }
+// Плоская лента всех фото из последних 3 зон для свайпа
+let galleryFlatPhotos = [];
 
 /* ========================================================
    ========== TIMINGS → FULLSCREEN MEDIA HANDLER ===========
@@ -464,7 +466,14 @@ document.addEventListener("DOMContentLoaded", () => {
         .sort((a, b) => b - a);
 
     const lastThree = zoneIds.slice(0, 3);
-
+// Пересобираем общую ленту фото из последних 3 зон
+galleryFlatPhotos = [];
+lastThree.forEach(zoneId => {
+    const items = missedMedia[zoneId] || [];
+    items
+        .filter(m => m.type === "photo")
+        .forEach(m => galleryFlatPhotos.push(m.src));
+});
     lastThree.forEach(zoneId => {
         const items = missedMedia[zoneId];
 
@@ -509,12 +518,9 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.add("hidden");
     window.__openedFromGallery = true;
 
-    const photos = missedMedia[zoneId]
-        .filter(m => m.type === "photo")
-        .map(m => m.src);
-
-    window.__fsGallery = photos;
-    window.__fsIndex = photos.indexOf(item.src);
+    // Используем общую ленту всех фото из последних 3 зон
+    window.__fsGallery = galleryFlatPhotos;
+    window.__fsIndex = window.__fsGallery.indexOf(item.src);
 
     showFullscreenMedia(item.src, item.type);
 };
@@ -526,6 +532,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
