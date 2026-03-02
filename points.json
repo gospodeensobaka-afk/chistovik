@@ -1,23 +1,5 @@
 [
   {
-    "id": 26,
-    "type": "audio",
-    "lat": 55.826908445267634,
-    "lng": 49.08297086294377,
-    "radius": 15,
-    "audio": "audio/26-plochad-tukaya(mozhno-pro-shalyapina-dobavit).m4a"
-  },
-  {
-  "id": 500,
-  "type": "audio",
-  "lat": 55.78434029221012,
-  "lng": 49.118123189573424,
-  "radius": 2,
-  "audio": null,
-  "customColor": "rgba(0,0,0,0)",
-  "preloadTarget": 24
-},
-  {
     "id": 0,
     "type": "audio",
     "lat": 55.78592035400666,
@@ -240,8 +222,8 @@
   {
     "id": 26,
     "type": "audio",
-    "lat": 55.826908445267634,
-    "lng": 49.08297086294377,
+    "lat": 55.826568381078204,
+    "lng":  49.0821539732454,
     "radius": 15,
     "audio": "audio/26-plochad-tukaya(mozhno-pro-shalyapina-dobavit).m4a"
   },
@@ -667,6 +649,7 @@
   ]
 }
 ]
+
 
 
 
