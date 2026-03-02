@@ -1463,7 +1463,7 @@ if (startBtn) {
         /* ========================================================
            ПРЕДЗАГРУЗКА ВСЕГО МЕДИА ДЛЯ ТЯЖЁЛЫХ ЗОН (5, 8, 24, 25)
            ======================================================== */
-        const heavyZones = [5, 8, 24, 25];
+        const heavyZones = [5, 8, 24, 25, 26];
 
         heavyZones.forEach(id => {
             const z = zones.find(z => z.id === id);
@@ -1588,6 +1588,7 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
