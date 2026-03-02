@@ -1445,10 +1445,10 @@ function createMediaMenuUniversal() {
         if (e.target === overlay) closeMediaMenuUniversal();
     };
 }
-               /* ========================================================
+              /* ========================================================
                   ===================== START TOUR BTN ====================
                   ======================================================== */
-               
+
 /* START TOUR BTN — обновлённый, с компасом */
 const startBtn = document.getElementById("startTourBtn");
 if (startBtn) {
@@ -1460,37 +1460,6 @@ if (startBtn) {
         intro.play().catch(() => console.log("Не удалось проиграть start.mp3"));
 
         startBtn.style.display = "none";
-
-        /* === VIDEO UNLOCK POPUP (iOS autoplay fix) === */
-        (function showUnlockVideo() {
-            const overlay = document.createElement("div");
-            overlay.style.position = "fixed";
-            overlay.style.top = "0";
-            overlay.style.left = "0";
-            overlay.style.width = "100%";
-            overlay.style.height = "100%";
-            overlay.style.background = "rgba(0,0,0,0.85)";
-            overlay.style.zIndex = "9999999";
-            overlay.style.display = "flex";
-            overlay.style.alignItems = "center";
-            overlay.style.justifyContent = "center";
-
-            const v = document.createElement("video");
-            v.src = "videos/blank.mp4"; // твой 2‑секундный файл
-            v.controls = true;
-            v.playsInline = true;
-            v.style.maxWidth = "90%";
-            v.style.maxHeight = "90%";
-
-            v.onplay = () => {
-                window.__videoUnlocked = true;
-                console.log("VIDEO UNLOCKED BY USER PLAY");
-                setTimeout(() => overlay.remove(), 300);
-            };
-
-            overlay.appendChild(v);
-            document.body.appendChild(overlay);
-        })();
     };
 }
         /* ========================================================
@@ -1620,6 +1589,7 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
