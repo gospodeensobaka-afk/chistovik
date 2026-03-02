@@ -169,7 +169,7 @@ const videoTimings = {
     },
 
     "audio/8-sport-na-mileniume.m4a": {
-        32.89: { open: "videos/3d modelki.mp4", duration: 22410 } // 22.41 сек
+        31.02: { open: "videos/3d modelki.mp4", duration: 25780 } // 22.41 сек
     },
    
    "audio/23-teatr-3h-smehov.mp3": {
@@ -184,7 +184,7 @@ const videoTimings = {
     45.90: { open: "videos/pamyatniki.mp4", duration: 10000 }
     },
 
-   "audio/25-put-na-pl-tukaya-stih.mp3": {
+   "audio/26-plochad-tukaya(mozhno-pro-shalyapina-dobavit).m4a": {
     24.50: { open: "videos/shalyapin1.mp4", duration: 5000 },
       43.07: { open: "videos/shalyapin2.mp4", duration: 4830 }
     },
@@ -544,6 +544,7 @@ lastThree.forEach(zoneId => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
