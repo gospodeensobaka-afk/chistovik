@@ -1244,6 +1244,40 @@ map.on("load", updateAudioCircleRadius);
                        map.on("move", handleMapMove);
                
                        console.log("Карта готова");
+                     /* === VIDEO UNLOCK FOR IOS (FIRST USER GESTURE) === */
+(function setupVideoUnlock() {
+    if (window.__videoUnlockReady) return;
+    window.__videoUnlockReady = true;
+
+    let unlocked = false;
+
+    function unlockVideo() {
+        if (unlocked) return;
+        unlocked = true;
+
+        const v = document.createElement("video");
+        v.muted = true;
+        v.playsInline = true;
+        v.setAttribute("playsinline", "true");
+        v.setAttribute("webkit-playsinline", "true");
+        v.autoplay = true;
+        v.style.position = "fixed";
+        v.style.left = "-9999px";
+        v.style.top = "-9999px";
+
+        document.body.appendChild(v);
+
+        // tiny blank video (1 frame)
+        v.src = "videos/blank.mp4";
+        v.play().catch(()=>{}).then(() => {
+            v.pause();
+            console.log("VIDEO UNLOCKED");
+        });
+    }
+
+    document.addEventListener("touchstart", unlockVideo, { once: true });
+    document.addEventListener("click", unlockVideo, { once: true });
+})();
                    });
                
                   /* ========================================================
@@ -1588,6 +1622,7 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
