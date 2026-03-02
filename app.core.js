@@ -145,6 +145,8 @@ function hideMiniStatus() {
                let userInteracting = false;
                let smoothAngle = 0;
                let compassUpdates = 0;
+let followMode = true;
+let followTimeout = null;
                
                let gpsAngleLast = null;
                let gpsUpdates = 0;
@@ -479,12 +481,13 @@ function checkZones(coords) {
                    lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
                
                    applyArrowTransform(lastCorrectedAngle);
-               if (!userTouching) {
-                   map.easeTo({
-                       bearing: smoothAngle,
-                       duration: 300
-                   });
-               }
+               if (followMode && lastCoords) {
+    map.easeTo({
+        center: [lastCoords[1], lastCoords[0]],
+        bearing: smoothAngle,
+        duration: 300
+    });
+}
                    debugUpdate("compass", lastCorrectedAngle);
                }
                
@@ -595,10 +598,38 @@ function checkZones(coords) {
              
 
                /* ========================================================
-                  ===================== MOVE MARKER =======================
-                  ======================================================== */
-               
-               function moveMarker(coords) {
+   ===================== SMOOTH GPS ========================
+   ======================================================== */
+
+let smoothMoving = false;
+
+async function smoothMoveTo(target, steps = 12, delay = 50) {
+    if (!lastCoords) {
+        moveMarker(target);
+        return;
+    }
+
+    if (smoothMoving) return;
+    smoothMoving = true;
+
+    const a = lastCoords;
+    const b = target;
+
+    for (let t = 0; t <= 1; t += 1 / steps) {
+        const lat = a[0] + (b[0] - a[0]) * t;
+        const lng = a[1] + (b[1] - a[1]) * t;
+
+        moveMarker([lat, lng]);
+        await new Promise(r => setTimeout(r, delay));
+    }
+
+    smoothMoving = false;
+}
+
+/* ========================================================
+   ===================== MOVE MARKER =======================
+   ======================================================== */
+function moveMarker(coords) {
                    // TOUR NOT STARTED → IGNORE ALL MOVEMENT
                    if (!tourStarted) return;
                
@@ -607,7 +638,7 @@ function checkZones(coords) {
                
                    updateArrowPositionFromCoords(coords);
                
-                   /* ========================================================
+/* ========================================================
    =============== GPS ROTATION + MAP ROTATION ============
    ======================================================== */
 
@@ -616,17 +647,13 @@ if (!compassActive && prevCoords) {
     gpsAngleLast = Math.round(angle);
     gpsUpdates++;
 
-    // Поворот стрелки — всегда можно
+    // Поворот стрелки
     applyArrowTransform(angle);
 
-    // 🚫 НЕ КРУТИМ КАРТУ ДО СТАРТА ТУРА
-    if (!tourStarted) {
-        return;
-    }
-
-    // Поворот карты — только если пользователь не трогает экран
-    if (!userTouching) {
+    // FOLLOW MODE — карта следует за стрелкой
+    if (followMode) {
         map.easeTo({
+            center: [coords[1], coords[0]],
             bearing: angle,
             duration: 300
         });
@@ -785,16 +812,22 @@ if (audioPlaying) {
 globalAudio.autoplay = true;
                      globalAudio.load();
                       map.getCanvas().addEventListener("pointerdown", () => {
-                   userTouching = true;
-               });
+    userTouching = true;
+    followMode = false;
+    if (followTimeout) clearTimeout(followTimeout);
+});
                
-               map.getCanvas().addEventListener("pointerup", () => {
-                   userTouching = false;
-               });
+             map.getCanvas().addEventListener("pointerup", () => {
+    userTouching = false;
+    if (followTimeout) clearTimeout(followTimeout);
+    followTimeout = setTimeout(() => followMode = true, 3000);
+});
                
-               map.getCanvas().addEventListener("pointercancel", () => {
-                   userTouching = false;
-               });
+              map.getCanvas().addEventListener("pointercancel", () => {
+    userTouching = false;
+    if (followTimeout) clearTimeout(followTimeout);
+    followTimeout = setTimeout(() => followMode = true, 3000);
+});
                       map.on("movestart", () => userInteracting = true);
                map.on("moveend", () => userInteracting = false);
                // FIX_REMOVE_HACK_LINE — полностью удалить старые слои маршрута
@@ -1197,7 +1230,7 @@ map.on("load", updateAudioCircleRadius);
                            navigator.geolocation.watchPosition(
                                pos => {
                                    if (!gpsActive) return;
-                                   moveMarker([pos.coords.latitude, pos.coords.longitude]);
+                                   smoothMoveTo([pos.coords.latitude, pos.coords.longitude]);
                                },
                                err => console.log("GPS error:", err),
                                { enableHighAccuracy: true }
@@ -1211,6 +1244,7 @@ map.on("load", updateAudioCircleRadius);
                        map.on("move", handleMapMove);
                
                        console.log("Карта готова");
+                    
                    });
                
                   /* ========================================================
@@ -1415,28 +1449,161 @@ function createMediaMenuUniversal() {
                   ===================== START TOUR BTN ====================
                   ======================================================== */
                
-               /* START TOUR BTN */
-               const startBtn = document.getElementById("startTourBtn");
-               if (startBtn) {
-                   startBtn.onclick = () => {
-                       tourStarted = true;
-                       gpsActive = true;
-               
-                       const intro = new Audio("audio/start.mp3");
-                       intro.play().catch(() => console.log("Не удалось проиграть start.mp3"));
-               
-                       startBtn.style.display = "none";
-                   };
-               }
-               const simBtn = document.getElementById("simulate");
-               if (simBtn) simBtn.onclick = startSimulation;
-               
-          
-               
-               const compassBtn = document.getElementById("enableCompass");
-               if (compassBtn) compassBtn.onclick = startCompass;
-               
+/* START TOUR BTN — обновлённый, с компасом */
+const startBtn = document.getElementById("startTourBtn");
+if (startBtn) {
+    startBtn.onclick = async () => {
+        tourStarted = true;
+        gpsActive = true;
 
+        const intro = new Audio("audio/start.mp3");
+        intro.play().catch(() => console.log("Не удалось проиграть start.mp3"));
+
+        startBtn.style.display = "none";
+
+        /* === VIDEO UNLOCK POPUP (iOS autoplay fix) === */
+        (function showUnlockVideo() {
+            const overlay = document.createElement("div");
+            overlay.style.position = "fixed";
+            overlay.style.top = "0";
+            overlay.style.left = "0";
+            overlay.style.width = "100%";
+            overlay.style.height = "100%";
+            overlay.style.background = "rgba(0,0,0,0.85)";
+            overlay.style.zIndex = "9999999";
+            overlay.style.display = "flex";
+            overlay.style.alignItems = "center";
+            overlay.style.justifyContent = "center";
+
+            const v = document.createElement("video");
+            v.src = "videos/blank.mp4"; // твой 2‑секундный файл
+            v.controls = true;
+            v.playsInline = true;
+            v.style.maxWidth = "90%";
+            v.style.maxHeight = "90%";
+
+            v.onplay = () => {
+                window.__videoUnlocked = true;
+                console.log("VIDEO UNLOCKED BY USER PLAY");
+                setTimeout(() => overlay.remove(), 300);
+            };
+
+            overlay.appendChild(v);
+            document.body.appendChild(overlay);
+        })();
+    };
+}
+        /* ========================================================
+           ПРЕДЗАГРУЗКА ВСЕГО МЕДИА ДЛЯ ТЯЖЁЛЫХ ЗОН (5, 8, 24, 25)
+           ======================================================== */
+        const heavyZones = [5, 8, 24, 25, 26];
+
+        heavyZones.forEach(id => {
+            const z = zones.find(z => z.id === id);
+            if (!z || !z.audio) return;
+
+            let files = [];
+
+            // АУДИО
+            files.push(z.audio);
+
+            // КЛЮЧ ДЛЯ ТАЙМИНГОВ
+            const key = "audio/" + z.audio.split("/").pop();
+
+            // ФОТО
+            const p = photoTimings[key];
+            if (p) {
+                for (const t in p) {
+                    files.push(p[t].open);
+                }
+            }
+
+            // ВИДЕО
+            const v = videoTimings[key];
+            if (v) {
+                for (const t in v) {
+                    files.push(v[t].open);
+                }
+            }
+
+            // ОТПРАВЛЯЕМ В ОЧЕРЕДЬ ПРЕДЗАГРУЗКИ
+            queuePreload(files, id);
+        });
+
+       /* === ВКЛЮЧАЕМ КОМПАС ПРИ СТАРТЕ (ТОЛЬКО IOS + ANDROID) === */
+try {
+    compassActive = true;
+
+    const ua = navigator.userAgent.toLowerCase();
+    const isIOS = typeof DeviceOrientationEvent !== "undefined" &&
+                  typeof DeviceOrientationEvent.requestPermission === "function";
+    const isAndroid = ua.includes("android");
+
+    /* ============================
+       iOS — твоя логика
+       ============================ */
+    if (isIOS) {
+        console.log("iOS: requesting compass permission");
+
+        const state = await DeviceOrientationEvent.requestPermission();
+
+        if (state === "granted") {
+            window.addEventListener("deviceorientation", handleIOSCompass);
+        } else {
+            console.warn("iOS: permission denied");
+        }
+
+        return;
+    }
+
+   /* ============================
+   ANDROID — новая логика
+   ============================ */
+if (isAndroid) {
+    console.log("Android: enabling compass");
+
+    window.addEventListener("deviceorientation", e => {
+        if (!compassActive) return;
+
+        if (e.alpha == null) {
+            debugUpdate("compass", NaN, "NO_ALPHA");
+            return;
+        }
+
+        // Android heading = 360 - alpha
+        const raw = normalizeAngle(360 - e.alpha);
+
+        smoothAngle = normalizeAngle(0.8 * smoothAngle + 0.2 * raw);
+        compassUpdates++;
+
+        lastMapBearing = (typeof map.getBearing === "function") ? map.getBearing() : 0;
+        lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
+
+        applyArrowTransform(lastCorrectedAngle);
+
+        // === FOLLOW MODE (как в навигаторе) ===
+        if (followMode && lastCoords) {
+            map.easeTo({
+                center: [lastCoords[1], lastCoords[0]],
+                bearing: smoothAngle,
+                duration: 300
+            });
+        }
+
+        debugUpdate("compass", lastCorrectedAngle);
+    });
+
+    return;
+}
+    /* ============================
+       DESKTOP — ничего не делаем
+       ============================ */
+    console.log("Desktop detected — compass disabled");
+
+} catch (err) {
+    console.warn("Ошибка при запросе компаса:", err);
+}
+   
                    /* ========================================================
                       ===================== INIT DEBUG PANEL =================
                       ======================================================== */
@@ -1453,36 +1620,6 @@ function createMediaMenuUniversal() {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
