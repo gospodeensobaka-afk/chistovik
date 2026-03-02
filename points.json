@@ -1,5 +1,13 @@
 [
   {
+    "id": 26,
+    "type": "audio",
+    "lat": 55.826908445267634,
+    "lng": 49.08297086294377,
+    "radius": 15,
+    "audio": "audio/26-plochad-tukaya(mozhno-pro-shalyapina-dobavit).m4a"
+  },
+  {
   "id": 500,
   "type": "audio",
   "lat": 55.78434029221012,
@@ -659,6 +667,7 @@
   ]
 }
 ]
+
 
 
 
