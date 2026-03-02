@@ -90,6 +90,10 @@ const photoTimings = {
         4.33: { open: "images/fontan.jpeg" }
     },
 
+"audio/26-plochad-tukaya(mozhno-pro-shalyapina-dobavit).m4a": {
+        52.71: { open: "images/shalyapin3.jpeg" }
+    },
+   
     "audio/27-universitetskaya.m4a": {
         14.00: { open: "images/universitetskaya.jpeg" }
     },
@@ -178,6 +182,11 @@ const videoTimings = {
   
    "audio/25-put-na-pl-tukaya-stih.mp3": {
     45.90: { open: "videos/pamyatniki.mp4", duration: 10000 }
+    },
+
+   "audio/25-put-na-pl-tukaya-stih.mp3": {
+    24.50: { open: "videos/shalyapin1.mp4", duration: 5000 },
+      43.07: { open: "videos/shalyapin2.mp4", duration: 4830 }
     },
    
  "audio/37-petropavlovskiy.m4a": {
@@ -535,6 +544,7 @@ lastThree.forEach(zoneId => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
