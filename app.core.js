@@ -1244,40 +1244,7 @@ map.on("load", updateAudioCircleRadius);
                        map.on("move", handleMapMove);
                
                        console.log("Карта готова");
-                     /* === VIDEO UNLOCK FOR IOS (FIRST USER GESTURE) === */
-(function setupVideoUnlock() {
-    if (window.__videoUnlockReady) return;
-    window.__videoUnlockReady = true;
-
-    let unlocked = false;
-
-    function unlockVideo() {
-        if (unlocked) return;
-        unlocked = true;
-
-        const v = document.createElement("video");
-        v.muted = true;
-        v.playsInline = true;
-        v.setAttribute("playsinline", "true");
-        v.setAttribute("webkit-playsinline", "true");
-        v.autoplay = true;
-        v.style.position = "fixed";
-        v.style.left = "-9999px";
-        v.style.top = "-9999px";
-
-        document.body.appendChild(v);
-
-        // tiny blank video (1 frame)
-        v.src = "videos/blank.mp4";
-        v.play().catch(()=>{}).then(() => {
-            v.pause();
-            console.log("VIDEO UNLOCKED");
-        });
-    }
-
-    document.addEventListener("touchstart", unlockVideo, { once: true });
-    document.addEventListener("click", unlockVideo, { once: true });
-})();
+                    
                    });
                
                   /* ========================================================
@@ -1494,6 +1461,41 @@ if (startBtn) {
 
         startBtn.style.display = "none";
 
+        /* === VIDEO UNLOCK POPUP (iOS autoplay fix) === */
+        (function showUnlockVideo() {
+            const overlay = document.createElement("div");
+            overlay.style.position = "fixed";
+            overlay.style.top = "0";
+            overlay.style.left = "0";
+            overlay.style.width = "100%";
+            overlay.style.height = "100%";
+            overlay.style.background = "rgba(0,0,0,0.85)";
+            overlay.style.zIndex = "9999999";
+            overlay.style.display = "flex";
+            overlay.style.alignItems = "center";
+            overlay.style.justifyContent = "center";
+
+            const v = document.createElement("video");
+            v.src = "videos/blank.mp4"; // твой 2‑секундный файл
+            v.controls = true;
+            v.playsInline = true;
+            v.style.maxWidth = "90%";
+            v.style.maxHeight = "90%";
+
+            // Пользователь нажимает Play → iOS разлочивает видео
+            v.onplay = () => {
+                window.__videoUnlocked = true;
+                console.log("VIDEO UNLOCKED BY USER PLAY");
+
+                // Закрываем окно через 300 мс
+                setTimeout(() => overlay.remove(), 300);
+            };
+
+            overlay.appendChild(v);
+            document.body.appendChild(overlay);
+        })();
+    };
+}
         /* ========================================================
            ПРЕДЗАГРУЗКА ВСЕГО МЕДИА ДЛЯ ТЯЖЁЛЫХ ЗОН (5, 8, 24, 25)
            ======================================================== */
@@ -1622,6 +1624,7 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
