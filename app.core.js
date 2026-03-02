@@ -1482,12 +1482,9 @@ if (startBtn) {
             v.style.maxWidth = "90%";
             v.style.maxHeight = "90%";
 
-            // Пользователь нажимает Play → iOS разлочивает видео
             v.onplay = () => {
                 window.__videoUnlocked = true;
                 console.log("VIDEO UNLOCKED BY USER PLAY");
-
-                // Закрываем окно через 300 мс
                 setTimeout(() => overlay.remove(), 300);
             };
 
@@ -1624,6 +1621,7 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
