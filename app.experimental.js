@@ -2,7 +2,7 @@
    CACHE BUSTER — показывает версию деплоя
    ======================================================== */
 
-const BUILD_ID = "1"; // ← меняй вручную при каждом коммите
+const BUILD_ID = "AAAA"; // ← меняй вручную при каждом коммите
 
 const buildBadge = document.createElement("div");
 buildBadge.textContent = `build: ${BUILD_ID}`;
@@ -18,3 +18,4 @@ buildBadge.style.borderRadius = "6px";
 buildBadge.style.zIndex = "999999";
 buildBadge.style.pointerEvents = "none";
 document.addEventListener("DOMContentLoaded", () => document.body.appendChild(buildBadge));
+
