@@ -621,14 +621,7 @@ function updateRouteProgress(passedCoords, remainingCoords) {
         geometry: { type: "MultiLineString", coordinates: toMultiLine(remainingCoords) }
     });
 }
-```
 
----
-
-**Шаг 2 — заменить старые setData**
-
-Найди через Ctrl+F точно эту строку:
-```
 // === UPDATE SOURCES ===
 let smoothMoving = false;
 
@@ -1641,6 +1634,7 @@ heavyZones.forEach(id => {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
