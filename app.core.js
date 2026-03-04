@@ -601,6 +601,32 @@ function checkZones(coords) {
    ===================== SMOOTH GPS ========================
    ======================================================== */
 
+function updateRouteProgress(passedCoords, remainingCoords) {
+    function toMultiLine(flatCoords) {
+        const lines = [];
+        for (let i = 0; i + 1 < flatCoords.length; i += 2) {
+            lines.push([flatCoords[i], flatCoords[i + 1]]);
+        }
+        return lines;
+    }
+    map.getSource("route-passed").setData({
+        type: "Feature",
+        geometry: { type: "MultiLineString", coordinates: toMultiLine(passedCoords) }
+    });
+    map.getSource("route-remaining").setData({
+        type: "Feature",
+        geometry: { type: "MultiLineString", coordinates: toMultiLine(remainingCoords) }
+    });
+}
+```
+
+---
+
+**Шаг 2 — заменить старые setData**
+
+Найди через Ctrl+F точно эту строку:
+```
+// === UPDATE SOURCES ===
 let smoothMoving = false;
 
 async function smoothMoveTo(target, steps = 12, delay = 50) {
@@ -713,16 +739,7 @@ if (!compassActive && prevCoords) {
                    remainingCoords.push(fullRoute[i + 1].coord);
                }
                
-                   // === UPDATE SOURCES ===
-                   map.getSource("route-passed").setData({
-                       type: "Feature",
-                       geometry: { type: "LineString", coordinates: passedCoords }
-                   });
-               
-                   map.getSource("route-remaining").setData({
-                       type: "Feature",
-                       geometry: { type: "LineString", coordinates: remainingCoords }
-                   });
+                  updateRouteProgress(passedCoords, remainingCoords);
                
                    // === ZONES ===
                    checkZones(coords);
@@ -848,72 +865,71 @@ globalAudio.autoplay = true;
    ======================================================== */
 
 const points = await fetch("points.json").then(r => r.json());
-const route = await fetch("route.json").then(r => r.json());
+const route  = await fetch("route.json").then(r => r.json());
 
-/* === 1) Собираем ВСЕ координаты из FeatureCollection === */
-let allCoords = [];
+/* === 1. Собираем сегменты как ОТДЕЛЬНЫЕ LineString === */
+// route.json — FeatureCollection, каждый Feature = отдельный сегмент маршрута
+// Храним их раздельно, чтобы MapLibre не соединял концы прямой линией
+
+const routeSegmentCoords = []; // массив массивов координат, по одному на сегмент
+
 route.features.forEach(f => {
     if (f.geometry && f.geometry.type === "LineString") {
-        allCoords = allCoords.concat(f.geometry.coordinates);
+        routeSegmentCoords.push(f.geometry.coordinates);
     }
 });
 
-/* === 2) fullRoute для перекраски маршрута === */
-fullRoute = allCoords.map(c => ({
-    coord: [c[0], c[1]]
-}));
+/* === 2. Плоский список всех координат для fullRoute (перекраска) === */
+let allCoords = [];
+routeSegmentCoords.forEach(seg => {
+    allCoords = allCoords.concat(seg);
+});
 
-/* === 3) Сегменты маршрута === */
-routeSegments = [];
-for (let i = 0; i < fullRoute.length - 1; i++) {
-    routeSegments.push({
-        start: fullRoute[i].coord,
-        end: fullRoute[i + 1].coord,
-        passed: false
-    });
-}
+fullRoute = allCoords.map(c => ({ coord: [c[0], c[1]] }));
 
-/* === 4) Симуляция — идём по всем точкам подряд === */
+/* === 3. Симуляция — идём по всем точкам подряд === */
 simulationPoints = allCoords.map(c => [c[1], c[0]]);
-/* === 5) Показываем весь маршрут === */
+
+/* === 4. Fitbounds === */
 const bounds = new maplibregl.LngLatBounds();
 allCoords.forEach(c => bounds.extend([c[0], c[1]]));
+map.fitBounds(bounds, { padding: 50, duration: 0 });
 
-map.fitBounds(bounds, {
-    padding: 50,
-    duration: 0
-});
-
-/* === 6) Через 4 секунды — плавный зум к нужной точке === */
 setTimeout(() => {
     map.easeTo({
-    center: [49.12169747999815, 55.7872919881855],
-    zoom: 16.125383373632552,
-    duration: 1500
-});
+        center: [49.12169747999815, 55.7872919881855],
+        zoom: 16.125383373632552,
+        duration: 1500
+    });
 }, 4000);
-                     
+
 /* ========================================================
-   ===================== ROUTE SOURCES =====================
+   ROUTE SOURCES — MultiLineString вместо одного LineString
    ======================================================== */
 
-/* === 5) Рисуем три отдельные линии, как в старом проекте === */
+// remaining: все сегменты как MultiLineString — MapLibre НЕ соединит их
 map.addSource("route-remaining", {
     type: "geojson",
-    data: route   // ← отдаём весь FeatureCollection
+    data: {
+        type: "Feature",
+        geometry: {
+            type: "MultiLineString",
+            coordinates: routeSegmentCoords   // [[...seg1...], [...seg2...], [...seg3...]]
+        }
+    }
 });
 
+// passed: тоже MultiLineString, изначально пустой
 map.addSource("route-passed", {
     type: "geojson",
     data: {
-        type: "FeatureCollection",
-        features: [] // сюда будем добавлять пройденные куски
+        type: "Feature",
+        geometry: {
+            type: "MultiLineString",
+            coordinates: []
+        }
     }
 });
-
-/* ========================================================
-   ====================== ROUTE LAYERS =====================
-   ======================================================== */
 
 map.addLayer({
     id: "route-remaining-line",
@@ -1633,6 +1649,7 @@ heavyZones.forEach(id => {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
