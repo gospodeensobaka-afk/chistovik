@@ -561,10 +561,10 @@ function checkZones(coords) {
         }, { once: true });
     }
     // Разрешаем повторный запуск в симуляции
-    z.visited = false;
-
+   if (!z.visited) {
     z.visited = true;
     visitedAudioZones++;
+}
     updateProgress();
     updateCircleColors();
 
@@ -1263,18 +1263,7 @@ map.on("load", updateAudioCircleRadius);
                     
                    });
                
-                  /* ========================================================
-                  ========================= BUTTONS ======================
-                  ======================================================== */
-
-
-if (galleryOverlay) {
-    galleryOverlay.onclick = (e) => {
-        if (e.target === galleryOverlay) {
-            galleryOverlay.classList.add("hidden");
-        }
-    };
-}
+                  
 /* ========================================================
    ========== UNIVERSAL MEDIA MENU (ALL ZONES) ============
    ======================================================== */
@@ -1649,6 +1638,7 @@ heavyZones.forEach(id => {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
