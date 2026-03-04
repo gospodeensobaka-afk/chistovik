@@ -117,9 +117,12 @@ function hideMiniStatus() {
                let currentPointImage = null;
                
                
-               const photoOverlay = document.getElementById("photoOverlay");
-               const photoImage = document.getElementById("photoImage");
-               const closePhotoBtn = document.getElementById("closePhotoBtn");
+               let photoOverlay, photoImage, closePhotoBtn;
+document.addEventListener("DOMContentLoaded", () => {
+    photoOverlay = document.getElementById("photoOverlay");
+    photoImage = document.getElementById("photoImage");
+    closePhotoBtn = document.getElementById("closePhotoBtn");
+});
                
                let arrowEl = null;
                let lastCoords = null;
@@ -1638,6 +1641,7 @@ heavyZones.forEach(id => {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
