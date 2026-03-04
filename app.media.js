@@ -323,26 +323,16 @@ if (!window.__openedFromGallery) {
 if (type === "video") {
     const newVideo = document.createElement("video");
     newVideo.id = "fsMediaElement";
-   if (window.__videoCache && window.__videoCache[src]) {
-    newVideo.src = window.__videoCache[src];
-} else {
-   if (window.__videoCache && window.__videoCache[src]) {
-    newVideo.src = window.__videoCache[src];
-} else {
-    newVideo.src = src;
-}
-}
+    newVideo.src = (window.__videoCache && window.__videoCache[src])
+        ? window.__videoCache[src]
+        : src;
     newVideo.style.maxWidth = "100%";
     newVideo.style.maxHeight = "100%";
-
-    // === Универсальный кроссплатформенный фикс ===
-    newVideo.muted = true;        // видео без звука → iOS не ставит аудио на паузу
-    newVideo.playsInline = true;  // не открывать видео в системном плеере
-    newVideo.controls = true;     // можно оставить, Android/Windows не страдают
-
+    newVideo.muted = true;
+    newVideo.playsInline = true;
+    newVideo.controls = true;
     overlay.replaceChild(newVideo, media);
     media = newVideo;
-
     media.play().catch(() => {});
 } else {
     if (media.tagName.toLowerCase() !== "img") {
@@ -548,6 +538,7 @@ lastThree.forEach(zoneId => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
