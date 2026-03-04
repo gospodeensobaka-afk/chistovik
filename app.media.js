@@ -39,6 +39,10 @@ const photoTimings = {
         61.05: { open: "images/kizich.jpeg" },
         102.61:{ open: "images/tatneft.jpeg" }
     },
+   
+    "audio/6-riviera-koleso.m4a": {
+        29.82: { open: "images/vodnih.jpeg" }
+    },
 
     "audio/7-edinobor-Millenium.m4a": {
         26.29: { open: "images/milenium.jpeg" }
@@ -123,8 +127,8 @@ const photoTimings = {
     },
 
     "audio/33-ploschad-svobodi.m4a": {
-        11.65: { open: "images/ratusha.jpeg" },
-       33.72: { open: "images/bkz.jpeg" }
+        12.65: { open: "images/ratusha.jpeg" },
+       26.27: { open: "images/bkz.jpeg" }
     },
 
     "audio/34-put-na-bogorodickiy(bolshaya-krasnay).m4a": {
@@ -544,6 +548,7 @@ lastThree.forEach(zoneId => {
     galleryOverlay.classList.remove("hidden");
 };
 });
+
 
 
 
