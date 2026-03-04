@@ -1445,134 +1445,174 @@ function createMediaMenuUniversal() {
         if (e.target === overlay) closeMediaMenuUniversal();
     };
 }
-              /* ========================================================
-                  ===================== START TOUR BTN ====================
-                  ======================================================== */
+             /* ========================================================
+   ===================== START TOUR BTN ====================
+   ======================================================== */
 
-/* START TOUR BTN — обновлённый, с компасом */
+/* ===== iOS MEDIA UNLOCK HELPERS ===== */
+
+let __audioUnlocked = false;
+let __videoUnlocked = false;
+let __audioContext = null;
+
+async function unlockAudioIOS() {
+    if (__audioUnlocked) return;
+
+    try {
+        __audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        await __audioContext.resume();
+
+        const buffer = __audioContext.createBuffer(1, 1, 22050);
+        const source = __audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(__audioContext.destination);
+        source.start(0);
+
+        __audioUnlocked = true;
+    } catch (e) {
+        console.warn("Audio unlock failed:", e);
+    }
+}
+
+async function unlockVideoIOS() {
+    if (__videoUnlocked) return;
+
+    try {
+        const v = document.createElement("video");
+        v.muted = true;
+        v.playsInline = true;
+        v.setAttribute("playsinline", "true");
+        v.setAttribute("webkit-playsinline", "true");
+        v.src = "data:video/mp4;base64,";
+
+        await v.play().catch(()=>{});
+
+        __videoUnlocked = true;
+    } catch (e) {
+        console.warn("Video unlock failed:", e);
+    }
+}
+
+/* START TOUR BTN — iOS-safe */
 const startBtn = document.getElementById("startTourBtn");
 if (startBtn) {
     startBtn.onclick = async () => {
+
         tourStarted = true;
         gpsActive = true;
 
-        const intro = new Audio("audio/start.mp3");
-        intro.play().catch(() => console.log("Не удалось проиграть start.mp3"));
+        /* === 🔓 UNLOCK MEDIA (ВАЖНО ДЛЯ iOS) === */
+        await unlockAudioIOS();
+        await unlockVideoIOS();
 
-        startBtn.style.display = "none";
+        /* === 🧭 КОМПАС ТЕПЕРЬ ВНУТРИ USER GESTURE === */
+        try {
+
+            compassActive = true;
+
+            const ua = navigator.userAgent.toLowerCase();
+            const isIOS = typeof DeviceOrientationEvent !== "undefined" &&
+                          typeof DeviceOrientationEvent.requestPermission === "function";
+            const isAndroid = ua.includes("android");
+
+            /* ============================
+               iOS
+               ============================ */
+            if (isIOS) {
+
+                const state = await DeviceOrientationEvent.requestPermission();
+
+                if (state === "granted") {
+                    window.addEventListener("deviceorientation", handleIOSCompass);
+                } else {
+                    console.warn("iOS: compass permission denied");
+                }
+
+            }
+
+            /* ============================
+               ANDROID
+               ============================ */
+            else if (isAndroid) {
+
+                window.addEventListener("deviceorientation", e => {
+
+                    if (!compassActive) return;
+
+                    if (e.alpha == null) {
+                        debugUpdate("compass", NaN, "NO_ALPHA");
+                        return;
+                    }
+
+                    const raw = normalizeAngle(360 - e.alpha);
+
+                    smoothAngle = normalizeAngle(0.8 * smoothAngle + 0.2 * raw);
+                    compassUpdates++;
+
+                    lastMapBearing = (typeof map.getBearing === "function") ? map.getBearing() : 0;
+                    lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
+
+                    applyArrowTransform(lastCorrectedAngle);
+
+                    if (followMode && lastCoords) {
+                        map.easeTo({
+                            center: [lastCoords[1], lastCoords[0]],
+                            bearing: smoothAngle,
+                            duration: 300
+                        });
+                    }
+
+                    debugUpdate("compass", lastCorrectedAngle);
+                });
+            }
+
+        } catch (err) {
+            console.warn("Ошибка при запросе компаса:", err);
+        }
+
+        /* === Стартовое аудио === */
+        const intro = new Audio("audio/start.mp3");
+        try {
+            await intro.play();
+        } catch {
+            setTimeout(() => intro.play().catch(()=>{}), 200);
+        }
+      startBtn.style.display = "none";
     };
 }
-        /* ========================================================
-           ПРЕДЗАГРУЗКА ВСЕГО МЕДИА ДЛЯ ТЯЖЁЛЫХ ЗОН (5, 8, 24, 25)
-           ======================================================== */
-        const heavyZones = [5, 8, 24, 25, 26];
 
-        heavyZones.forEach(id => {
-            const z = zones.find(z => z.id === id);
-            if (!z || !z.audio) return;
+/* ========================================================
+   ПРЕДЗАГРУЗКА ВСЕГО МЕДИА ДЛЯ ТЯЖЁЛЫХ ЗОН
+   ======================================================== */
 
-            let files = [];
+const heavyZones = [5, 8, 24, 25, 26];
 
-            // АУДИО
-            files.push(z.audio);
+heavyZones.forEach(id => {
+    const z = zones.find(z => z.id === id);
+    if (!z || !z.audio) return;
 
-            // КЛЮЧ ДЛЯ ТАЙМИНГОВ
-            const key = "audio/" + z.audio.split("/").pop();
+    let files = [];
 
-            // ФОТО
-            const p = photoTimings[key];
-            if (p) {
-                for (const t in p) {
-                    files.push(p[t].open);
-                }
-            }
+    files.push(z.audio);
 
-            // ВИДЕО
-            const v = videoTimings[key];
-            if (v) {
-                for (const t in v) {
-                    files.push(v[t].open);
-                }
-            }
+    const key = "audio/" + z.audio.split("/").pop();
 
-            // ОТПРАВЛЯЕМ В ОЧЕРЕДЬ ПРЕДЗАГРУЗКИ
-            queuePreload(files, id);
-        });
-
-       /* === ВКЛЮЧАЕМ КОМПАС ПРИ СТАРТЕ (ТОЛЬКО IOS + ANDROID) === */
-try {
-    compassActive = true;
-
-    const ua = navigator.userAgent.toLowerCase();
-    const isIOS = typeof DeviceOrientationEvent !== "undefined" &&
-                  typeof DeviceOrientationEvent.requestPermission === "function";
-    const isAndroid = ua.includes("android");
-
-    /* ============================
-       iOS — твоя логика
-       ============================ */
-    if (isIOS) {
-        console.log("iOS: requesting compass permission");
-
-        const state = await DeviceOrientationEvent.requestPermission();
-
-        if (state === "granted") {
-            window.addEventListener("deviceorientation", handleIOSCompass);
-        } else {
-            console.warn("iOS: permission denied");
+    const p = photoTimings[key];
+    if (p) {
+        for (const t in p) {
+            files.push(p[t].open);
         }
-
-        return;
     }
 
-   /* ============================
-   ANDROID — новая логика
-   ============================ */
-if (isAndroid) {
-    console.log("Android: enabling compass");
-
-    window.addEventListener("deviceorientation", e => {
-        if (!compassActive) return;
-
-        if (e.alpha == null) {
-            debugUpdate("compass", NaN, "NO_ALPHA");
-            return;
+    const v = videoTimings[key];
+    if (v) {
+        for (const t in v) {
+            files.push(v[t].open);
         }
+    }
 
-        // Android heading = 360 - alpha
-        const raw = normalizeAngle(360 - e.alpha);
-
-        smoothAngle = normalizeAngle(0.8 * smoothAngle + 0.2 * raw);
-        compassUpdates++;
-
-        lastMapBearing = (typeof map.getBearing === "function") ? map.getBearing() : 0;
-        lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
-
-        applyArrowTransform(lastCorrectedAngle);
-
-        // === FOLLOW MODE (как в навигаторе) ===
-        if (followMode && lastCoords) {
-            map.easeTo({
-                center: [lastCoords[1], lastCoords[0]],
-                bearing: smoothAngle,
-                duration: 300
-            });
-        }
-
-        debugUpdate("compass", lastCorrectedAngle);
-    });
-
-    return;
-}
-    /* ============================
-       DESKTOP — ничего не делаем
-       ============================ */
-    console.log("Desktop detected — compass disabled");
-
-} catch (err) {
-    console.warn("Ошибка при запросе компаса:", err);
-}
-   
+    queuePreload(files, id);
+});
                    /* ========================================================
                       ===================== INIT DEBUG PANEL =================
                       ======================================================== */
@@ -1589,6 +1629,7 @@ if (isAndroid) {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
