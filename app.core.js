@@ -1496,89 +1496,93 @@ async function unlockVideoIOS() {
 /* START TOUR BTN — iOS-safe */
 const startBtn = document.getElementById("startTourBtn");
 if (startBtn) {
-    startBtn.onclick = async () => {
+   startBtn.onclick = () => {
 
-        tourStarted = true;
-        gpsActive = true;
+    tourStarted = true;
+    gpsActive = true;
 
-        /* === 🔓 UNLOCK MEDIA (ВАЖНО ДЛЯ iOS) === */
-        await unlockAudioIOS();
-        await unlockVideoIOS();
+    /* ============================
+       🧭 КОМПАС — СИНХРОННО ПЕРВЫМ
+       ============================ */
 
-        /* === 🧭 КОМПАС ТЕПЕРЬ ВНУТРИ USER GESTURE === */
-        try {
+    try {
 
-            compassActive = true;
+        compassActive = true;
 
-            const ua = navigator.userAgent.toLowerCase();
-            const isIOS = typeof DeviceOrientationEvent !== "undefined" &&
-                          typeof DeviceOrientationEvent.requestPermission === "function";
-            const isAndroid = ua.includes("android");
+        const isIOS =
+            typeof DeviceOrientationEvent !== "undefined" &&
+            typeof DeviceOrientationEvent.requestPermission === "function";
 
-            /* ============================
-               iOS
-               ============================ */
-            if (isIOS) {
+        const ua = navigator.userAgent.toLowerCase();
+        const isAndroid = ua.includes("android");
 
-                const state = await DeviceOrientationEvent.requestPermission();
+        if (isIOS) {
 
-                if (state === "granted") {
-                    window.addEventListener("deviceorientation", handleIOSCompass);
-                } else {
-                    console.warn("iOS: compass permission denied");
+            // 🚨 БЕЗ await — иначе Safari не покажет popup
+            DeviceOrientationEvent.requestPermission()
+                .then(state => {
+                    if (state === "granted") {
+                        window.addEventListener("deviceorientation", handleIOSCompass);
+                    } else {
+                        console.warn("iOS: compass denied");
+                    }
+                })
+                .catch(err => {
+                    console.warn("iOS compass error:", err);
+                });
+
+        } else if (isAndroid) {
+
+            window.addEventListener("deviceorientation", e => {
+
+                if (!compassActive) return;
+
+                if (e.alpha == null) {
+                    debugUpdate("compass", NaN, "NO_ALPHA");
+                    return;
                 }
 
-            }
+                const raw = normalizeAngle(360 - e.alpha);
+                smoothAngle = normalizeAngle(0.8 * smoothAngle + 0.2 * raw);
+                compassUpdates++;
 
-            /* ============================
-               ANDROID
-               ============================ */
-            else if (isAndroid) {
+                lastMapBearing = (typeof map.getBearing === "function") ? map.getBearing() : 0;
+                lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
 
-                window.addEventListener("deviceorientation", e => {
+                applyArrowTransform(lastCorrectedAngle);
 
-                    if (!compassActive) return;
+                if (followMode && lastCoords) {
+                    map.easeTo({
+                        center: [lastCoords[1], lastCoords[0]],
+                        bearing: smoothAngle,
+                        duration: 300
+                    });
+                }
 
-                    if (e.alpha == null) {
-                        debugUpdate("compass", NaN, "NO_ALPHA");
-                        return;
-                    }
-
-                    const raw = normalizeAngle(360 - e.alpha);
-
-                    smoothAngle = normalizeAngle(0.8 * smoothAngle + 0.2 * raw);
-                    compassUpdates++;
-
-                    lastMapBearing = (typeof map.getBearing === "function") ? map.getBearing() : 0;
-                    lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
-
-                    applyArrowTransform(lastCorrectedAngle);
-
-                    if (followMode && lastCoords) {
-                        map.easeTo({
-                            center: [lastCoords[1], lastCoords[0]],
-                            bearing: smoothAngle,
-                            duration: 300
-                        });
-                    }
-
-                    debugUpdate("compass", lastCorrectedAngle);
-                });
-            }
-
-        } catch (err) {
-            console.warn("Ошибка при запросе компаса:", err);
+                debugUpdate("compass", lastCorrectedAngle);
+            });
         }
 
-        /* === Стартовое аудио === */
-        const intro = new Audio("audio/start.mp3");
-        try {
-            await intro.play();
-        } catch {
-            setTimeout(() => intro.play().catch(()=>{}), 200);
-        }
-      startBtn.style.display = "none";
-    };
+    } catch (err) {
+        console.warn("Compass error:", err);
+    }
+
+    /* ============================
+       🔓 MEDIA UNLOCK (после компаса!)
+       ============================ */
+
+    unlockAudioIOS();
+    unlockVideoIOS();
+
+    /* ============================
+       ▶️ Стартовое аудио
+       ============================ */
+
+    const intro = new Audio("audio/start.mp3");
+    intro.play().catch(()=>{});
+
+    startBtn.style.display = "none";
+};
 }
 
 /* ========================================================
@@ -1629,6 +1633,7 @@ heavyZones.forEach(id => {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
