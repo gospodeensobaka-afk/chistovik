@@ -1,8 +1,8 @@
-               /* ========================================================
+          if     /* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             /* === SMART PRELOAD QUEUE (AUDIO + PHOTO/VIDEO TIMINGS) === */
-/* === DEBUG: список предзагруженных зон (только будущие) === */
+else/* === DEBUG: список предзагруженных зон (только будущие) === */
 let preloadDebugList = [];
 
 function updateDebugStatus() {
@@ -1634,6 +1634,7 @@ heavyZones.forEach(id => {
 document.addEventListener("DOMContentLoaded", initMap);
 
 /* ==================== END OF APP.JS ====================== */
+
 
 
 
