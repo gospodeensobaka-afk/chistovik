@@ -1,4 +1,4 @@
-/* ========================================================
+               /* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             /* === SMART PRELOAD QUEUE (AUDIO + PHOTO/VIDEO TIMINGS) === */
@@ -158,6 +158,16 @@ let followTimeout = null;
 
                // FIX: границы стыков между сегментами маршрута — не рисуем линию через стык
                let segmentBoundaries = new Set();
+
+/* ========================================================
+   === DRIVER MODE — активируется через ?driver=1 в URL
+   ======================================================== */
+const isDriverMode = new URLSearchParams(window.location.search).get("driver") === "1";
+
+/* ========================================================
+   === NEXT ZONE MARKER — прыгающая стрелка над след. зоной
+   ======================================================== */
+let nextZoneMarker = null;
 
                const ROUTE_HITBOX_METERS = 6;
 
@@ -336,6 +346,7 @@ function pointInPolygon(point, polygon) {
 }
 
 function checkZones(coords) {
+    if (isDriverMode) return; // водитель не триггерит зоны
     zones.forEach(z => {
         if (z.type !== "audio") return;
 
@@ -366,8 +377,8 @@ function checkZones(coords) {
 
             visitedAudioZones++;
             updateProgress();
-
             updateCircleColors();
+            updateNextZoneMarker(); // перепрыгиваем стрелку на следующую зону
 
             if (z.audio) {
                 preloadAllMediaForCurrentAudio(z.audio);
@@ -570,6 +581,7 @@ arrow=${arrowPngStatus}, icons=${iconsPngStatus}
     }
     updateProgress();
     updateCircleColors();
+    updateNextZoneMarker(); // перепрыгиваем стрелку на следующую зону
 
     if (z.audio) {
         window.__currentZoneId = id;
@@ -970,6 +982,7 @@ points.forEach(p => {
     }
 
     if (p.type === "mediaMenu") {
+        if (isDriverMode) return; // водителю не нужны
         const el = document.createElement("img");
         el.src = p.icon;
         el.style.width = "40px";
@@ -981,6 +994,7 @@ points.forEach(p => {
 });
 
 zones.filter(p => p.type === "square").forEach(p => {
+    if (isDriverMode) return; // водителю не нужны декоративные маркеры
     const el = document.createElement("div");
     el.style.width = "40px";
     el.style.height = "40px";
@@ -1141,6 +1155,19 @@ map.addLayer({
                        map.on("move", handleMapMove);
 
                        console.log("Карта готова");
+
+                       // [DRIVER MODE] авто-старт без кнопки
+                       if (isDriverMode) {
+                           tourStarted = true;
+                           gpsActive = true;
+                           compassActive = true;
+                           const startBtnEl = document.getElementById("startTourBtn");
+                           if (startBtnEl) startBtnEl.style.display = "none";
+                           requestWakeLock();
+                       }
+
+                       // Инициализируем стрелку на первую зону после загрузки карты
+                       setTimeout(() => updateNextZoneMarker(), 500);
                    });
 
 /* ========================================================
@@ -1478,6 +1505,90 @@ heavyZones.forEach(id => {
                /* ========================================================
                   ====================== DOM EVENTS =======================
                   ======================================================== */
+
+/* ========================================================
+   === NEXT ZONE ARROW — игровая прыгающая стрелка
+   ======================================================== */
+
+// Инжектим CSS анимацию один раз
+(function injectNextZoneCSS() {
+    const style = document.createElement("style");
+    style.textContent = `
+        @keyframes nextZoneBounce {
+            0%   { transform: translateY(0px) perspective(200px) rotateX(20deg); }
+            40%  { transform: translateY(-14px) perspective(200px) rotateX(20deg); }
+            60%  { transform: translateY(-14px) perspective(200px) rotateX(20deg); }
+            100% { transform: translateY(0px) perspective(200px) rotateX(20deg); }
+        }
+        .next-zone-arrow {
+            animation: nextZoneBounce 0.9s ease-in-out infinite;
+            pointer-events: none;
+            transform-origin: center bottom;
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
+function createNextZoneArrowEl() {
+    const el = document.createElement("div");
+    el.className = "next-zone-arrow";
+
+    // SVG: стрелка вниз с хвостом как в играх
+    el.innerHTML = `
+        <svg width="50" height="60" viewBox="0 0 50 60" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="nzGlow">
+                    <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+            </defs>
+            <!-- хвост -->
+            <rect x="18" y="2" width="14" height="28" rx="4"
+                fill="#00e05a" filter="url(#nzGlow)"/>
+            <!-- наконечник -->
+            <polygon points="25,58 4,28 46,28"
+                fill="#00e05a" filter="url(#nzGlow)"/>
+            <!-- блик для объёма -->
+            <rect x="21" y="4" width="5" height="20" rx="2"
+                fill="rgba(255,255,255,0.35)"/>
+        </svg>
+    `;
+    return el;
+}
+
+function updateNextZoneMarker() {
+    if (isDriverMode) return; // водителю не нужна
+
+    // Находим первую непосещённую аудиозону
+    const audioZones = zones.filter(z => z.type === "audio");
+    const next = audioZones.find(z => !z.visited);
+
+    // Удаляем старый маркер
+    if (nextZoneMarker) {
+        nextZoneMarker.remove();
+        nextZoneMarker = null;
+    }
+
+    if (!next || !map) return;
+
+    const lat = next.lat;
+    const lng = next.lng;
+
+    // Для полигональных зон берём центр первой точки
+    const lngLat = (next.shape === "polygon" && Array.isArray(next.polygon))
+        ? [next.polygon[0][0], next.polygon[0][1]]
+        : [lng, lat];
+
+    const el = createNextZoneArrowEl();
+
+    nextZoneMarker = new maplibregl.Marker({
+        element: el,
+        anchor: "bottom",
+        offset: [0, -8]
+    })
+    .setLngLat(lngLat)
+    .addTo(map);
+}
 
 document.addEventListener("DOMContentLoaded", initMap);
 
