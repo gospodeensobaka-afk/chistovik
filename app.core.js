@@ -1409,6 +1409,16 @@ if (startBtn) {
         tourStarted = true;
         gpsActive = true;
 
+        // Центрируем карту на первую зону при старте
+        const firstZone = zones.find(z => z.type === "audio" && !z.visited);
+        if (firstZone) {
+            map.easeTo({
+                center: [firstZone.lng, firstZone.lat],
+                zoom: 16.5,
+                duration: 800
+            });
+        }
+
         try {
             compassActive = true;
 
@@ -1582,8 +1592,8 @@ function updateNextZoneMarker() {
 
     nextZoneMarker = new maplibregl.Marker({
         element: el,
-        anchor: "bottom",
-        offset: [0, -8]
+        anchor: "top",
+        offset: [0, 8]
     })
     .setLngLat(lngLat)
     .addTo(map);
