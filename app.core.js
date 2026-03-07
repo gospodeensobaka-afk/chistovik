@@ -1529,21 +1529,27 @@ heavyZones.forEach(id => {
             60%  { transform: translateY(-14px) perspective(200px) rotateX(20deg); }
             100% { transform: translateY(0px) perspective(200px) rotateX(20deg); }
         }
-        .next-zone-arrow {
+        .next-zone-arrow-inner {
             animation: nextZoneBounce 0.9s ease-in-out infinite;
             pointer-events: none;
             transform-origin: center bottom;
+            display: block;
         }
     `;
     document.head.appendChild(style);
 })();
 
 function createNextZoneArrowEl() {
+    // Внешний div — якорь маркера, transform трогать нельзя
     const el = document.createElement("div");
-    el.className = "next-zone-arrow";
+    el.style.width = "50px";
+    el.style.height = "60px";
+    el.style.pointerEvents = "none";
 
-    // SVG: стрелка вниз с хвостом как в играх
-    el.innerHTML = `
+    // Внутренний div — только на него вешаем анимацию
+    const inner = document.createElement("div");
+    inner.className = "next-zone-arrow-inner";
+    inner.innerHTML = `
         <svg width="50" height="60" viewBox="0 0 50 60" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <filter id="nzGlow">
@@ -1551,17 +1557,16 @@ function createNextZoneArrowEl() {
                     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
                 </filter>
             </defs>
-            <!-- хвост -->
             <rect x="18" y="2" width="14" height="28" rx="4"
                 fill="#00e05a" filter="url(#nzGlow)"/>
-            <!-- наконечник -->
             <polygon points="25,58 4,28 46,28"
                 fill="#00e05a" filter="url(#nzGlow)"/>
-            <!-- блик для объёма -->
             <rect x="21" y="4" width="5" height="20" rx="2"
                 fill="rgba(255,255,255,0.35)"/>
         </svg>
     `;
+
+    el.appendChild(inner);
     return el;
 }
 
