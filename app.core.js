@@ -886,8 +886,8 @@ setTimeout(() => {
         zoom: 16.125383373632552,
         duration: 1500
     });
-    // Инициализируем стрелку после завершения easeTo
-    setTimeout(() => updateNextZoneMarker(), 1600);
+    // Создаём стрелку только когда карта реально остановилась
+    map.once("moveend", () => updateNextZoneMarker());
 }, 4000);map.addSource("route-remaining", {
     type: "geojson",
     data: {
@@ -1592,8 +1592,8 @@ function updateNextZoneMarker() {
 
     nextZoneMarker = new maplibregl.Marker({
         element: el,
-        anchor: "top",
-        offset: [0, 8]
+        anchor: "bottom",
+        offset: [0, -20]
     })
     .setLngLat(lngLat)
     .addTo(map);
