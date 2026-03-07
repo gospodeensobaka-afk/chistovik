@@ -886,9 +886,9 @@ setTimeout(() => {
         zoom: 16.125383373632552,
         duration: 1500
     });
-}, 4000);
-
-map.addSource("route-remaining", {
+    // Инициализируем стрелку после завершения easeTo
+    setTimeout(() => updateNextZoneMarker(), 1600);
+}, 4000);map.addSource("route-remaining", {
     type: "geojson",
     data: {
         type: "Feature",
@@ -1166,8 +1166,7 @@ map.addLayer({
                            requestWakeLock();
                        }
 
-                       // Инициализируем стрелку на первую зону после загрузки карты
-                       setTimeout(() => updateNextZoneMarker(), 500);
+                       // стрелка инициализируется после easeTo (см. ниже в initMap)
                    });
 
 /* ========================================================
