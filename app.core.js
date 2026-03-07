@@ -1575,7 +1575,7 @@ function updateNextZoneMarker() {
 
     // Находим первую непосещённую аудиозону
     const audioZones = zones.filter(z => z.type === "audio");
-    const next = audioZones.find(z => !z.visited);
+    const next = audioZones.find(z => !z.visited && z.id !== 0);
 
     // Удаляем старый маркер
     if (nextZoneMarker) {
