@@ -346,7 +346,6 @@ function pointInPolygon(point, polygon) {
 }
 
 function checkZones(coords) {
-    if (isDriverMode) return; // водитель не триггерит зоны
     zones.forEach(z => {
         if (z.type !== "audio") return;
 
@@ -361,28 +360,27 @@ function checkZones(coords) {
 
         if (!z.visited && inside) {
             z.visited = true;
-
-            const audioZonesList = zones.filter(a => a.type === "audio");
-            const idx = audioZonesList.findIndex(a => a.id === z.id);
-            const next = audioZonesList[idx + 1];
-
-            if (next && !next.preloadTriggered) {
-                next.preloadTriggered = true;
-
-                let files = [];
-                if (next.audio) files.push(next.audio);
-
-                queuePreload(files, next.id);
-            }
-
             visitedAudioZones++;
             updateProgress();
             updateCircleColors();
-            updateNextZoneMarker(); // перепрыгиваем стрелку на следующую зону
+            updateNextZoneMarker();
 
-            if (z.audio) {
-                preloadAllMediaForCurrentAudio(z.audio);
-                playZoneAudio(z.audio, z.id);
+            if (!isDriverMode) {
+                // Предзагрузка следующей зоны
+                const audioZonesList = zones.filter(a => a.type === "audio");
+                const idx = audioZonesList.findIndex(a => a.id === z.id);
+                const next = audioZonesList[idx + 1];
+                if (next && !next.preloadTriggered) {
+                    next.preloadTriggered = true;
+                    let files = [];
+                    if (next.audio) files.push(next.audio);
+                    queuePreload(files, next.id);
+                }
+
+                if (z.audio) {
+                    preloadAllMediaForCurrentAudio(z.audio);
+                    playZoneAudio(z.audio, z.id);
+                }
             }
         }
     });
