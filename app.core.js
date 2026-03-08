@@ -664,7 +664,13 @@ function moveMarker(coords) {
 
                    updateArrowPositionFromCoords(coords);
 
-if (!compassActive && prevCoords) {
+if (isDriverMode && followMode) {
+    // В режиме водителя — просто центрируем без поворота карты
+    map.easeTo({
+        center: [coords[1], coords[0]],
+        duration: 300
+    });
+} else if (!compassActive && prevCoords) {
     const angle = calculateAngle(prevCoords, coords);
     gpsAngleLast = Math.round(angle);
     gpsUpdates++;
