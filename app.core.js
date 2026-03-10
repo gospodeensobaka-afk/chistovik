@@ -1,4 +1,4 @@
- /* ========================================================
+/* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             /* === SMART PRELOAD QUEUE (AUDIO + PHOTO/VIDEO TIMINGS) === */
@@ -1544,6 +1544,12 @@ async function unlockVideoIOS() {
 }
 
 const startBtn = document.getElementById("startTourBtn");
+
+// Слушаем событие от онбординга
+document.addEventListener("kzn:startTour", () => {
+    if (startBtn) startBtn.click();
+});
+
 if (startBtn) {
     startBtn.onclick = () => {
 
