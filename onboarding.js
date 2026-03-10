@@ -3,7 +3,7 @@
    Премиальный онбординг + стартовый экран для аудиогида
    ======================================================== */
 
-(function initOnboarding() {
+function initOnboarding() {
 
     /* ── Инжектим шрифт ── */
     const fontLink = document.createElement("link");
@@ -542,5 +542,10 @@
         });
     }
 
-})();
+}
 
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initOnboarding);
+} else {
+    initOnboarding();
+}
