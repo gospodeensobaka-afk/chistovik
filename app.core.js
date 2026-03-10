@@ -1,4 +1,4 @@
-/* ========================================================
+               /* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             /* === SMART PRELOAD QUEUE (AUDIO + PHOTO/VIDEO TIMINGS) === */
@@ -1592,12 +1592,30 @@ if (startBtn) {
             } else if (isAndroid) {
                 window.addEventListener("deviceorientation", e => {
                     if (!compassActive) return;
-                    if (e.alpha == null) {
+                    if (e.alpha == null || e.beta == null || e.gamma == null) {
                         debugUpdate("compass", NaN, "NO_ALPHA");
                         return;
                     }
-                    const raw = normalizeAngle(360 - e.alpha);
-                    smoothAngle = normalizeAngle(0.8 * smoothAngle + 0.2 * raw);
+
+                    // Вычисляем истинный азимут через матрицу поворота
+                    // Корректно работает при любом наклоне телефона (вертикально, в держателе и т.д.)
+                    const toRad = Math.PI / 180;
+                    const alpha = e.alpha * toRad;
+                    const beta  = e.beta  * toRad;
+                    const gamma = e.gamma * toRad;
+
+                    const sa = Math.sin(alpha), ca = Math.cos(alpha);
+                    const sb = Math.sin(beta),  cb = Math.cos(beta);
+                    const sg = Math.sin(gamma), cg = Math.cos(gamma);
+
+                    // Проекция вектора "вперёд" устройства на горизонтальную плоскость
+                    const Vx = sa * sg - ca * sb * cg;
+                    const Vy = ca * sg + sa * sb * cg;
+
+                    const heading = Math.atan2(Vx, Vy) * (180 / Math.PI);
+                    const raw = normalizeAngle(heading);
+
+                    smoothAngle = normalizeAngle(0.85 * smoothAngle + 0.15 * raw);
                     compassUpdates++;
                     lastMapBearing = (typeof map.getBearing === "function") ? map.getBearing() : 0;
                     lastCorrectedAngle = normalizeAngle(smoothAngle - lastMapBearing);
