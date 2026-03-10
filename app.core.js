@@ -1,4 +1,4 @@
-               /* ========================================================
+ /* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             /* === SMART PRELOAD QUEUE (AUDIO + PHOTO/VIDEO TIMINGS) === */
@@ -104,6 +104,124 @@ function hideMiniStatus() {
     const el = document.getElementById("miniPreloadStatus");
     if (!el) return;
     el.style.display = "none";
+}
+
+/* ========================================================
+   =================== PROGRESS SYSTEM ====================
+   ======================================================== */
+
+const DEVELOPER_IDS = [732055728]; // твой Telegram user_id — прогресс не сохраняется
+
+// Получаем Telegram user_id через WebApp API
+function getTelegramUserId() {
+    try {
+        const tg = window.Telegram?.WebApp;
+        if (tg && tg.initDataUnsafe?.user?.id) {
+            return tg.initDataUnsafe.user.id;
+        }
+    } catch (e) {}
+    return null;
+}
+
+function isDeveloper() {
+    const uid = getTelegramUserId();
+    if (uid === null) return true; // нет Telegram контекста (десктоп/прямой URL) — тоже девелопер
+    return DEVELOPER_IDS.includes(uid);
+}
+
+const PROGRESS_KEY_PREFIX = "kzn_progress_";
+
+function getProgressKey() {
+    const uid = getTelegramUserId();
+    return uid ? `${PROGRESS_KEY_PREFIX}${uid}` : null;
+}
+
+function saveProgress(visitedIds) {
+    if (isDeveloper()) return; // девелоперу не сохраняем
+    const key = getProgressKey();
+    if (!key) return;
+    try {
+        localStorage.setItem(key, JSON.stringify({
+            visitedIds,
+            savedAt: Date.now()
+        }));
+    } catch (e) {}
+}
+
+function loadProgress() {
+    if (isDeveloper()) return []; // девелопер всегда стартует с нуля
+    const key = getProgressKey();
+    if (!key) return [];
+    try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return [];
+        const data = JSON.parse(raw);
+        return Array.isArray(data.visitedIds) ? data.visitedIds : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function clearProgress() {
+    const key = getProgressKey();
+    if (key) localStorage.removeItem(key);
+}
+
+// Применяем сохранённый прогресс к зонам после их загрузки
+function applyProgress(savedIds) {
+    if (!savedIds || savedIds.length === 0) return;
+    zones.forEach(z => {
+        if (z.type === "audio" && savedIds.includes(z.id)) {
+            z.visited = true;
+            visitedAudioZones++;
+        }
+    });
+    updateProgress();
+    updateCircleColors();
+    updateNextZoneMarker();
+}
+
+// Проверяем завершён ли маршрут (все аудиозоны кроме id=0)
+function isRouteCompleted() {
+    const audioZones = zones.filter(z => z.type === "audio" && z.id !== 0);
+    return audioZones.length > 0 && audioZones.every(z => z.visited);
+}
+
+// Показываем экран "маршрут завершён" для повторного входа
+function showCompletedScreen() {
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+        position:fixed; inset:0; z-index:999999;
+        background:linear-gradient(160deg,#0a0a0a 0%,#1a1a2e 60%,#16213e 100%);
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        padding:40px 30px; text-align:center;
+    `;
+    overlay.innerHTML = `
+        <div style="font-size:64px;margin-bottom:24px;">🏁</div>
+        <div style="font-size:26px;font-weight:700;color:#fff;margin-bottom:12px;letter-spacing:-0.5px;">
+            Маршрут пройден!
+        </div>
+        <div style="font-size:16px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:36px;max-width:280px;">
+            Вы уже прошли этот аудиогид.<br>
+            Медиазоны на карте по-прежнему доступны — возвращайтесь к ним в любое время.
+        </div>
+        <button id="completedMapBtn" style="
+            background:linear-gradient(135deg,#00e05a,#00b846);
+            color:#fff; border:none; border-radius:16px;
+            padding:16px 32px; font-size:17px; font-weight:600;
+            cursor:pointer; margin-bottom:16px; width:100%; max-width:280px;
+        ">Открыть карту с медиазонами</button>
+        <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:8px;">
+            Хотите пройти снова? Напишите нам.
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById("completedMapBtn").onclick = () => {
+        overlay.remove();
+        // Показываем карту но без стартовой кнопки
+        const btn = document.getElementById("startTourBtn");
+        if (btn) btn.style.display = "none";
+    };
 }
 
                let tourStarted = false;
@@ -365,6 +483,10 @@ function checkZones(coords) {
             updateCircleColors();
             updateNextZoneMarker();
 
+            // Сохраняем прогресс
+            const visitedIds = zones.filter(z => z.type === "audio" && z.visited).map(z => z.id);
+            saveProgress(visitedIds);
+
             if (!isDriverMode) {
                 // Предзагрузка следующей зоны
                 const audioZonesList = zones.filter(a => a.type === "audio");
@@ -576,6 +698,9 @@ arrow=${arrowPngStatus}, icons=${iconsPngStatus}
     if (!z.visited) {
         z.visited = true;
         visitedAudioZones++;
+        // Сохраняем прогресс
+        const visitedIds = zones.filter(z => z.type === "audio" && z.visited).map(z => z.id);
+        saveProgress(visitedIds);
     }
     updateProgress();
     updateCircleColors();
@@ -1168,6 +1293,18 @@ map.addLayer({
                            const startBtnEl = document.getElementById("startTourBtn");
                            if (startBtnEl) startBtnEl.style.display = "none";
                            requestWakeLock();
+                       }
+
+                       // [PROGRESS] Восстанавливаем прогресс из localStorage
+                       if (!isDriverMode) {
+                           const savedIds = loadProgress();
+                           if (savedIds.length > 0) {
+                               applyProgress(savedIds);
+                               // Если маршрут уже пройден — показываем экран завершения
+                               if (isRouteCompleted()) {
+                                   setTimeout(() => showCompletedScreen(), 500);
+                               }
+                           }
                        }
 
                        // стрелка инициализируется после easeTo (см. ниже в initMap)
