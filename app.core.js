@@ -514,6 +514,17 @@ function checkZones(coords) {
                     queuePreload(files, next.id);
                 }
 
+                // Ранний вармап видео для зон с коротким таймингом:
+                // При входе в зону 22 — греем видео зоны 23 (тайминг 2.3 сек)
+                // При входе в зону 25 — греем видео зоны 26 (тайминг 24.5 сек)
+                const earlyVideoWarmup = {
+                    22: ["videos/kamala.mp4"],
+                    25: ["videos/shalyapin1.mp4"]
+                };
+                if (earlyVideoWarmup[z.id]) {
+                    earlyVideoWarmup[z.id].forEach(src => hardPreloadVideo(src));
+                }
+
                 if (z.audio) {
                     preloadAllMediaForCurrentAudio(z.audio);
                     playZoneAudio(z.audio, z.id);
