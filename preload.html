@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Предзагрузка — Казань</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --gold: #C9A96E;
+            --gold-dim: rgba(201,169,110,0.35);
+            --bg: #07090F;
+            --surface: #0D1118;
+            --border: rgba(201,169,110,0.13);
+            --text: rgba(255,255,255,0.92);
+            --muted: rgba(255,255,255,0.32);
+            --green: #00E05A;
+            --blue: #0A84FF;
+            --orange: #FF9F0A;
+        }
+        html, body { width:100%; height:100%; background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; overflow:hidden; }
+        body::before {
+            content:''; position:fixed; inset:0; z-index:0;
+            background-image: linear-gradient(rgba(201,169,110,0.025) 1px,transparent 1px), linear-gradient(90deg,rgba(201,169,110,0.025) 1px,transparent 1px);
+            background-size:40px 40px; pointer-events:none;
+        }
+        body::after {
+            content:''; position:fixed; inset:0; z-index:0;
+            background: radial-gradient(ellipse 80% 45% at 50% 0%, rgba(201,169,110,0.07) 0%, transparent 70%);
+            pointer-events:none;
+        }
+        .container {
+            position:relative; z-index:1;
+            width:100%; height:100%;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            padding:28px 22px; gap:16px;
+        }
+        .header { text-align:center; }
+        .city-name { font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:600; color:var(--gold); letter-spacing:0.07em; line-height:1; margin-bottom:5px; }
+        .subtitle { font-size:10px; letter-spacing:0.28em; text-transform:uppercase; color:var(--muted); }
+
+        .card { width:100%; max-width:360px; background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:22px 20px; }
+        .status-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+        .status-label { font-size:10px; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; }
+        .status-value { font-size:11px; color:var(--gold); font-weight:700; }
+
+        .progress-track { width:100%; height:3px; background:rgba(255,255,255,0.05); border-radius:2px; margin-bottom:22px; overflow:hidden; }
+        .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--gold),#E5C882); border-radius:2px; transition:width 0.25s ease; position:relative; }
+        .progress-fill.running::after {
+            content:''; position:absolute; right:0; top:0; width:24px; height:100%;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,0.55));
+            animation:shimmer 1.2s ease-in-out infinite;
+        }
+        @keyframes shimmer { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+        .counters { display:flex; gap:10px; }
+        .cnt {
+            flex:1; border-radius:12px; padding:14px 8px 12px; text-align:center;
+            background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);
+            transition:border-color 0.3s;
+        }
+        .cnt.active { border-color:rgba(255,255,255,0.12); }
+        .cnt-num { font-size:30px; font-weight:700; line-height:1; margin-bottom:4px; transition:color 0.3s; }
+        .cnt-total { font-size:10px; color:var(--muted); line-height:1; margin-bottom:4px; }
+        .cnt-label { font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); }
+        .cnt.audio .cnt-num { color:var(--blue); }
+        .cnt.photo .cnt-num { color:var(--gold); }
+        .cnt.video .cnt-num { color:var(--orange); }
+        .cnt.loading .cnt-num { animation:pulsnum 0.5s ease-in-out infinite alternate; }
+        @keyframes pulsnum { from{opacity:0.55} to{opacity:1} }
+
+        .current-file {
+            font-size:10px; color:var(--muted);
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+            padding:8px 10px; background:rgba(255,255,255,0.025);
+            border-radius:8px; border-left:2px solid var(--gold-dim);
+            width:100%; max-width:360px;
+        }
+        .current-file::before { content:'▶ '; color:var(--gold); }
+
+        .log-wrap {
+            width:100%; max-width:360px; height:96px;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:12px; padding:10px 12px; overflow:hidden; position:relative;
+        }
+        .log-wrap::after {
+            content:''; position:absolute; top:0; left:0; right:0; height:28px;
+            background:linear-gradient(to bottom,var(--surface),transparent); pointer-events:none;
+        }
+        .log-list { display:flex; flex-direction:column-reverse; gap:2px; }
+        .log-item { font-size:10px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; animation:logIn .15s ease; }
+        @keyframes logIn { from{opacity:0;transform:translateY(3px)} to{opacity:1} }
+        .log-item.ok { color:rgba(0,224,90,0.55); }
+        .log-item.ok::before { content:'✓ '; }
+        .log-item.err { color:rgba(255,69,58,0.55); }
+        .log-item.err::before { content:'✗ '; }
+
+        .btn {
+            width:100%; max-width:360px; height:54px;
+            border:none; border-radius:14px;
+            background:linear-gradient(135deg,var(--gold) 0%,#A8803E 100%);
+            color:#07090F; font-family:'JetBrains Mono',monospace;
+            font-size:15px; font-weight:700; letter-spacing:0.04em;
+            cursor:pointer; position:relative; overflow:hidden;
+            transition:transform 0.1s, box-shadow 0.2s;
+            box-shadow:0 6px 22px rgba(201,169,110,0.28);
+        }
+        .btn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.14) 0%,transparent 55%); }
+        .btn:active { transform:scale(0.97); }
+        .btn:disabled { opacity:0.38; cursor:not-allowed; transform:none; }
+        .btn.done { background:linear-gradient(135deg,var(--green) 0%,#00A83A 100%); box-shadow:0 6px 22px rgba(0,224,90,0.22); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="city-name">Казань</div>
+        <div class="subtitle">Предзагрузка маршрута</div>
+    </div>
+
+    <div class="card">
+        <div class="status-row">
+            <span class="status-label">СТАТУС</span>
+            <span class="status-value" id="statusText">ГОТОВ К ЗАГРУЗКЕ</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="counters">
+            <div class="cnt audio" id="cntAudio">
+                <div class="cnt-num" id="numAudio">0</div>
+                <div class="cnt-total" id="totAudio">/ —</div>
+                <div class="cnt-label">аудио</div>
+            </div>
+            <div class="cnt photo" id="cntPhoto">
+                <div class="cnt-num" id="numPhoto">0</div>
+                <div class="cnt-total" id="totPhoto">/ —</div>
+                <div class="cnt-label">фото</div>
+            </div>
+            <div class="cnt video" id="cntVideo">
+                <div class="cnt-num" id="numVideo">0</div>
+                <div class="cnt-total" id="totVideo">/ —</div>
+                <div class="cnt-label">видео</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="current-file" id="currentFile">нажмите «Загрузить» для начала</div>
+
+    <div class="log-wrap"><div class="log-list" id="logList"></div></div>
+
+    <button class="btn" id="startBtn" onclick="startPreload()">⚡ Загрузить маршрут</button>
+</div>
+
+<script>
+const CACHE_NAME = 'kzn-tour-v1';
+const BASE_URL   = 'https://gospodeensobaka-afk.github.io/chistovik/';
+const INDEX_URL  = BASE_URL + 'media-index.json';
+
+if (window.Telegram?.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+
+const loaded  = { audio:0, photo:0, video:0 };
+const totals  = { audio:0, photo:0, video:0 };
+let totalFiles = 0, doneFiles = 0;
+
+const fillEl   = document.getElementById('progressFill');
+const statusEl = document.getElementById('statusText');
+const currEl   = document.getElementById('currentFile');
+const logEl    = document.getElementById('logList');
+const startBtn = document.getElementById('startBtn');
+
+function getType(path) {
+    if (path.match(/\.(mp3|m4a|aac|wav)$/i)) return 'audio';
+    if (path.match(/\.(jpg|jpeg|png|webp|gif)$/i)) return 'photo';
+    if (path.match(/\.(mp4|mov|webm)$/i)) return 'video';
+    return null;
+}
+
+function setTotals(index) {
+    totals.audio = (index.audio  || []).length;
+    totals.photo = (index.photos || []).length;
+    totals.video = (index.videos || []).length;
+    document.getElementById('totAudio').textContent = '/ ' + totals.audio;
+    document.getElementById('totPhoto').textContent = '/ ' + totals.photo;
+    document.getElementById('totVideo').textContent = '/ ' + totals.video;
+}
+
+function capName(type) { return type.charAt(0).toUpperCase() + type.slice(1); }
+
+function tick(type) {
+    if (!type || !(type in loaded)) return;
+    loaded[type]++;
+    document.getElementById('num' + capName(type)).textContent = loaded[type];
+    if (loaded[type] >= totals[type]) {
+        document.getElementById('cnt' + capName(type)).classList.remove('loading');
+        document.getElementById('cnt' + capName(type)).classList.add('active');
+    }
+}
+
+function setActiveType(type) {
+    ['audio','photo','video'].forEach(t => document.getElementById('cnt' + capName(t)).classList.remove('loading'));
+    if (type) document.getElementById('cnt' + capName(type)).classList.add('loading');
+}
+
+function updateBar() {
+    const pct = totalFiles > 0 ? (doneFiles / totalFiles) * 100 : 0;
+    fillEl.style.width = pct + '%';
+    if (pct > 0 && pct < 100) { fillEl.classList.add('running'); statusEl.textContent = Math.round(pct) + '% ЗАГРУЖЕНО'; }
+}
+
+function addLog(text, cls='') {
+    const el = document.createElement('div');
+    el.className = 'log-item ' + cls;
+    el.textContent = text;
+    logEl.prepend(el);
+    while (logEl.children.length > 60) logEl.removeChild(logEl.lastChild);
+}
+
+async function fetchOne(url, cache) {
+    const name = decodeURIComponent(url.split('/').pop());
+    const type = getType(url);
+    currEl.textContent = name;
+    setActiveType(type);
+    try {
+        const cached = await cache.match(url);
+        if (cached) { tick(type); doneFiles++; updateBar(); addLog(name + ' (кэш)', 'ok'); return; }
+        const resp = await fetch(url, { cache:'no-store' });
+        if (!resp.ok) throw new Error(resp.status);
+        await cache.put(url, resp);
+        tick(type); doneFiles++; updateBar(); addLog(name, 'ok');
+    } catch(e) {
+        doneFiles++; updateBar(); addLog(name + ' — ошибка', 'err');
+    }
+}
+
+async function startPreload() {
+    startBtn.disabled = true;
+    statusEl.textContent = 'ЧИТАЕМ ИНДЕКС…';
+    addLog('Загружаем media-index.json…');
+    let index;
+    try {
+        const res = await fetch(INDEX_URL + '?t=' + Date.now());
+        index = await res.json();
+    } catch(e) {
+        statusEl.textContent = 'ОШИБКА'; addLog('Не удалось загрузить индекс', 'err');
+        startBtn.disabled = false; return;
+    }
+    const audioFiles = (index.audio  || []).map(f => BASE_URL + f);
+    const photoFiles = (index.photos || []).map(f => BASE_URL + f);
+    const videoFiles = (index.videos || []).map(f => BASE_URL + f);
+    const iconFiles  = (index.icons  || []).map(f => BASE_URL + f);
+    const allFiles   = [...audioFiles, ...photoFiles, ...videoFiles, ...iconFiles];
+    totalFiles = allFiles.length;
+    setTotals(index);
+    addLog(`Файлов: ${totalFiles}`);
+    const cache = await caches.open(CACHE_NAME);
+    const BATCH = 3;
+    for (let i = 0; i < allFiles.length; i += BATCH) {
+        await Promise.all(allFiles.slice(i, i + BATCH).map(url => fetchOne(url, cache)));
+    }
+    fillEl.style.width = '100%';
+    fillEl.classList.remove('running');
+    setActiveType(null);
+    statusEl.textContent = 'ГОТОВО ✓';
+    currEl.textContent = `загружено ${doneFiles} файлов`;
+    startBtn.classList.add('done');
+    startBtn.textContent = '✓ Маршрут готов к работе';
+    startBtn.disabled = false;
+    addLog('Загрузка завершена', 'ok');
+}
+</script>
+</body>
+</html>
