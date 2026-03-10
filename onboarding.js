@@ -23,6 +23,16 @@ function initOnboarding() {
             --muted: rgba(255,255,255,0.45);
         }
 
+        /* Скрываем весь UI пока идёт онбординг */
+        body.kzn-onboarding-active #startTourBtn,
+        body.kzn-onboarding-active #tourProgress,
+        body.kzn-onboarding-active #notReadyBtn,
+        body.kzn-onboarding-active #miniPreloadStatus,
+        body.kzn-onboarding-active #superDebug {
+            display: none !important;
+            pointer-events: none !important;
+        }
+
         #kzn-onboarding {
             position: fixed;
             inset: 0;
@@ -49,13 +59,13 @@ function initOnboarding() {
         /* ── Слайды ── */
         #kzn-slides {
             flex: 1;
-            display: flex;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
         }
 
         .kzn-slide {
-            min-width: 100%;
+            position: absolute;
+            inset: 0;
             padding: 0 28px;
             display: flex;
             flex-direction: column;
@@ -64,15 +74,14 @@ function initOnboarding() {
             text-align: center;
             transition: opacity 0.45s ease;
             opacity: 0;
-            position: absolute;
-            inset: 0;
             pointer-events: none;
+            box-sizing: border-box;
+            width: 100%;
         }
 
         .kzn-slide.active {
             opacity: 1;
             pointer-events: auto;
-            position: relative;
         }
 
         /* ── Слайд 1: заставка ── */
@@ -301,8 +310,7 @@ function initOnboarding() {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-end;
-            padding-bottom: 48px;
+            justify-content: center;
             pointer-events: none;
         }
 
@@ -464,6 +472,9 @@ function initOnboarding() {
     `;
     document.body.appendChild(onboarding);
 
+    // Вешаем класс — скрываем UI под онбордингом
+    document.body.classList.add("kzn-onboarding-active");
+
     /* ── Логика слайдов ── */
     let currentSlide = 0;
     const slides = onboarding.querySelectorAll(".kzn-slide");
@@ -488,6 +499,8 @@ function initOnboarding() {
         onboarding.style.opacity = "0";
         setTimeout(() => {
             onboarding.remove();
+            // Снимаем класс — возвращаем UI
+            document.body.classList.remove("kzn-onboarding-active");
             showStartScreen();
         }, 400);
     }
@@ -513,9 +526,16 @@ function initOnboarding() {
 
     /* ── Стартовый экран поверх карты ── */
     function showStartScreen() {
-        // Скрываем старую кнопку startTourBtn если есть
+        // Убиваем старую синюю кнопку навсегда
         const oldBtn = document.getElementById("startTourBtn");
         if (oldBtn) oldBtn.style.display = "none";
+
+        // Центрируем стрелку до старта
+        const arrowEl = document.querySelector("#map > div[style*='position: absolute']");
+        if (arrowEl) {
+            arrowEl.style.left = "50%";
+            arrowEl.style.top = "50%";
+        }
 
         const screen = document.createElement("div");
         screen.id = "kzn-start-screen";
@@ -531,11 +551,9 @@ function initOnboarding() {
 
         document.getElementById("kzn-start-btn").addEventListener("click", () => {
             screen.classList.add("hidden");
-            // Вызываем оригинальный обработчик startTourBtn
             if (oldBtn) {
                 oldBtn.click();
             } else {
-                // Fallback: триггерим событие напрямую
                 const event = new CustomEvent("kzn:startTour");
                 document.dispatchEvent(event);
             }
