@@ -1,4 +1,4 @@
-               /* ========================================================
+/* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             /* === SMART PRELOAD QUEUE (AUDIO + PHOTO/VIDEO TIMINGS) === */
@@ -56,14 +56,29 @@ async function runPreloadQueue() {
     preloadInProgress = false;
 }
 async function hardPreloadVideo(src) {
-    try {
-        const blob = await fetch(src).then(r => r.blob());
-        const url = URL.createObjectURL(blob);
+    window.__videoWarmup = window.__videoWarmup || {};
+    if (window.__videoWarmup[src]) return; // уже прогрет
 
-        window.__videoCache = window.__videoCache || {};
-        window.__videoCache[src] = url;
+    try {
+        const v = document.createElement("video");
+        v.src = src;
+        v.preload = "auto";
+        v.muted = true;
+        v.playsInline = true;
+        v.setAttribute("playsinline", "true");
+        v.setAttribute("webkit-playsinline", "true");
+        v.style.cssText = "position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;top:-9999px;";
+        document.body.appendChild(v);
+        v.load();
+        await new Promise(resolve => {
+            v.oncanplay = resolve;
+            v.onerror = resolve;
+            setTimeout(resolve, 10000); // таймаут 10 сек
+        });
+        window.__videoWarmup[src] = v;
+        console.log("Video warmed up:", src.split("/").pop());
     } catch (e) {
-        console.warn("Video preload failed:", src, e);
+        console.warn("Video warmup failed:", src, e);
     }
 }
 
