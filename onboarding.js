@@ -28,7 +28,8 @@ function initOnboarding() {
         body.kzn-onboarding-active #tourProgress,
         body.kzn-onboarding-active #notReadyBtn,
         body.kzn-onboarding-active #miniPreloadStatus,
-        body.kzn-onboarding-active #superDebug {
+        body.kzn-onboarding-active #superDebug,
+        body.kzn-onboarding-active #audioWrapper {
             display: none !important;
             pointer-events: none !important;
         }
