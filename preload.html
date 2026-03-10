@@ -267,6 +267,10 @@ async function startPreload() {
     startBtn.classList.add('done');
     startBtn.textContent = '✓ Маршрут готов к работе';
     startBtn.disabled = false;
+    // убираем onclick чтобы кнопка не запускала загрузку снова
+    startBtn.onclick = () => {
+        if (window.Telegram?.WebApp) Telegram.WebApp.close();
+    };
     addLog('Загрузка завершена', 'ok');
 }
 </script>
