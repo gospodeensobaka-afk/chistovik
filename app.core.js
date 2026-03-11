@@ -1,4 +1,96 @@
 /* ========================================================
+   ===================== TG LOGGER =========================
+   ======================================================== */
+
+const TG_LOG_TOKEN = "8519274473:AAEV9veBim0w5PUsVvLrKy9-EDIJ-Y6WYLE";
+const TG_LOG_CHAT  = "-1003867459988";
+
+const _ua = navigator.userAgent;
+const _device = (() => {
+    if (/iPhone|iPad|iPod/i.test(_ua)) return "iOS";
+    if (/Android/i.test(_ua)) return "Android";
+    return "Desktop";
+})();
+
+const _tgUser = (() => {
+    try { return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "unknown"; } catch(e) { return "unknown"; }
+})();
+
+let _logQueue = [];
+let _logTimer = null;
+
+function tgLog(level, msg) {
+    const emoji = level === "ERROR" ? "🔴" : level === "WARN" ? "🟡" : level === "GPS" ? "📍" : "🟢";
+    _logQueue.push(`${emoji} ${level} | ${msg}`);
+    if (!_logTimer) {
+        _logTimer = setTimeout(_flushLogs, 5000);
+    }
+}
+
+async function _flushLogs() {
+    _logTimer = null;
+    if (_logQueue.length === 0) return;
+    const batch = _logQueue.splice(0, _logQueue.length);
+    const header = `📱 ${_device} | user:${_tgUser} | ${new Date().toLocaleTimeString("ru")}`;
+    const body = batch.join("\n");
+    const text = `${header}\n${"─".repeat(28)}\n${body}`;
+    try {
+        await fetch(`https://api.telegram.org/bot${TG_LOG_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: TG_LOG_CHAT, text })
+        });
+    } catch(e) {}
+}
+
+window.addEventListener("error", (e) => {
+    tgLog("ERROR", `JS: ${e.message} @ ${e.filename?.split("/").pop()}:${e.lineno}`);
+    _flushLogs();
+});
+window.addEventListener("unhandledrejection", (e) => {
+    tgLog("ERROR", `Promise: ${String(e.reason)}`);
+    _flushLogs();
+});
+
+/* ========================================================
+   ===================== ACCESS SWITCH =====================
+   access.json в корне репо: {"enabled": true/false}
+   Отрубить — поменять на false прямо в GitHub
+   ======================================================== */
+
+async function checkAccess() {
+    try {
+        const res = await fetch("access.json?t=" + Date.now());
+        const data = await res.json();
+        if (!data.enabled) {
+            document.body.innerHTML = `
+                <div style="
+                    position:fixed;inset:0;background:#07090F;
+                    display:flex;flex-direction:column;
+                    align-items:center;justify-content:center;
+                    font-family:system-ui;color:rgba(255,255,255,0.85);
+                    text-align:center;padding:32px;
+                ">
+                    <div style="font-size:52px;margin-bottom:20px;">🔧</div>
+                    <div style="font-size:22px;font-weight:700;margin-bottom:12px;">Технические работы</div>
+                    <div style="font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:280px;">
+                        Маршрут временно недоступен.<br>
+                        Попробуйте позже или напишите нам.
+                    </div>
+                </div>`;
+            tgLog("WARN", "ACCESS BLOCKED — показана заглушка");
+            _flushLogs();
+            return false;
+        }
+        tgLog("INFO", "ACCESS OK — приложение запущено");
+        return true;
+    } catch(e) {
+        tgLog("WARN", "access.json не найден — пропускаем проверку");
+        return true;
+    }
+}
+
+               /* ========================================================
                   =============== GLOBAL VARIABLES & STATE ===============
                   ======================================================== */
             /* === SMART PRELOAD QUEUE (AUDIO + PHOTO/VIDEO TIMINGS) === */
@@ -76,9 +168,10 @@ async function hardPreloadVideo(src) {
             setTimeout(resolve, 10000); // таймаут 10 сек
         });
         window.__videoWarmup[src] = v;
-        console.log("Video warmed up:", src.split("/").pop());
+        tgLog("INFO", `VIDEO WARM OK | ${src.split("/").pop()}`);
     } catch (e) {
-        console.warn("Video warmup failed:", src, e);
+        tgLog("ERROR", `VIDEO WARM FAIL | ${src.split("/").pop()} | ${e.message}`);
+        _flushLogs();
     }
 }
 
@@ -409,10 +502,18 @@ function playZoneAudio(src, id) {
 
     setupPhotoTimingsForAudio(globalAudio, id);
 
-    globalAudio.play().catch(() => {});
+    globalAudio.play().then(() => {
+        tgLog("INFO", `AUDIO START | zone:${id} | ${src.split("/").pop()}`);
+    }).catch((e) => {
+        tgLog("ERROR", `AUDIO FAIL | zone:${id} | ${src.split("/").pop()} | ${e.message}`);
+        _flushLogs();
+    });
 
     audioPlaying = true;
-    globalAudio.onended = () => audioPlaying = false;
+    globalAudio.onended = () => {
+        audioPlaying = false;
+        tgLog("INFO", `AUDIO END | zone:${id} | ${src.split("/").pop()}`);
+    };
 }
 
 function updateCircleColors() {
@@ -497,6 +598,8 @@ function checkZones(coords) {
             updateProgress();
             updateCircleColors();
             updateNextZoneMarker();
+
+            tgLog("INFO", `ZONE ENTER | id:${z.id} | ${z.audio ? z.audio.split("/").pop() : "no audio"} | visited:${visitedAudioZones}/${totalAudioZones}`);
 
             // Сохраняем прогресс
             const visitedIds = zones.filter(z => z.type === "audio" && z.visited).map(z => z.id);
@@ -1300,9 +1403,13 @@ map.addLayer({
                            navigator.geolocation.watchPosition(
                                pos => {
                                    if (!gpsActive) return;
+                                   tgLog("GPS", `lat:${pos.coords.latitude.toFixed(5)} lng:${pos.coords.longitude.toFixed(5)} acc:${Math.round(pos.coords.accuracy)}m`);
                                    smoothMoveTo([pos.coords.latitude, pos.coords.longitude]);
                                },
-                               err => console.log("GPS error:", err),
+                               err => {
+                                   tgLog("ERROR", `GPS error: ${err.message} (code:${err.code})`);
+                                   _flushLogs();
+                               },
                                { enableHighAccuracy: true }
                            );
                        }
@@ -1582,6 +1689,9 @@ if (startBtn) {
         tourStarted = true;
         gpsActive = true;
 
+        tgLog("INFO", `TOUR START | ${_device} | user:${_tgUser}`);
+        _flushLogs();
+
         // Центрируем карту на первую зону при старте
         const firstZone = zones.find(z => z.type === "audio" && !z.visited);
         if (firstZone) {
@@ -1795,6 +1905,9 @@ function updateNextZoneMarker() {
     .addTo(map);
 }
 
-document.addEventListener("DOMContentLoaded", initMap);
+document.addEventListener("DOMContentLoaded", async () => {
+    const ok = await checkAccess();
+    if (ok) initMap();
+});
 
 /* ==================== END OF APP.JS ====================== */
