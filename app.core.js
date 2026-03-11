@@ -22,8 +22,15 @@ let _logTimer = null;
 function tgLog(level, msg) {
     const emoji = level === "ERROR" ? "🔴" : level === "WARN" ? "🟡" : level === "GPS" ? "📍" : "🟢";
     _logQueue.push(`${emoji} ${level} | ${msg}`);
+    // Шлём сразу если накопилось 40+ строк (лимит TG ~4096 символов)
+    if (_logQueue.length >= 40) {
+        if (_logTimer) { clearTimeout(_logTimer); _logTimer = null; }
+        _flushLogs();
+        return;
+    }
+    // Иначе батч раз в 30 секунд
     if (!_logTimer) {
-        _logTimer = setTimeout(_flushLogs, 5000);
+        _logTimer = setTimeout(_flushLogs, 30000);
     }
 }
 
@@ -1399,12 +1406,20 @@ map.addLayer({
                    document.body.appendChild(arrowEl);
                }
 
+                       let _lastLoggedGPS = null;
                        if (navigator.geolocation) {
                            navigator.geolocation.watchPosition(
                                pos => {
                                    if (!gpsActive) return;
-                                   tgLog("GPS", `lat:${pos.coords.latitude.toFixed(5)} lng:${pos.coords.longitude.toFixed(5)} acc:${Math.round(pos.coords.accuracy)}m`);
-                                   smoothMoveTo([pos.coords.latitude, pos.coords.longitude]);
+                                   const lat = pos.coords.latitude;
+                                   const lng = pos.coords.longitude;
+                                   const acc = Math.round(pos.coords.accuracy);
+                                   // Логируем GPS только если сдвинулись больше 5м
+                                   if (!_lastLoggedGPS || distance([lat, lng], _lastLoggedGPS) > 5) {
+                                       _lastLoggedGPS = [lat, lng];
+                                       tgLog("GPS", `lat:${lat.toFixed(5)} lng:${lng.toFixed(5)} acc:${acc}m`);
+                                   }
+                                   smoothMoveTo([lat, lng]);
                                },
                                err => {
                                    tgLog("ERROR", `GPS error: ${err.message} (code:${err.code})`);
