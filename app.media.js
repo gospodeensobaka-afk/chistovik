@@ -227,6 +227,7 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
                 const cfg = pTimings[timeStr];
                 if (!shownPhoto[target] && lastTime < target && current >= target) {
                     shownPhoto[target] = true;
+                    tgLog("INFO", `PHOTO TIMING | t:${target}s | ${cfg.open.split("/").pop()}`);
                     showFullscreenMedia(cfg.open, "photo", cfg.duration);
                 }
             }
@@ -239,6 +240,7 @@ function setupPhotoTimingsForAudio(audio, zoneId) {
                 if (!shownVideo[target] && lastTime < target && current >= target) {
                     shownVideo[target] = true;
                     const cfg = vTimings[timeStr];
+                    tgLog("INFO", `VIDEO TIMING | t:${target}s | ${cfg.open.split("/").pop()}`);
                     showFullscreenMedia(cfg.open, "video", cfg.duration);
                 }
             }
