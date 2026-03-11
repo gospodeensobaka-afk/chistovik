@@ -16,40 +16,46 @@ const _tgUser = (() => {
     try { return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "unknown"; } catch(e) { return "unknown"; }
 })();
 
-let _logQueue = [];
-let _logTimer = null;
+const _sessionStart = new Date().toLocaleString("ru");
+let _fullLog = [];
 
 function tgLog(level, msg) {
+    const time = new Date().toLocaleTimeString("ru");
     const emoji = level === "ERROR" ? "🔴" : level === "WARN" ? "🟡" : level === "GPS" ? "📍" : "🟢";
-    _logQueue.push(`${emoji} ${level} | ${msg}`);
-    // Шлём сразу если накопилось 40+ строк (лимит TG ~4096 символов)
-    if (_logQueue.length >= 40) {
-        if (_logTimer) { clearTimeout(_logTimer); _logTimer = null; }
-        _flushLogs();
-        return;
-    }
-    // Иначе батч раз в 30 секунд
-    if (!_logTimer) {
-        _logTimer = setTimeout(_flushLogs, 30000);
-    }
+    _fullLog.push(`${time} ${emoji} ${level} | ${msg}`);
 }
 
 async function _flushLogs() {
-    _logTimer = null;
-    if (_logQueue.length === 0) return;
-    const batch = _logQueue.splice(0, _logQueue.length);
-    const header = `📱 ${_device} | user:${_tgUser} | ${new Date().toLocaleTimeString("ru")}`;
-    const body = batch.join("\n");
-    const text = `${header}\n${"─".repeat(28)}\n${body}`;
+    if (_fullLog.length === 0) return;
+    const header = [
+        `=== KZN TOUR LOG ===`,
+        `Устройство: ${_device}`,
+        `Пользователь: ${_tgUser}`,
+        `Сессия: ${_sessionStart} — ${new Date().toLocaleString("ru")}`,
+        `Событий: ${_fullLog.length}`,
+        `${"=".repeat(36)}`,
+        ""
+    ].join("\n");
+    const content = header + _fullLog.join("\n");
+    const blob = new Blob([content], { type: "text/plain" });
+    const form = new FormData();
+    form.append("chat_id", TG_LOG_CHAT);
+    form.append("document", blob, `kzn_${_device}_${Date.now()}.txt`);
+    form.append("caption", `📋 ${_device} | user:${_tgUser} | ${_fullLog.length} событий`);
     try {
-        await fetch(`https://api.telegram.org/bot${TG_LOG_TOKEN}/sendMessage`, {
+        await fetch(`https://api.telegram.org/bot${TG_LOG_TOKEN}/sendDocument`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: TG_LOG_CHAT, text })
+            body: form
         });
+        _fullLog = []; // очищаем после отправки
     } catch(e) {}
 }
 
+// Отправляем при закрытии приложения
+window.addEventListener("pagehide", () => { _flushLogs(); });
+window.addEventListener("beforeunload", () => { _flushLogs(); });
+
+// Ошибки — пишем и сразу шлём
 window.addEventListener("error", (e) => {
     tgLog("ERROR", `JS: ${e.message} @ ${e.filename?.split("/").pop()}:${e.lineno}`);
     _flushLogs();
