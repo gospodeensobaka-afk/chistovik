@@ -259,6 +259,12 @@ function showFullscreenMedia(src, type, duration = null) {
     let media = document.getElementById("fsMediaElement");
     let closeBtn = document.getElementById("fsMediaClose");
 
+    // === ЕСЛИ НЕ ИЗ ГАЛЕРЕИ — сбрасываем галерею чтобы свайп не уходил в старые фото ===
+    if (!window.__openedFromGallery) {
+        window.__fsGallery = null;
+        window.__fsIndex = 0;
+    }
+
     // === ГРУППИРУЕМ МЕДИА ПО ЗОНАМ (только для аудиозон, не из галереи) ===
     if (!window.__openedFromGallery) {
         if (window.__currentZoneId !== undefined && window.__currentZoneId !== null) {
