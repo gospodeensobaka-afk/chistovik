@@ -1212,7 +1212,7 @@ points.forEach(p => {
         customColor: p.customColor || null
     });
 
-    if (p.type === "audio") totalAudioZones++;
+    if (p.type === "audio" && p.id !== 0) totalAudioZones++;
 
     if (p.type === "audio") {
         if (p.shape === "polygon" && Array.isArray(p.polygon)) {
