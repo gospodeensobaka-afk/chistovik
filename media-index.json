@@ -174,22 +174,22 @@
     "videos/tea.mp4"
   ],
   "icons": [
-    "icons/apanaevi.png",
-    "icons/berkut.png",
-    "icons/chakchak.png",
-    "icons/chaynaya.png",
+    "icons/apanaevi.webp",
+    "icons/berkut.webp",
+    "icons/chakchak.webp",
+    "icons/chaynaya.webp",
     "icons/eda.png",
     "icons/finish.png",
     "icons/here.png",
-    "icons/i1.png",
-    "icons/ichiga.png",
-    "icons/kaush.png",
+    "icons/i1.webp",
+    "icons/ichiga.webp",
+    "icons/kaush.webp",
     "icons/kofe.png",
-    "icons/kuznec.png",
+    "icons/kuznec.webp",
     "icons/muzey.png",
-    "icons/shamil.png",
+    "icons/shamil.webp",
     "icons/showroom.png",
-    "icons/silver.png",
+    "icons/silver.webp",
     "icons/start.png"
   ]
 }
