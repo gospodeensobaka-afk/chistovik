@@ -1245,6 +1245,7 @@ points.forEach(p => {
         el.style.width = "40px";
         el.style.height = "40px";
         el.style.cursor = "pointer";
+        el.style.willChange = "transform";
         el.onclick = () => {
             if (p.photo) showFullscreenMedia(p.photo, "photo");
             if (p.video) showFullscreenMedia(p.video, "video");
@@ -1259,6 +1260,7 @@ points.forEach(p => {
         el.style.width = "40px";
         el.style.height = "40px";
         el.style.cursor = "pointer";
+        el.style.willChange = "transform";
         el.onclick = () => openMediaMenu(p);
         new maplibregl.Marker({ element: el }).setLngLat([p.lng, p.lat]).addTo(map);
     }
@@ -1274,6 +1276,7 @@ zones.filter(p => p.type === "square").forEach(p => {
     el.style.justifyContent = "center";
     el.style.transform = "translate(-50%, -50%)";
     el.style.pointerEvents = "none";
+    el.style.willChange = "transform";
 
     const img = document.createElement("img");
     img.src = p.icon;
