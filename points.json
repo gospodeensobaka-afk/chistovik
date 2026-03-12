@@ -19,14 +19,14 @@
     "id": 2,
     "type": "audio",
     "lat": 55.789079,
-    "lng": 49.112080,
+    "lng": 49.11208,
     "radius": 25,
     "audio": "audio/2-bulak.m4a"
   },
   {
     "id": 3,
     "type": "audio",
-    "lat": 55.796000,
+    "lat": 55.796,
     "lng": 49.104035,
     "radius": 25,
     "audio": "audio/3-ploschad-tisyacheletia.m4a"
@@ -39,18 +39,30 @@
     "radius": 25,
     "audio": "audio/4-Chasha+pravila.m4a"
   },
- {
+  {
     "id": 41,
     "type": "audio",
     "shape": "polygon",
     "polygon": [
-        [49.105210, 55.813476],
-        [49.106712, 55.814201],
-        [49.107385, 55.813746],
-        [49.105871, 55.813030]
+      [
+        49.10521,
+        55.813476
+      ],
+      [
+        49.106712,
+        55.814201
+      ],
+      [
+        49.107385,
+        55.813746
+      ],
+      [
+        49.105871,
+        55.81303
+      ]
     ],
     "audio": "audio/41-sama-chasha.mp3"
-},
+  },
   {
     "id": 5,
     "type": "audio",
@@ -87,7 +99,7 @@
     "id": 9,
     "type": "audio",
     "lat": 55.803981086975256,
-    "lng":  49.14937843124139,
+    "lng": 49.14937843124139,
     "radius": 25,
     "audio": "audio/9-vezhaem-v-center-arskoe.m4a"
   },
@@ -95,7 +107,7 @@
     "id": 10,
     "type": "audio",
     "lat": 55.792645,
-    "lng": 49.153270,
+    "lng": 49.15327,
     "radius": 25,
     "audio": "audio/10-vishnevskogo-avik.m4a"
   },
@@ -110,7 +122,7 @@
   {
     "id": 12,
     "type": "audio",
-    "lat": 55.776770,
+    "lat": 55.77677,
     "lng": 49.144213,
     "radius": 25,
     "audio": "audio/12-znachok-metro.m4a"
@@ -127,7 +139,7 @@
     "id": 14,
     "type": "audio",
     "lat": 55.779171,
-    "lng": 49.138610,
+    "lng": 49.13861,
     "radius": 25,
     "audio": "audio/14-ekiyat.m4a"
   },
@@ -223,7 +235,7 @@
     "id": 26,
     "type": "audio",
     "lat": 55.786674760472835,
-    "lng":  49.121604956788474,
+    "lng": 49.121604956788474,
     "radius": 15,
     "audio": "audio/26-plochad-tukaya(mozhno-pro-shalyapina-dobavit).m4a"
   },
@@ -247,7 +259,7 @@
     "id": 29,
     "type": "audio",
     "lat": 55.791645,
-    "lng": 49.120670,
+    "lng": 49.12067,
     "radius": 25,
     "audio": "audio/29-bivshaya-voskresenskaya.m4a"
   },
@@ -263,7 +275,7 @@
     "id": 31,
     "type": "audio",
     "lat": 55.794091024192284,
-    "lng":  49.1214960250019,
+    "lng": 49.1214960250019,
     "radius": 25,
     "audio": "audio/31.m4a"
   },
@@ -311,7 +323,7 @@
   {
     "id": 37,
     "type": "audio",
-    "lat": 55.793360,
+    "lat": 55.79336,
     "lng": 49.114008,
     "radius": 25,
     "audio": "audio/37-petropavlovskiy.m4a"
@@ -320,67 +332,64 @@
     "id": 38,
     "type": "audio",
     "lat": 55.794239,
-    "lng": 49.114350,
+    "lng": 49.11435,
     "radius": 25,
     "audio": "audio/38-istoriya-vzyatiya-kazani.mp3"
   },
-
   {
     "id": 101,
     "type": "square",
     "lat": 55.81359681043182,
     "lng": 49.10463358711252,
-    "icon": "icons/i1.png"
+    "icon": "icons/i1.webp"
   },
-  
   {
     "id": 103,
     "type": "square",
     "lat": 55.779176,
     "lng": 49.138629,
-    "icon": "icons/i1.png"
+    "icon": "icons/i1.webp"
   },
   {
     "id": 104,
     "type": "square",
     "lat": 55.780078,
-    "lng": 49.136650,
-    "icon": "icons/i1.png"
+    "lng": 49.13665,
+    "icon": "icons/i1.webp"
   },
   {
     "id": 105,
     "type": "square",
-    "lat": 55.780770,
+    "lat": 55.78077,
     "lng": 49.115689,
-    "icon": "icons/i1.png"
+    "icon": "icons/i1.webp"
   },
   {
     "id": 106,
     "type": "square",
     "lat": 55.791094,
     "lng": 49.122121,
-    "icon": "icons/i1.png"
+    "icon": "icons/i1.webp"
   },
   {
     "id": 107,
     "type": "square",
-    "lat": 55.798440,
+    "lat": 55.79844,
     "lng": 49.113723,
-    "icon": "icons/i1.png"
+    "icon": "icons/i1.webp"
   },
   {
     "id": 108,
     "type": "square",
     "lat": 55.793398,
     "lng": 49.113957,
-    "icon": "icons/i1.png"
+    "icon": "icons/i1.webp"
   },
-
   {
     "id": 201,
     "type": "square",
     "lat": 55.787232,
-    "lng": 49.121880,
+    "lng": 49.12188,
     "icon": "icons/start.png"
   },
   {
@@ -398,286 +407,254 @@
     "icon": "icons/finish.png"
   },
   {
-  "id": 301,
-  "type": "mediaMenu",
-  "lat": 55.779714,
-  "lng": 49.116988,
-  "icon": "icons/showroom.png",
-  "title": "Шоурум национальной одежды",
-  "description": "700–10500₽. Платки, платья, шопперы, тюбетейки и прочее.",
-  "video": "videos/showroom.mp4",
-  "photos": [
-    "images/sshowroom.jpeg"
-  ]
-},
-  {
-  "id": 302,
-  "type": "mediaMenu",
-  "lat": 55.780555,
-  "lng": 49.115742,
-  "icon": "icons/muzey.png",
-  "title": "Музей татарской невесты",
-  "description": "Дегустация: чак‑чак, чай. Чак‑чак 140–550₽.",
-  "video": "videos/nevesta.mp4",
-  "photos": [
-    "images/nevessty.jpeg",
-    "images/nevesty.jpeg"
-  ]
-},
-  {
-  "id": 303,
-  "type": "mediaMenu",
-  "lat": 55.780776,
-  "lng": 49.116821,
-  "icon": "icons/ichiga.png",
-  "title": "Древняя техника — татарская мозаика",
-  "description": "Сшивание кожи как пазл. Аксессуары 700–20000₽, обувь 5400–80000₽.",
-  "video": "videos/ichigi.mp4",
+    "id": 301,
+    "type": "mediaMenu",
+    "lat": 55.779714,
+    "lng": 49.116988,
+    "icon": "icons/showroom.png",
+    "title": "Шоурум национальной одежды",
+    "description": "700–10500₽. Платки, платья, шопперы, тюбетейки и прочее.",
+    "video": "videos/showroom.mp4",
     "photos": [
-   "images/ichiga1.jpeg",
-  "images/ichiga2.jpeg",
-  "images/ichiga3.jpeg"
-  ]
-},
+      "images/sshowroom.jpeg"
+    ]
+  },
   {
-  "id": 304,
-  "type": "mediaMenu",
-  "lat": 55.780832,
-  "lng": 49.116141,
-  "icon": "icons/chakchak.png",
-  "title": "Дегустация чак‑чака, чая, колбасы",
-  "description": "Чак‑чак 50–500₽, колбаса 400–800₽.",
-  "photos": [
-    "images/farid.jpeg",
-    "images/fariid.jpeg"
-  ]
-},
+    "id": 302,
+    "type": "mediaMenu",
+    "lat": 55.780555,
+    "lng": 49.115742,
+    "icon": "icons/muzey.png",
+    "title": "Музей татарской невесты",
+    "description": "Дегустация: чак‑чак, чай. Чак‑чак 140–550₽.",
+    "video": "videos/nevesta.mp4",
+    "photos": [
+      "images/nevessty.jpeg",
+      "images/nevesty.jpeg"
+    ]
+  },
   {
-  "id": 305,
-  "type": "mediaMenu",
-  "lat": 55.780658,
-  "lng": 49.116142,
-  "icon": "icons/chakchak.png",
-  "title": "Дегустация чак‑чака, колбасы, баурсака",
-  "description": "Колбаса 350–1500₽, домашний чак‑чак 400₽, баурсак 180₽",
-  "photos": [
-    "images/alidan.jpeg",
-    "images/alidann.jpeg",
-     "images/alidan2.jpeg",
-     "images/aliddan2.jpeg"
-  ]
-},
+    "id": 303,
+    "type": "mediaMenu",
+    "lat": 55.780776,
+    "lng": 49.116821,
+    "icon": "icons/ichiga.webp",
+    "title": "Древняя техника — татарская мозаика",
+    "description": "Сшивание кожи как пазл. Аксессуары 700–20000₽, обувь 5400–80000₽.",
+    "video": "videos/ichigi.mp4",
+    "photos": [
+      "images/ichiga1.jpeg",
+      "images/ichiga2.jpeg",
+      "images/ichiga3.jpeg"
+    ]
+  },
   {
-  "id": 306,
-  "type": "mediaMenu",
-  "lat": 55.780669,
-  "lng": 49.116953,
-  "icon": "icons/chakchak.png",
-  "title": "Дегустация: чак‑чак, хворост, талкыш‑кәләвә",
-  "description": "Чак‑чак 250–470₽.",
+    "id": 304,
+    "type": "mediaMenu",
+    "lat": 55.780832,
+    "lng": 49.116141,
+    "icon": "icons/chakchak.webp",
+    "title": "Дегустация чак‑чака, чая, колбасы",
+    "description": "Чак‑чак 50–500₽, колбаса 400–800₽.",
+    "photos": [
+      "images/farid.jpeg",
+      "images/fariid.jpeg"
+    ]
+  },
+  {
+    "id": 305,
+    "type": "mediaMenu",
+    "lat": 55.780658,
+    "lng": 49.116142,
+    "icon": "icons/chakchak.webp",
+    "title": "Дегустация чак‑чака, колбасы, баурсака",
+    "description": "Колбаса 350–1500₽, домашний чак‑чак 400₽, баурсак 180₽",
+    "photos": [
+      "images/alidan.jpeg",
+      "images/alidann.jpeg",
+      "images/alidan2.jpeg",
+      "images/aliddan2.jpeg"
+    ]
+  },
+  {
+    "id": 306,
+    "type": "mediaMenu",
+    "lat": 55.780669,
+    "lng": 49.116953,
+    "icon": "icons/chakchak.webp",
+    "title": "Дегустация: чак‑чак, хворост, талкыш‑кәләвә",
+    "description": "Чак‑чак 250–470₽.",
     "video": "videos/delikotests.mp4",
-  "photos": [
-    "images/delikates.jpeg",
-    "images/delikatess.jpeg"
-  ]
-},
+    "photos": [
+      "images/delikates.jpeg",
+      "images/delikatess.jpeg"
+    ]
+  },
   {
-  "id": 307,
-  "type": "mediaMenu",
-  "lat": 55.779904,
-  "lng": 49.116303,
-  "icon": "icons/chakchak.png",
-  "title": "Дегустация: чак‑чак, колбаса, талкыш‑кәләвә",
-  "description": "Чак‑чак 220–2500₽, талкыш 400₽, колбаса 1200₽",
-  "photos": [
-    "images/aart.jpeg",
-    "images/aartt.jpeg"
-  ]
-},
+    "id": 307,
+    "type": "mediaMenu",
+    "lat": 55.779904,
+    "lng": 49.116303,
+    "icon": "icons/chakchak.webp",
+    "title": "Дегустация: чак‑чак, колбаса, талкыш‑кәләвә",
+    "description": "Чак‑чак 220–2500₽, талкыш 400₽, колбаса 1200₽",
+    "photos": [
+      "images/aart.jpeg",
+      "images/aartt.jpeg"
+    ]
+  },
   {
-  "id": 308,
-  "type": "mediaMenu",
-  "lat": 55.777783,
-  "lng": 49.115784,
-  "icon": "icons/kofe.png",
-  "title": "Татарский раф",
-  "description": "Кофе с душицей, с мёдом — 440₽",
-  "photos": [
-    "images/coffe.jpeg",
-    "images/cofe2.jpeg",
-    "images/coffe2.jpeg"
-  ]
-},
+    "id": 308,
+    "type": "mediaMenu",
+    "lat": 55.777783,
+    "lng": 49.115784,
+    "icon": "icons/kofe.png",
+    "title": "Татарский раф",
+    "description": "Кофе с душицей, с мёдом — 440₽",
+    "photos": [
+      "images/coffe.jpeg",
+      "images/cofe2.jpeg",
+      "images/coffe2.jpeg"
+    ]
+  },
   {
-  "id": 309,
-  "type": "mediaMenu",
-  "lat": 55.779961,
-  "lng": 49.113961,
-  "icon": "icons/eda.png",
-  "title": "Перемячи с 1989 года",
-  "description": "80₽ за пирожок, про компот отзываются - Как в детстве",
-  "photos": [
-    "images/peeremyach.jpeg",
-    "images/peremyach.jpeg",
-    "images/perremyach.jpeg"
-  ]
-},
+    "id": 309,
+    "type": "mediaMenu",
+    "lat": 55.779961,
+    "lng": 49.113961,
+    "icon": "icons/eda.png",
+    "title": "Перемячи с 1989 года",
+    "description": "80₽ за пирожок, про компот отзываются - Как в детстве",
+    "photos": [
+      "images/peeremyach.jpeg",
+      "images/peremyach.jpeg",
+      "images/perremyach.jpeg"
+    ]
+  },
   {
-  "id": 310,
-  "type": "mediaMenu",
-  "lat": 55.780513,
-  "lng": 49.116361,
-  "icon": "icons/muzey.png",
-  "title": "Музей татарского быта",
-  "description": "Экскурсия 750р",
-  "video": "videos/mulina.mp4"
-},
+    "id": 310,
+    "type": "mediaMenu",
+    "lat": 55.780513,
+    "lng": 49.116361,
+    "icon": "icons/muzey.png",
+    "title": "Музей татарского быта",
+    "description": "Экскурсия 750р",
+    "video": "videos/mulina.mp4"
+  },
   {
-  "id": 311,
-  "type": "mediaMenu",
-  "lat": 55.78071854105818,
-  "lng": 49.116095572185685,
-  "icon": "icons/chakchak.png",
-  "title": "Копия лавки напротив, только чуть меньше",
-  "description": "Всё то же самое + бесплатный чай",
-  "photos": [
-    "images/alidan22.jpeg",
-    "images/allidan22.jpeg",
-    "images/alidan2.jpeg",
-    "images/alidann.jpeg",
-    "images/aliddan2.jpeg"
-  ]
-},
-{
-  "id": 312,
-  "type": "mediaMenu",
-  "lat": 55.77750777670093,
-  "lng": 49.115408736105394,
-  "icon": "icons/shamil.png",
-  "title": "Дом Шамиля",
-  "description": "Литературный музей Тукая",
-  "video": "videos/shamil.mp4"
-},
-{
-  "id": 313,
-  "type": "mediaMenu",
-  "lat": 55.77856800528312,
-  "lng": 49.11599377524496,
-  "icon": "icons/apanaevi.png",
-  "title": "Дом Апанаевых",
-  "description": "Сейчас внутри 7-я городская поликлиника",
-  "video": "videos/apanaevi.mp4"
-},
-{
-  "id": 314,
-  "type": "mediaMenu",
-  "lat": 55.77832541162246,
-  "lng": 49.11628313377358,
-  "icon": "icons/berkut.png",
-  "title": "Дом Беркутова",
-  "description": "Самый старый жилой дом Казани",
-  "video": "videos/berkutov.mp4"
-},
-{
-  "id": 315,
-  "type": "mediaMenu",
-  "lat": 55.778621564062746,
-  "lng": 49.11733014396731,
-  "icon": "icons/kaush.png",
-  "title": "Дом Каушчи",
-  "description": "Сейчас гостиница.",
-  "video": "videos/kaushchi.mp4"
-},
-{
-  "id": 316,
-  "type": "mediaMenu",
-  "lat": 55.77930426111641,
-  "lng": 49.11813871567148,
-  "icon": "icons/chakchak.png",
-  "title": "Дегустация",
-  "description": "Чак‑чак и чай .Вилка цен на чак-чак 100–500₽, на чай 170–500₽",
-  "photos": [
-    "images/new1.jpeg",
-    "images/new2.jpeg"
-  ]
-},
-{
-  "id": 317,
-  "type": "mediaMenu",
-  "lat": 55.77925605576107,
-  "lng": 49.11820568460362,
-  "icon": "icons/silver.png",
-  "title": "Серебро",
-  "description": "Украшения с татарскими орнаментами. 1600–16500₽",
-  "photos": [
-    "images/silver1.jpeg",
-    "images/silver2.jpeg",
-    "images/silver3.jpeg",
-    "images/silver4.jpeg"
-  ]
-},
-{
-  "id": 318,
-  "type": "mediaMenu",
-  "lat": 55.78095650404879,
-  "lng": 49.11580048231838,
-  "icon": "icons/chaynaya.png",
-  "title": "Чайная лавка",
-  "description": "150+ видов чая. От 450₽ (100г) до 800₽ (100г)",
-  "video": "videos/tea.mp4",
-  "photos": [
-    "images/tea1.jpeg",
-    "images/tea2.jpeg",
-    "images/tea3.jpeg",
-    "images/tea4.jpeg"
-  ]
-},
-{
-  "id": 319,
-  "type": "mediaMenu",
-  "lat": 55.780883757720886,
-  "lng": 49.115843260612905,
-  "icon": "icons/kuznec.png",
-  "title": "Лавка кузнеца",
-  "description": "Татарские ножи «Куябрики» (2000–3500₽). Ручной кладью не довезти, а чемоданом получится + отправляют СДЭКом.",
-  "photos": [
-    "images/kuznec1.jpeg",
-    "images/kuznec2.jpeg",
-    "images/kuznec3.jpeg",
-    "images/kuznec4.jpeg",
-    "images/kuznec5.jpeg"
-  ]
-}
+    "id": 311,
+    "type": "mediaMenu",
+    "lat": 55.78071854105818,
+    "lng": 49.116095572185685,
+    "icon": "icons/chakchak.webp",
+    "title": "Копия лавки напротив, только чуть меньше",
+    "description": "Всё то же самое + бесплатный чай",
+    "photos": [
+      "images/alidan22.jpeg",
+      "images/allidan22.jpeg",
+      "images/alidan2.jpeg",
+      "images/alidann.jpeg",
+      "images/aliddan2.jpeg"
+    ]
+  },
+  {
+    "id": 312,
+    "type": "mediaMenu",
+    "lat": 55.77750777670093,
+    "lng": 49.115408736105394,
+    "icon": "icons/shamil.webp",
+    "title": "Дом Шамиля",
+    "description": "Литературный музей Тукая",
+    "video": "videos/shamil.mp4"
+  },
+  {
+    "id": 313,
+    "type": "mediaMenu",
+    "lat": 55.77856800528312,
+    "lng": 49.11599377524496,
+    "icon": "icons/apanaevi.webp",
+    "title": "Дом Апанаевых",
+    "description": "Сейчас внутри 7-я городская поликлиника",
+    "video": "videos/apanaevi.mp4"
+  },
+  {
+    "id": 314,
+    "type": "mediaMenu",
+    "lat": 55.77832541162246,
+    "lng": 49.11628313377358,
+    "icon": "icons/berkut.webp",
+    "title": "Дом Беркутова",
+    "description": "Самый старый жилой дом Казани",
+    "video": "videos/berkutov.mp4"
+  },
+  {
+    "id": 315,
+    "type": "mediaMenu",
+    "lat": 55.778621564062746,
+    "lng": 49.11733014396731,
+    "icon": "icons/kaush.webp",
+    "title": "Дом Каушчи",
+    "description": "Сейчас гостиница.",
+    "video": "videos/kaushchi.mp4"
+  },
+  {
+    "id": 316,
+    "type": "mediaMenu",
+    "lat": 55.77930426111641,
+    "lng": 49.11813871567148,
+    "icon": "icons/chakchak.webp",
+    "title": "Дегустация",
+    "description": "Чак‑чак и чай .Вилка цен на чак-чак 100–500₽, на чай 170–500₽",
+    "photos": [
+      "images/new1.jpeg",
+      "images/new2.jpeg"
+    ]
+  },
+  {
+    "id": 317,
+    "type": "mediaMenu",
+    "lat": 55.77925605576107,
+    "lng": 49.11820568460362,
+    "icon": "icons/silver.webp",
+    "title": "Серебро",
+    "description": "Украшения с татарскими орнаментами. 1600–16500₽",
+    "photos": [
+      "images/silver1.jpeg",
+      "images/silver2.jpeg",
+      "images/silver3.jpeg",
+      "images/silver4.jpeg"
+    ]
+  },
+  {
+    "id": 318,
+    "type": "mediaMenu",
+    "lat": 55.78095650404879,
+    "lng": 49.11580048231838,
+    "icon": "icons/chaynaya.webp",
+    "title": "Чайная лавка",
+    "description": "150+ видов чая. От 450₽ (100г) до 800₽ (100г)",
+    "video": "videos/tea.mp4",
+    "photos": [
+      "images/tea1.jpeg",
+      "images/tea2.jpeg",
+      "images/tea3.jpeg",
+      "images/tea4.jpeg"
+    ]
+  },
+  {
+    "id": 319,
+    "type": "mediaMenu",
+    "lat": 55.780883757720886,
+    "lng": 49.115843260612905,
+    "icon": "icons/kuznec.webp",
+    "title": "Лавка кузнеца",
+    "description": "Татарские ножи «Куябрики» (2000–3500₽). Ручной кладью не довезти, а чемоданом получится + отправляют СДЭКом.",
+    "photos": [
+      "images/kuznec1.jpeg",
+      "images/kuznec2.jpeg",
+      "images/kuznec3.jpeg",
+      "images/kuznec4.jpeg",
+      "images/kuznec5.jpeg"
+    ]
+  }
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
