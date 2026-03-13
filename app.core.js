@@ -1802,7 +1802,9 @@ if (startBtn) {
         requestWakeLock();
 
         const intro = new Audio("audio/start.m4a");
-        intro.play().catch(()=>{});
+window.__currentZoneId = 0;
+setupPhotoTimingsForAudio(intro, 0);
+intro.play().catch(()=>{});
 
         startBtn.style.display = "none";
     };
