@@ -1801,7 +1801,7 @@ if (startBtn) {
         // FIX: запрашиваем WakeLock при старте тура
         requestWakeLock();
 
-        const intro = new Audio("audio/start.mp3");
+        const intro = new Audio("audio/start.m4a");
         intro.play().catch(()=>{});
 
         startBtn.style.display = "none";
