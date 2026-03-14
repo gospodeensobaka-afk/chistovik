@@ -4,10 +4,6 @@
 
 /* === PHOTO & VIDEO TIMINGS === */
 const photoTimings = {
-   "audio/start.m4a": {
-        12.38: { open: "icons/i1.webp" }
-    },
-   
     "audio/1-2005.m4a": {
         46: { open: "images/president.jpeg" }
     },
@@ -263,14 +259,14 @@ function showFullscreenMedia(src, type, duration = null) {
     let media = document.getElementById("fsMediaElement");
     let closeBtn = document.getElementById("fsMediaClose");
 
-    // === ЕСЛИ НЕ ИЗ ГАЛЕРЕИ — сбрасываем галерею чтобы свайп не уходил в старые фото ===
-    if (!window.__openedFromGallery) {
+    // === ЕСЛИ НЕ ИЗ ГАЛЕРЕИ И НЕ ИЗ МЕДИАЗОНЫ — сбрасываем галерею чтобы свайп не уходил в старые фото ===
+    if (!window.__openedFromGallery && !window.__mediaMenuMode) {
         window.__fsGallery = null;
         window.__fsIndex = 0;
     }
 
-    // === ГРУППИРУЕМ МЕДИА ПО ЗОНАМ (только для аудиозон, не из галереи) ===
-    if (!window.__openedFromGallery) {
+    // === ГРУППИРУЕМ МЕДИА ПО ЗОНАМ (только для аудиозон, не из галереи, не из медиазон) ===
+    if (!window.__openedFromGallery && !window.__mediaMenuMode) {
         if (window.__currentZoneId !== undefined && window.__currentZoneId !== null) {
             if (!missedMedia[window.__currentZoneId]) {
                 missedMedia[window.__currentZoneId] = [];
@@ -545,5 +541,19 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         galleryOverlay.classList.remove("hidden");
+
+        // Закрываем галерею по тапу вне неё (на карту)
+        // Используем document-level touchend с небольшой задержкой чтобы не перехватить тап на миниатюру
+        const closeOnOutsideTap = (e) => {
+            if (!galleryOverlay.classList.contains("hidden") &&
+                !galleryOverlay.contains(e.target)) {
+                galleryOverlay.classList.add("hidden");
+                document.removeEventListener("touchend", closeOnOutsideTap);
+            }
+        };
+        // Вешаем с задержкой чтобы текущий тап (на кнопку "Не успеваю") не закрыл сразу
+        setTimeout(() => {
+            document.addEventListener("touchend", closeOnOutsideTap);
+        }, 300);
     };
 });
