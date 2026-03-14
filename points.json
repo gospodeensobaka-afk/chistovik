@@ -393,13 +393,6 @@
     "icon": "icons/start.png"
   },
   {
-    "id": 202,
-    "type": "square",
-    "lat": 55.784975,
-    "lng": 49.118708,
-    "icon": "icons/here.png"
-  },
-  {
     "id": 203,
     "type": "square",
     "lat": 55.796388,
