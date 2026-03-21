@@ -2,8 +2,7 @@
    ===================== TG LOGGER =========================
    ======================================================== */
 
-const TG_LOG_TOKEN = "8519274473:AAEV9veBim0w5PUsVvLrKy9-EDIJ-Y6WYLE";
-const TG_LOG_CHAT  = "-1003867459988";
+const LOG_ENDPOINT = "https://aguidekzn.ru/api/log";
 
 const _ua = navigator.userAgent;
 const _device = (() => {
@@ -37,25 +36,23 @@ async function _flushLogs() {
         ""
     ].join("\n");
     const content = header + _fullLog.join("\n");
-    const blob = new Blob([content], { type: "text/plain" });
+    const filename = `kzn_${_device}_${Date.now()}.txt`;
+    const caption = `📋 ${_device} | user:${_tgUser} | ${_fullLog.length} событий`;
+
     const form = new FormData();
-    form.append("chat_id", TG_LOG_CHAT);
-    form.append("document", blob, `kzn_${_device}_${Date.now()}.txt`);
-    form.append("caption", `📋 ${_device} | user:${_tgUser} | ${_fullLog.length} событий`);
+    form.append("content", content);
+    form.append("filename", filename);
+    form.append("caption", caption);
+
     try {
-        await fetch(`https://api.telegram.org/bot${TG_LOG_TOKEN}/sendDocument`, {
-            method: "POST",
-            body: form
-        });
-        _fullLog = []; // очищаем после отправки
+        await fetch(LOG_ENDPOINT, { method: "POST", body: form });
+        _fullLog = [];
     } catch(e) {}
 }
 
-// Отправляем при закрытии приложения
 window.addEventListener("pagehide", () => { _flushLogs(); });
 window.addEventListener("beforeunload", () => { _flushLogs(); });
 
-// Ошибки — пишем и сразу шлём
 window.addEventListener("error", (e) => {
     tgLog("ERROR", `JS: ${e.message} @ ${e.filename?.split("/").pop()}:${e.lineno}`);
     _flushLogs();
