@@ -4,6 +4,9 @@
 
 /* === PHOTO & VIDEO TIMINGS === */
 const photoTimings = {
+    "audio/start.m4a": {
+        12.38: { open: "icons/i1.webp" }
+    },
     "audio/1-2005.m4a": {
         46: { open: "images/president.jpeg" }
     },
