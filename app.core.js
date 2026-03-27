@@ -198,7 +198,7 @@ function preloadSingle(src) {
             return;
         }
 
-        if (src.match(/\.(jpg|jpeg|png)$/i)) {
+       if (src.match(/\.(jpg|jpeg|png|webp)$/i)) {
             const img = new Image();
             img.src = src;
             img.onload = resolve;
