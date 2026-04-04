@@ -1803,6 +1803,71 @@ window.__currentZoneId = 0;
 setupPhotoTimingsForAudio(intro, 0);
 intro.play().catch(()=>{});
 
+       // ── Регистрируем сессию и получаем код зрителя ──
+        const _tgUid = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        if (_tgUid) {
+            fetch("https://aguidekzn.ru/api/audiogide/start", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ uid: _tgUid })
+            })
+            .then(r => r.json())
+            .then(d => {
+                if (d.ok && d.code) {
+                    window.__driverUid = _tgUid;
+                    const box = document.createElement("div");
+                    box.style.cssText = `
+                        position:fixed;top:50%;left:50%;
+                        transform:translate(-50%,-50%);
+                        background:#1c1c1e;color:#fff;
+                        border-radius:16px;padding:24px 28px;
+                        text-align:center;z-index:999999;
+                        font-family:system-ui;
+                        box-shadow:0 8px 32px rgba(0,0,0,0.6);
+                        min-width:260px;
+                    `;
+                    box.innerHTML = `
+                        <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:8px;">
+                            Код для пассажиров
+                        </div>
+                        <div style="font-size:32px;font-weight:700;letter-spacing:0.08em;
+                                    color:#00e05a;margin-bottom:12px;">
+                            ${d.code}
+                        </div>
+                        <div style="font-size:13px;color:rgba(255,255,255,0.5);
+                                    line-height:1.5;margin-bottom:20px;">
+                            Скажите этот код пассажирам.<br>
+                            Они введут его в боте @KznAGuideBot<br>
+                            и будут получать фото автоматически.
+                        </div>
+                        <button onclick="this.parentNode.remove()" style="
+                            background:#00e05a;color:#000;border:none;
+                            border-radius:10px;padding:12px 32px;
+                            font-size:15px;font-weight:600;cursor:pointer;
+                        ">Понятно</button>
+                    `;
+                    document.body.appendChild(box);
+                }
+            })
+            .catch(() => {});
+
+            // Тики каждую секунду
+            setInterval(() => {
+                if (!window.__driverUid) return;
+                const audio = document.getElementById("globalAudio");
+                if (!audio || !audio.src || audio.paused) return;
+                const fileName = audio.src.split("/").pop();
+                fetch("https://aguidekzn.ru/api/audiogide/tick", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        uid: window.__driverUid,
+                        file: "audio/" + fileName,
+                        time: audio.currentTime
+                    })
+                }).catch(() => {});
+            }, 1000);
+        }
         startBtn.style.display = "none";
     };
 }
