@@ -826,6 +826,8 @@ arrow=${arrowPngStatus}, icons=${iconsPngStatus}
                function simulateAudioZone(id) {
     const z = zones.find(z => z.id === id && z.type === "audio");
     if (!z) return;
+                  // Зона 35 — всегда симулируется, остальные — только если симуляция включена
+    if (id !== 35 && window.__simDisabled) return;
 
     if (!window.__simUserGestureBound) {
         window.__simUserGestureBound = true;
@@ -1995,7 +1997,18 @@ function updateNextZoneMarker() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     const ok = await checkAccess();
-    if (ok) initMap();
+    if (!ok) return;
+
+    // Загружаем флаг симуляции
+    try {
+        const simResp = await fetch("https://aguidekzn.ru/api/sim");
+        const simData = await simResp.json();
+        if (!simData.simEnabled) {
+            window.__simDisabled = true;
+        }
+    } catch(e) {}
+
+    initMap();
 });
 
 /* ==================== END OF APP.JS ====================== */
